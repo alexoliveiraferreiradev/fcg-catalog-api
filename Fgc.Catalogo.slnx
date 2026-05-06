@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Fcg.Catalogo.API/Fcg.Catalogo.API.csproj" Id="a74e9e9d-7222-4e20-816f-da08c79ec27f" />
+    <Project Path="src/Fcg.Catalogo.Application/Fcg.Catalogo.Application.csproj" Id="4d246821-6fc0-452a-b4d5-6409494a7b09" />
+    <Project Path="src/Fcg.Catalogo.Domain/Fcg.Catalogo.Domain.csproj" Id="cbf0d8cb-7f7c-437b-a696-cf586f99494b" />
+    <Project Path="src/Fcg.Catalogo.Infrastructure/Fcg.Catalogo.Infrastructure.csproj" Id="23d12b30-3850-422c-a4eb-4e12c73c08f9" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Fcg.Catalogo.Application.UnitTests/Fcg.Catalogo.Application.UnitTests.csproj" Id="9859326f-2555-4f10-9664-ee80ee5251a9" />
+    <Project Path="tests/Fcg.Catalogo.Domain/Fcg.Catalogo.Domain.csproj" Id="63ca3457-bf92-4d14-ba35-351a60f8107a" />
+    <Project Path="tests/Fcg.Catalogo.Infrastructure.Integration/Fcg.Catalogo.Infrastructure.Integration.csproj" Id="e6fd5288-9361-4c9b-b940-b8cc33c848f4" />
+  </Folder>
+</Solution>
