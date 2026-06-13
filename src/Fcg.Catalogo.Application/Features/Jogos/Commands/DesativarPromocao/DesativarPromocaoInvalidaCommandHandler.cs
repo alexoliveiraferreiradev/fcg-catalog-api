@@ -1,6 +1,6 @@
 ﻿namespace Fcg.Catalogo.Application.Features.Jogos.Commands.DesativarPromocao
 {
-    public class DesativarPromocaoInvalidaHandler
+    public class DesativarPromocaoInvalidaCommandHandler
     {
     }
 }
