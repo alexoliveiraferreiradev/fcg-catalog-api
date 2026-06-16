@@ -27,7 +27,7 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
                     .IsRequired();
             });
 
-            // Mapeando Periodo (ValueObject) como Owned Type
+            
             builder.OwnsOne(p => p.Periodo, periodo =>
             {
                 periodo.Property(pe => pe.DataInicio)
@@ -48,7 +48,7 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
             builder.Property(p => p.DataAlteracao)
                 .IsRequired();
 
-            // Índices para performance em buscas e joins frequentes
+           
             builder.HasIndex(p => p.JogoId);
             builder.HasIndex(p => p.Ativo);
         }
