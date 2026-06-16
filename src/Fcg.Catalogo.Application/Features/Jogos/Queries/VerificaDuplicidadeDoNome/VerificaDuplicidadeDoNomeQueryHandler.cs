@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Fcg.Catalogo.Domain.ValueObject;
 using MediatR;
 using System.Data;
 
@@ -21,7 +20,7 @@ namespace Fcg.Catalogo.Application.Features.Jogos.Queries.VerificaDuplicidadeDoN
             FROM Jogos 
             WHERE Nome = @NomeJogo";
 
-            return await _dbConnection.ExecuteScalarAsync<bool>(sql, new { Nome = request.NomeJogo });
+            return await _dbConnection.ExecuteScalarAsync<bool>(sql, new { NomeJogo = request.NomeJogo });
         }
     }
 }
