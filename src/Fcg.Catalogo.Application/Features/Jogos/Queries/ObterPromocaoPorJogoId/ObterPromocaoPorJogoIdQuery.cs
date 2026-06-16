@@ -1,6 +1,7 @@
-﻿namespace Fcg.Catalogo.Application.Features.Jogos.Queries.ObterPromocaoPorJogoId
+﻿using Fcg.Catalogo.Application.Dtos.Promocao;
+using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Jogos.Queries.ObterPromocaoPorJogoId
 {
-    public class ObterPromocaoPorJogoIdQuery
-    {
-    }
+    public record ObterPromocaoPorJogoIdQuery(Guid promocaoId) :IRequest<PromocaoResponse>;
 }
