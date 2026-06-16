@@ -1,6 +1,8 @@
-﻿namespace Fcg.Catalogo.Application.Features.Jogos.Commands.DesativarPromocaoInvalida
+﻿using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Jogos.Commands.DesativarPromocaoInvalida
 {
-    public class DesativarPromocaoInvalidaCommand
+    public class DesativarPromocaoInvalidaCommand : IRequest
     {
     }
 }
