@@ -35,6 +35,11 @@ namespace Fcg.Catalogo.Infrastructure.Repository
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.Ativo, false).SetProperty(p => p.DataAlteracao, DateTime.UtcNow));
         }
 
+        public async Task<bool> ExisteJogoComNome(string nomeJogo)
+        {
+            return await _dbContext.Jogos.AnyAsync(x=>x.Nome.Valor.ToUpper().Equals(nomeJogo.ToUpper()));   
+        }
+
         public async Task<Jogo> ObterPorId(Guid id)
         {
             return await _dbContext.Jogos.Where(x => x.Id == id).FirstOrDefaultAsync();
