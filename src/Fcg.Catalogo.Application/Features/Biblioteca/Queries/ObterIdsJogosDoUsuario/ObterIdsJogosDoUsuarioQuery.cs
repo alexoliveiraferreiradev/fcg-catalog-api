@@ -2,5 +2,6 @@
 {
     public class ObterIdsJogosDoUsuarioQuery
     {
+        public Guid UsuarioId { get; set; }
     }
 }
