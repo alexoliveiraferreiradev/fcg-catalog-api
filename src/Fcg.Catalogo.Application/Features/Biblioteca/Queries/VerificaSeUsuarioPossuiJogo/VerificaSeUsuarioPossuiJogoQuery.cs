@@ -2,5 +2,7 @@
 {
     public class VerificaSeUsuarioPossuiJogoQuery
     {
+        public Guid UsuarioId { get; set; }
+        public Guid JogoId { get; set; }
     }
 }
