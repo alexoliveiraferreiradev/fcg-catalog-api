@@ -1,6 +1,9 @@
-﻿namespace Fcg.Catalogo.Application.Features.Jogos.Commands.DesativarPromocao
+﻿using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Jogos.Commands.DesativarPromocao
 {
-    public class DesativarPromocaoCommand
+    public class DesativarPromocaoCommand : IRequest
     {
+        public Guid PromocaoId { get; set; }
     }
 }
