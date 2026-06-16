@@ -1,6 +1,6 @@
-﻿namespace Fcg.Catalogo.Application.Features.Jogos.Queries.VerificaDuplicidadeDoNome
+﻿using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Jogos.Queries.VerificaDuplicidadeDoNome
 {
-    public class VerificaDuplicidadeDoNomeQuery
-    {
-    }
+    public record VerificaDuplicidadeDoNomeQuery(string NomeJogo) : IRequest<bool>;
 }
