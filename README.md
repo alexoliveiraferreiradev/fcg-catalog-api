@@ -131,10 +131,3 @@ dotnet test
 ```
 
 ---
-
-## 📌 Diretrizes de Contribuição e Git
-
-Para manter o histórico do Git organizado e padronizado, todos os contribuidores devem seguir as seguintes regras:
-
-- **Idioma dos Commits**: Todas as mensagens de commit devem ser escritas obrigatoriamente em **português**.
-- **Granularidade dos Commits**: Sempre faça commits individuais e granulares por alteração lógica. Se houver `N` mudanças distintas, execute `git add` + `git commit` separadamente para cada uma delas. Nunca agrupe alterações de diferentes escopos em um único commit.
