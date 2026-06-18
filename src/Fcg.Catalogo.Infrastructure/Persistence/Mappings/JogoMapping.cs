@@ -15,7 +15,7 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
             builder.Property(j => j.Id)
                 .ValueGeneratedNever();
 
-            // Configuração dos Value Objects mapeados como Owned Types
+            
             builder.OwnsOne(j => j.Nome, nome =>
             {
                 nome.Property(n => n.Valor)
@@ -53,17 +53,17 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
             builder.Property(j => j.DataAlteracao)
                 .IsRequired();
 
-            // Mapeamento de um para muitos (Jogo -> Promocoes)
+           
             builder.HasMany(j => j.Promocoes)
                 .WithOne()
                 .HasForeignKey(p => p.JogoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Acesso explícito ao backing field privado para preservar o encapsulamento do DDD
+           
             builder.Navigation(j => j.Promocoes)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            // Índice para melhorar a performance de consultas por status ativo
+           
             builder.HasIndex(j => j.Ativo);
         }
     }

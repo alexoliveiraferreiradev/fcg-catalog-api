@@ -30,17 +30,17 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
             builder.Property(b => b.DataAlteracao)
                 .IsRequired();
 
-            // Configuração do relacionamento de Biblioteca com Jogo
+            
             builder.HasOne(b => b.Jogo)
                 .WithMany()
                 .HasForeignKey(b => b.JogoId)
-                .OnDelete(DeleteBehavior.Restrict); // Usando Restrict para evitar delete em cascata indesejado de Jogos
+                .OnDelete(DeleteBehavior.Restrict); 
 
-            // Regra de Negócio: Garantir que um usuário tenha apenas um registro único de cada jogo em sua biblioteca
+            
             builder.HasIndex(b => new { b.UsuarioId, b.JogoId })
                 .IsUnique();
 
-            // Índices adicionais para otimização de consultas por usuário ou por jogo separadamente
+            
             builder.HasIndex(b => b.UsuarioId);
             builder.HasIndex(b => b.JogoId);
         }
