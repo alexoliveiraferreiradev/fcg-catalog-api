@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Dtos.Promocao;
+﻿using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;

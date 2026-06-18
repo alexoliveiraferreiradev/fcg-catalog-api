@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Domain.Common;
+using Fcg.Catalogo.Domain.Common;
 using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
@@ -36,7 +36,7 @@ namespace Fcg.Catalogo.Domain.Entities
 
         public void Desativar()
         {
-            if (!EstaValida()) throw new DomainException(MensagensDominio.PromocaoInativa);
+            if (!Ativo) throw new DomainException(MensagensDominio.PromocaoInativa);
             Ativo = false;
             DataAlteracao = DateTime.UtcNow;
         }

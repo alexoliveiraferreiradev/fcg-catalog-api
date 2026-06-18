@@ -1,4 +1,4 @@
-﻿namespace Fcg.Catalogo.Application.Dtos.Promocao
+﻿namespace Fcg.Catalogo.Application.Features.Response
 {
     public class PromocaoResponse
     {

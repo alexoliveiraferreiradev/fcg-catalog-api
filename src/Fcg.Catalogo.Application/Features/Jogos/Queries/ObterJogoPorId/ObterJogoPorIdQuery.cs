@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Dtos.Jogos;
+﻿using Fcg.Catalogo.Application.Features.Response;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Jogos.Queries.ObterJogoPorId

@@ -26,7 +26,7 @@ namespace Fcg.Catalogo.Infrastructure.Repository
             await SaveChanges();
         }
 
-        public async Task<Biblioteca> ObterPorId(Guid id)
+        public async Task<Biblioteca?> ObterPorId(Guid id)
         {
            return await _dbContext.Bibliotecas.Where(x=>x.Id == id).FirstOrDefaultAsync();
         }

@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Dtos.Promocao;
+﻿using Fcg.Catalogo.Application.Features.Response;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Jogos.Commands.AdicionarPromocaoJogo

@@ -1,4 +1,5 @@
 using Fcg.Catalogo.Domain.Entities;
+using Fcg.Catalogo.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

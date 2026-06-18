@@ -1,8 +1,8 @@
-﻿using Fcg.Catalogo.Domain.Common;
+using Fcg.Catalogo.Domain.Common;
 using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Resources;
 
-namespace Fcg.Catalogo.Domain.Entities
+namespace Fcg.Catalogo.Domain.ValueObject
 {
     public class Periodo : ValueObject<Periodo>
     {

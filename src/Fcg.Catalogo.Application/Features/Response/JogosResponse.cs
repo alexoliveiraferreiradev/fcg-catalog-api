@@ -1,6 +1,6 @@
 ﻿using Fcg.Catalogo.Domain.Enum;
 
-namespace Fcg.Catalogo.Application.Dtos.Jogos
+namespace Fcg.Catalogo.Application.Features.Response
 {
     public class JogosResponse
     {
