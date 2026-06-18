@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Domain.Common;
+using Fcg.Catalogo.Domain.Common;
 using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Enum;
 using Fcg.Catalogo.Domain.Resources;
@@ -67,7 +67,7 @@ namespace Fcg.Catalogo.Domain.Entities
 
         private void AtualizarGenero(GeneroJogo novoGenero)
         {
-            AssertionConcern.AssertArgumentRange((int)Genero, 1, 15, MensagensDominio.JogoGeneroObrigatorio);
+            AssertionConcern.AssertArgumentRange((int)novoGenero, 1, 20, MensagensDominio.JogoGeneroObrigatorio);
             if (Genero == novoGenero) return;
             Genero = novoGenero;
         }

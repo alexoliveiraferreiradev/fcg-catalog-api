@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Dtos.Jogos;
+﻿using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Enum;
 using MediatR;
 using System.ComponentModel.DataAnnotations;

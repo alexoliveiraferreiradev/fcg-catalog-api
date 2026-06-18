@@ -1,5 +1,6 @@
-﻿using Fcg.Catalogo.Domain.Entities;
+using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
+using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,9 +41,9 @@ namespace Fcg.Catalogo.Infrastructure.Repository
             return await _dbContext.Jogos.AnyAsync(x=>x.Nome.Valor.ToUpper().Equals(nomeJogo.ToUpper()));   
         }
 
-        public async Task<Jogo> ObterPorId(Guid id)
+        public async Task<Jogo?> ObterPorId(Guid id)
         {
-            return await _dbContext.Jogos.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await _dbContext.Jogos.Include(x => x.Promocoes).Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Promocao?> ObterPromocaoPorId(Guid id)

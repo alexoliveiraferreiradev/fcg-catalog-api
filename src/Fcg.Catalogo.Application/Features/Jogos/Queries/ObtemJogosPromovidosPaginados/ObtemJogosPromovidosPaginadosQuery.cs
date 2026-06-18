@@ -1,5 +1,5 @@
 using Fcg.Catalogo.Application.Common;
-using Fcg.Catalogo.Application.Dtos.Promocao;
+using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Enum;
 using MediatR;
 

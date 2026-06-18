@@ -1,7 +1,6 @@
-﻿namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObterIdsJogosDoUsuario
+﻿using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObterIdsJogosDoUsuario
 {
-    public class ObterIdsJogosDoUsuarioQuery
-    {
-        public Guid UsuarioId { get; set; }
-    }
+    public record ObterIdsJogosDoUsuarioQuery(Guid UsuarioId) : IRequest<IEnumerable<Guid>>;
 }
