@@ -1,9 +1,4 @@
-﻿using Fcg.Catalogo.Domain.Common.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Fcg.Core.Abstractions.Interfaces;
 
 namespace Fcg.Catalogo.Infrastructure.Persistence
 {
