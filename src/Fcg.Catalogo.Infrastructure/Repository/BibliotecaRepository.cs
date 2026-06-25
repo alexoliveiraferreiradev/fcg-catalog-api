@@ -7,23 +7,20 @@ namespace Fcg.Catalogo.Infrastructure.Repository
 {
     public class BibliotecaRepository : IBibliotecaRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly CatalgoDbContext _dbContext;
 
-        public BibliotecaRepository(ApplicationDbContext dbContext)
+        public BibliotecaRepository(CatalgoDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-
-        public async Task Adicionar(Biblioteca biblioteca)
-        {
+        public void Adicionar(Biblioteca biblioteca)
+        {            
             _dbContext.Bibliotecas.Add(biblioteca);
-            await SaveChanges();
         }
 
-        public async Task Atualizar(Biblioteca biblioteca)
+        public void Atualizar(Biblioteca biblioteca)
         {
             _dbContext.Update(biblioteca);
-            await SaveChanges();
         }
 
         public async Task<Biblioteca?> ObterPorId(Guid id)
@@ -36,9 +33,6 @@ namespace Fcg.Catalogo.Infrastructure.Repository
             return await _dbContext.Bibliotecas.AnyAsync(x => x.UsuarioId == usuarioId && x.JogoId == jogoId && x.Ativo);
         }
 
-        public async Task SaveChanges()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
+      
     }
 }

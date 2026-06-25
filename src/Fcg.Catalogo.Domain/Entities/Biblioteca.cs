@@ -22,6 +22,15 @@ namespace Fcg.Catalogo.Domain.Entities
             ValidarEntidade();
         }
 
+        public Biblioteca(Guid usuarioId)
+        {
+            UsuarioId = usuarioId;
+            DataCadastro = DateTime.UtcNow;
+            DataAlteracao = DataCadastro;
+            Ativo = true;
+            ValidarEntidade();
+        }
+
         protected override void ValidarEntidade()
         {
             AssertionConcern.AssertArgumentNotEquals(UsuarioId, Guid.Empty, MensagensDominio.UsuarioNaoEncontrado);
