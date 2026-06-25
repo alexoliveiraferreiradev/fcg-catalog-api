@@ -1,9 +1,8 @@
 ﻿using Fcg.Catalogo.Application.Features.Response;
-using Fcg.Catalogo.Domain.Common.Exceptions;
-using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
+using Fcg.Core.Abstractions.Common.Exceptions;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Jogos.Commands.AdicionarPromocaoJogo
@@ -25,7 +24,7 @@ namespace Fcg.Catalogo.Application.Features.Jogos.Commands.AdicionarPromocaoJogo
 
             var valorPromocao = new Preco(request.ValorPromocao);   
             jogo.AdicionarPromocao(valorPromocao, periodo);
-            await _jogoRepository.Atualizar(jogo);
+            _jogoRepository.Atualizar(jogo);
 
             var novaPromocao = jogo.Promocoes.First();
 

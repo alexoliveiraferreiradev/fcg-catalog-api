@@ -1,9 +1,9 @@
 ﻿using Fcg.Catalogo.Application.Features.Response;
-using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
+using Fcg.Core.Abstractions.Common.Exceptions;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Jogos.Commands.AdicionarJogo
@@ -26,7 +26,7 @@ namespace Fcg.Catalogo.Application.Features.Jogos.Commands.AdicionarJogo
             var nomeJogo = new Nome(request.Nome);
             var descricaoJogo = new Descricao(request.Descricao);
             var jogo = new Jogo(nomeJogo, descricaoJogo, preco, request.Genero);
-            await _jogoRepository.Adicionar(jogo);
+            _jogoRepository.Adicionar(jogo);
            
             return new JogosResponse
             {
