@@ -1,7 +1,7 @@
-﻿using Fcg.Catalogo.Application.MessageContracts;
-using Fcg.Catalogo.Domain.Common.Interfaces;
-using Fcg.Catalogo.Domain.Entities;
+﻿using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
+using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.Abstractions.MessageContracts;
 using MassTransit;
 
 namespace Fcg.Catalogo.API.Consumers
@@ -22,13 +22,13 @@ namespace Fcg.Catalogo.API.Consumers
         {
             var mensagem = context.Message;
 
-            _logger.LogInformation("[CatalogAPI] Preparando Biblioteca para o novo usuário: {Nome}", mensagem.Nome);
+            _logger.LogInformation("[CatalogAPI] Preparando Biblioteca para o novo usuário: {Nome}", mensagem.Name);
 
             var bibliotecaExistente = await _bibliotecaRepository.ObterPorId(mensagem.UserId);
 
             if(bibliotecaExistente != null)
             {
-                _logger.LogInformation("[CatalogAPI] Biblioteca já existe para o usuário: {Nome}", mensagem.Nome);
+                _logger.LogInformation("[CatalogAPI] Biblioteca já existe para o usuário: {Nome}", mensagem.Name);
                 return;
             }
             var biblioteca = new Biblioteca(mensagem.UserId);
@@ -37,7 +37,7 @@ namespace Fcg.Catalogo.API.Consumers
 
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("[CatalogAPI] Biblioteca criada para o usuário: {Nome}", mensagem.Nome);
+            _logger.LogInformation("[CatalogAPI] Biblioteca criada para o usuário: {Nome}", mensagem.Name);
         }
     }
 }
