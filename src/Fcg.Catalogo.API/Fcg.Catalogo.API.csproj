@@ -18,8 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.2" />
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fcg.Catalogo.Application\Fcg.Catalogo.Application.csproj" />
+    <ProjectReference Include="..\Fcg.Catalogo.Domain\Fcg.Catalogo.Domain.csproj" />
+    <ProjectReference Include="..\Fcg.Catalogo.Infrastructure\Fcg.Catalogo.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
