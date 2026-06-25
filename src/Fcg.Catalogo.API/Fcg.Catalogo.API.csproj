@@ -8,18 +8,18 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\**" />
+    <Compile Remove="Controller\**" />
     <Content Remove="Controllers\**" />
+    <Content Remove="Controller\**" />
     <EmbeddedResource Remove="Controllers\**" />
+    <EmbeddedResource Remove="Controller\**" />
     <None Remove="Controllers\**" />
+    <None Remove="Controller\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.15" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controller\" />
   </ItemGroup>
 
 </Project>
