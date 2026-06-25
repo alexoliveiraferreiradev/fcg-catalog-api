@@ -1,5 +1,5 @@
-﻿using Fcg.Catalogo.Domain.Common;
-using Fcg.Catalogo.Domain.Resources;
+﻿using Fcg.Catalogo.Domain.Resources;
+using Fcg.Core.Abstractions.Common;
 
 namespace Fcg.Catalogo.Domain.Entities
 {

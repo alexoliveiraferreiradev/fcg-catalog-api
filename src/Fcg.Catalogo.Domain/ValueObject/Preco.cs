@@ -1,10 +1,5 @@
-﻿using Fcg.Catalogo.Domain.Common;
-using Fcg.Catalogo.Domain.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Fcg.Catalogo.Domain.Resources;
+using Fcg.Core.Abstractions.Common;
 
 namespace Fcg.Catalogo.Domain.ValueObject
 {
