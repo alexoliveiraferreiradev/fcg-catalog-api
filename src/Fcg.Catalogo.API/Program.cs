@@ -37,6 +37,7 @@ builder.Services.AddDbContext<CatalogoDbContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumers(typeof(Program).Assembly);
     x.AddEntityFrameworkOutbox<CatalogoDbContext>(o =>
     {
         o.UseSqlServer();
