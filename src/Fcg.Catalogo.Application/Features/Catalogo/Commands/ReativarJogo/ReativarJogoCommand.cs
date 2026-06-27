@@ -1,0 +1,9 @@
+﻿using MediatR;
+
+namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.ReativarJogo
+{
+    public class ReativarJogoCommand : IRequest
+    {
+        public Guid JogoId { get; set; }
+    }
+}
