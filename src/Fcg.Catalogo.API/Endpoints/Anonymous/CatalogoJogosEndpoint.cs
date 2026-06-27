@@ -1,4 +1,6 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados;
+﻿using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
+using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados;
+using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPorGeneroPaginado;
 using Fcg.Catalogo.Domain.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +38,7 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
                        [FromQuery] int pagina = 1,
                        [FromQuery] int tamanho = 10) =>
                 {
-                    var query = new ObtemCatalogoPaginadosQuery() with
+                    var query = new ObtemCatalogoPorGeneroQuery() with
                     {
                         Pagina = pagina,
                         TamanhoPagina = tamanho,
@@ -59,7 +61,7 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
                        [FromQuery] int pagina = 1,
                        [FromQuery] int tamanho = 10) =>
                 {
-                    var query = new ObtemCatalogoPaginadosQuery() with
+                    var query = new ObtemCatalogoJogosPromovidosQuery() with
                     {
                         Pagina = pagina,
                         TamanhoPagina = tamanho,

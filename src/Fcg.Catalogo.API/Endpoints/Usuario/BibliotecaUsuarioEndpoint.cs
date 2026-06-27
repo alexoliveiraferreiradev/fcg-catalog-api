@@ -10,7 +10,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
     {
         public static void MapBibliotecaUsuarioPaginadaEndpoint(this WebApplication app)
         {
-            var group = app.MapGroup("/api/usuario/biblioteca").WithTags("Biblioteca do Usuário");
+            var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization().WithTags("Biblioteca do Usuário");
 
             group.MapGet("/obtem-todos",
                 async ([FromRoute] Guid usuarioId,
