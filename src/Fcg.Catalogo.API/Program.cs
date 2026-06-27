@@ -1,7 +1,9 @@
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarJogo;
 using Fcg.Catalogo.Infrastructure.Persistence;
+using Fcg.Core.WebApi.Security;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,11 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 });
+
+builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
 
 var app = builder.Build();
 
