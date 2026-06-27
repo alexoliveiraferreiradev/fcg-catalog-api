@@ -1,4 +1,5 @@
 ﻿using Fcg.Catalogo.Domain.Entities;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalogo.Infrastructure.Persistence
@@ -14,6 +15,9 @@ namespace Fcg.Catalogo.Infrastructure.Persistence
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogoDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
+            modelBuilder.AddOutboxStateEntity();
         }
     }
 }
