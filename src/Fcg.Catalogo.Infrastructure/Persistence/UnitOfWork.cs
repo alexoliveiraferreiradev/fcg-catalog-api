@@ -1,12 +1,12 @@
-﻿using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.Abstractions.Interfaces;
 
 namespace Fcg.Catalogo.Infrastructure.Persistence
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly CatalgoDbContext _dbContext;
+        private readonly CatalogoDbContext _dbContext;
 
-        public UnitOfWork(CatalgoDbContext dbContext)
+        public UnitOfWork(CatalogoDbContext dbContext)
         {
             _dbContext = dbContext;
         }

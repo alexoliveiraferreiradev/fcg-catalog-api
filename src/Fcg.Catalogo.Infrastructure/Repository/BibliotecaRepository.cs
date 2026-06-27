@@ -7,9 +7,9 @@ namespace Fcg.Catalogo.Infrastructure.Repository
 {
     public class BibliotecaRepository : IBibliotecaRepository
     {
-        private readonly CatalgoDbContext _dbContext;
+        private readonly CatalogoDbContext _dbContext;
 
-        public BibliotecaRepository(CatalgoDbContext dbContext)
+        public BibliotecaRepository(CatalogoDbContext dbContext)
         {
             _dbContext = dbContext;
         }

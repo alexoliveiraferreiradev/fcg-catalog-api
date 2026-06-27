@@ -19,7 +19,7 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Mappings
             builder.Property(p => p.JogoId)
                 .IsRequired();
 
-            // Mapeando Preco como Owned Type
+            
             builder.OwnsOne(p => p.ValorPromocao, preco =>
             {
                 preco.Property(pr => pr.Valor)

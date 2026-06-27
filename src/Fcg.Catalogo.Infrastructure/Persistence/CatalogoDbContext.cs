@@ -3,15 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalogo.Infrastructure.Persistence
 {
-    public class CatalgoDbContext : DbContext
+    public class CatalogoDbContext : DbContext
     {
-        public CatalgoDbContext(DbContextOptions<CatalgoDbContext> options) :base(options){            
+        public CatalogoDbContext(DbContextOptions<CatalogoDbContext> options) :base(options){            
         }
         public DbSet<Biblioteca> Bibliotecas  { get; set; }
         public DbSet<Jogo> Jogos { get; set; }
+        public DbSet<Promocao> Promocoes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalgoDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogoDbContext).Assembly);
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -8,9 +8,9 @@ namespace Fcg.Catalogo.Infrastructure.Repository
 {
     public class JogoRepository : IJogoRepository
     {
-        private readonly CatalgoDbContext _dbContext;
+        private readonly CatalogoDbContext _dbContext;
 
-        public JogoRepository(CatalgoDbContext dbContext)
+        public JogoRepository(CatalogoDbContext dbContext)
         {
             _dbContext = dbContext;
         }
