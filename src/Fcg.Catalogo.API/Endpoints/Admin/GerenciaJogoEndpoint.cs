@@ -1,6 +1,7 @@
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.AtualizarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.ReativarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId;
 using Fcg.Catalogo.Application.Features.Response;
@@ -40,6 +41,12 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound);
+
+            group.MapPut("/reativar/{jogoId:guid}", ReativarJogo)
+            .Produces<JogosResponse>()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
         }
 
 
@@ -84,10 +91,7 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
             CancellationToken cancellationToken
             )
         {
-            var command = new DesativarJogoCommand
-            {
-                JogoId = jogoId
-            };
+            var command = new DesativarJogoCommand(jogoId);
 
             await sender.Send(command, cancellationToken);
 
@@ -103,6 +107,21 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
             var command = atualizarJogoCommand with { JogoId = jogoId };
             var response = await sender.Send(command, cancellationToken);
             return Results.Ok(response);
+        }
+
+        private static async Task<IResult> ReativarJogo(
+            [FromRoute] Guid jogoId,
+            [FromServices] ReativarJogoCommand reativarJogoCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+        {
+            var command =  reativarJogoCommand with
+            {
+                JogoId = jogoId,    
+            };
+
+            await sender.Send(command, cancellationToken);
+            return Results.NoContent();
         }
 
     }
