@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Fcg.Catalogo.Infrastructure\Fcg.Catalogo.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Endpoints\Admin\" />
+  </ItemGroup>
+
 </Project>
