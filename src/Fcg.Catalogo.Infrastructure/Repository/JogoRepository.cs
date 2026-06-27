@@ -8,23 +8,21 @@ namespace Fcg.Catalogo.Infrastructure.Repository
 {
     public class JogoRepository : IJogoRepository
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly CatalogoDbContext _dbContext;
 
-        public JogoRepository(ApplicationDbContext dbContext)
+        public JogoRepository(CatalogoDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task Adicionar(Jogo jogo)
+        public void Adicionar(Jogo jogo)
         {
             _dbContext.Jogos.Add(jogo);
-            await SaveChanges();
         }
 
-        public async Task Atualizar(Jogo jogo)
+        public void Atualizar(Jogo jogo)
         {
             _dbContext.Update(jogo);
-            await SaveChanges();
         }
 
         public async Task DesativaPromocoesInvalidas()
@@ -52,11 +50,6 @@ namespace Fcg.Catalogo.Infrastructure.Repository
                 .FirstOrDefaultAsync(j => j.Promocoes.Any(p => p.Id == id));
 
             return jogo?.Promocoes.FirstOrDefault(p => p.Id == id);
-        }
-
-        public async Task SaveChanges()
-        {
-            await _dbContext.SaveChangesAsync();    
         }
     }
 }

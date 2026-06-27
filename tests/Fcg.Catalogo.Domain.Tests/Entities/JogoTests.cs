@@ -1,11 +1,8 @@
-using System;
-using System.Linq;
-using Fcg.Catalogo.Domain.Common.Exceptions;
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Enum;
 using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
-using Xunit;
+using Fcg.Core.Abstractions.Common.Exceptions;
 
 namespace Fcg.Catalogo.Domain.Tests.Entities
 {

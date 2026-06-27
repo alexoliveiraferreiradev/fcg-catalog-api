@@ -1,13 +1,13 @@
-﻿namespace Fcg.Catalogo.Application.Features.Response
+namespace Fcg.Catalogo.Application.Features.Response
 {
-    public class PromocaoResponse
+    public record PromocaoResponse
     {
-        public Guid PromocaoId { get; set; }
-        public Guid JogoId { get; set; }
-        public decimal ValorPromocao { get; set; }
-        public string NomeJogo { get; set; }
-        public string DescricaoJogo { get; set; }
-        public DateTime DataInicio { get; set; }
-        public DateTime DataFim { get; set; }
+        public Guid PromocaoId { get; init; }
+        public Guid JogoId { get; init; }
+        public decimal ValorPromocao { get; init; }
+        public string NomeJogo { get; init; }
+        public string DescricaoJogo { get; init; }
+        public DateTime DataInicio { get; init; }
+        public DateTime DataFim { get; init; }
     }
 }

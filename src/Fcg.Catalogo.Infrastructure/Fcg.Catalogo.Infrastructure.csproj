@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Fcg.Catalogo.Domain\Fcg.Catalogo.Domain.csproj" />
+    <ProjectReference Include="..\Fcg.Catalogo.Application\Fcg.Catalogo.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
       <PrivateAssets>all</PrivateAssets>

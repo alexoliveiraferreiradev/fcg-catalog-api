@@ -5,11 +5,10 @@ namespace Fcg.Catalogo.Domain.Repositories
 {
     public interface IJogoRepository
     {
-        Task Adicionar(Jogo jogo);
-        Task Atualizar(Jogo jogo);
+        void Adicionar(Jogo jogo);
+        void Atualizar(Jogo jogo);
         Task<bool> ExisteJogoComNome(string nomeJogo);
-        Task<Jogo?> ObterPorId(Guid id);        
-        Task SaveChanges();                
+        Task<Jogo?> ObterPorId(Guid id);       
         Task<Promocao?> ObterPromocaoPorId(Guid id);        
         Task DesativaPromocoesInvalidas();
     }

@@ -1,5 +1,5 @@
-﻿using Fcg.Catalogo.Domain.Common;
-using Fcg.Catalogo.Domain.Resources;
+﻿using Fcg.Catalogo.Domain.Resources;
+using Fcg.Core.Abstractions.Common;
 
 namespace Fcg.Catalogo.Domain.Entities
 {
@@ -16,6 +16,15 @@ namespace Fcg.Catalogo.Domain.Entities
         {
             UsuarioId = usuarioId;
             JogoId = jogoId;
+            DataCadastro = DateTime.UtcNow;
+            DataAlteracao = DataCadastro;
+            Ativo = true;
+            ValidarEntidade();
+        }
+
+        public Biblioteca(Guid usuarioId)
+        {
+            UsuarioId = usuarioId;
             DataCadastro = DateTime.UtcNow;
             DataAlteracao = DataCadastro;
             Ativo = true;
