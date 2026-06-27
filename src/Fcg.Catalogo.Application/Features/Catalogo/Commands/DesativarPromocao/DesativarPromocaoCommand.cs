@@ -1,9 +1,9 @@
-﻿using MediatR;
+using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocao
 {
-    public class DesativarPromocaoCommand : IRequest
+    public record DesativarPromocaoCommand : IRequest
     {
-        public Guid PromocaoId { get; set; }
+        public Guid PromocaoId { get; init; }
     }
 }

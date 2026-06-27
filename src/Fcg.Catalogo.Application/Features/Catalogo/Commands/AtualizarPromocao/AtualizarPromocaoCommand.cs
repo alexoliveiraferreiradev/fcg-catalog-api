@@ -1,14 +1,14 @@
-﻿using MediatR;
+using MediatR;
 using System.ComponentModel.DataAnnotations;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.AtualizarPromocao
 {
-    public class AtualizarPromocaoCommand : IRequest
+    public record AtualizarPromocaoCommand : IRequest
     {
-        public Guid PromocaoId { get; set; }
-        public Guid JogoId { get; set; }
-        public decimal NovoValorPromocao { get; set; }
-        public DateTime NovaDataFim { get; set; }
+        public Guid PromocaoId { get; init; }
+        public Guid JogoId { get; init; }
+        public decimal NovoValorPromocao { get; init; }
+        public DateTime NovaDataFim { get; init; }
 
         public AtualizarPromocaoCommand()
         {

@@ -1,17 +1,17 @@
-﻿using Fcg.Catalogo.Application.Features.Response;
+using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Enum;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.AtualizarJogo
 {
-    public class AtualizarJogoCommand : IRequest<JogosResponse>
+    public record AtualizarJogoCommand : IRequest<JogosResponse>
     {
-        public Guid JogoId { get; set; }
-        public string NovoNome { get; set; }
-        public string NovaDescricao { get; set; }
-        public decimal NovoPreco { get; set; }
-        public GeneroJogo NovoGenero { get; set; }
+        public Guid JogoId { get; init; }
+        public string NovoNome { get; init; }
+        public string NovaDescricao { get; init; }
+        public decimal NovoPreco { get; init; }
+        public GeneroJogo NovoGenero { get; init; }
 
         public AtualizarJogoCommand()
         {

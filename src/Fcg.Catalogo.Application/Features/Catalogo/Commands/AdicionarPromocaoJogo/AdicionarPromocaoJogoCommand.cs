@@ -1,14 +1,14 @@
-﻿using Fcg.Catalogo.Application.Features.Response;
+using Fcg.Catalogo.Application.Features.Response;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarPromocaoJogo
 {
-    public class AdicionarPromocaoJogoCommand : IRequest<PromocaoResponse>
+    public record AdicionarPromocaoJogoCommand : IRequest<PromocaoResponse>
     {
-        public Guid JogoId { get; set; }
-        public decimal ValorPromocao { get; set; }
-        public DateTime DataInicio { get; set; }
-        public DateTime DataFim { get; set; }
+        public Guid JogoId { get; init; }
+        public decimal ValorPromocao { get; init; }
+        public DateTime DataInicio { get; init; }
+        public DateTime DataFim { get; init; }
 
         public AdicionarPromocaoJogoCommand()
         {

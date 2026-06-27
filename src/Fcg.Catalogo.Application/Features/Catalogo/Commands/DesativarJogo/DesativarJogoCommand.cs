@@ -1,9 +1,9 @@
-﻿using MediatR;
+using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarJogo
 {
-    public class DesativarJogoCommand : IRequest
+    public record DesativarJogoCommand : IRequest
     {
-        public Guid JogoId { get; set; }
+        public Guid JogoId { get; init; }
     }
 }

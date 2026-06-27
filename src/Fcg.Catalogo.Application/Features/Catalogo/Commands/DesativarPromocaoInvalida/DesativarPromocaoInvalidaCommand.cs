@@ -1,8 +1,8 @@
-﻿using MediatR;
+using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida
 {
-    public class DesativarPromocaoInvalidaCommand : IRequest
+    public record DesativarPromocaoInvalidaCommand : IRequest
     {
     }
 }
