@@ -1,5 +1,5 @@
-﻿using Dapper;
-using Fcg.Catalogo.Application.Common;
+using Dapper;
+using Fcg.Core.Abstractions.Common;
 using MediatR;
 using System.Data;
 

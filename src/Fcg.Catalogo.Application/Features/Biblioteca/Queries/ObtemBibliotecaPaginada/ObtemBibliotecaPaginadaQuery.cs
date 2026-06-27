@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Common;
+using Fcg.Core.Abstractions.Common;
 using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPaginada
