@@ -13,8 +13,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
             var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization().WithTags("Biblioteca do Usuário");
 
             group.MapGet("/obtem-todos",
-                async ([FromRoute] Guid usuarioId,
-                       [FromServices] ISender mediator,
+                async ([FromServices] ISender mediator,
                        ClaimsPrincipal user,
                        [FromQuery] int pagina = 1,
                        [FromQuery] int tamanho = 10) =>
