@@ -11,6 +11,7 @@ using FluentValidation;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,8 @@ builder.Services.AddSwaggerGen(options => {
     });
 });
 builder.Services.AddOpenApi();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+var connectionString = builder.Configuration.GetConnectionString("CatalogoConnection");
 builder.Services.AddDbContext<CatalogoDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
@@ -43,7 +45,8 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
+        cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
+        cfg.ConfigureEndpoints(context);
     });
 });
 
@@ -51,11 +54,12 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 });
-
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-
+builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogoDbContext>().Database.GetDbConnection());
 builder.Services.AddScoped<CatalogoDbContext>();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();  
@@ -97,6 +101,8 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 

@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>47dffb83-79f4-4d7b-a548-19dbcbb8b2f7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,10 @@
   <ItemGroup>
     <PackageReference Include="Fcg.Core.WebApi" Version="1.0.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
