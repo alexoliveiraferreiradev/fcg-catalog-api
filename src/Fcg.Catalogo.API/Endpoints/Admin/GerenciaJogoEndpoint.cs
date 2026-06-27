@@ -1,6 +1,7 @@
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.AtualizarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.ReativarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId;
@@ -51,10 +52,14 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
 
 
         private static async Task<IResult> ObtemJogoPorId(
-            [FromRoute] Guid jogoId, [FromServices] ISender mediator)
+            [FromRoute] Guid jogoId, [FromServices] ISender sender,
+            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
+            CancellationToken cancellationToken)
         {
+            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+
             var query = new ObterJogoPorIdQuery(jogoId);
-            var response = await mediator.Send(query);
+            var response = await sender.Send(query, cancellationToken);
             if (response == null)
             {
                 return Results.NotFound();

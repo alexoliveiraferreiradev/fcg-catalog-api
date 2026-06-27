@@ -1,4 +1,5 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
+﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida;
+using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPorGeneroPaginado;
 using Fcg.Catalogo.Domain.Enum;
@@ -32,12 +33,16 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
 
 
         private static async Task<IResult> ObtemTodosJogos(
-            [FromServices] ISender mediator,
+            [FromServices] ISender sender,
+            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
+            CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
+            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+
             var query = new ObtemCatalogoPaginadosQuery(pagina, tamanho);
-            var response = await mediator.Send(query);
+            var response = await sender.Send(query,cancellationToken);
             if (response == null)
             {
                 return Results.NotFound();
@@ -46,18 +51,22 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
         }
 
         private static async Task<IResult> ObtemJogosPorGenero(
-            [FromServices] ISender mediator,
+            [FromServices] ISender sender,
+            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             [FromRoute] GeneroJogo genero,
+            CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
+            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+
             var query = new ObtemCatalogoPorGeneroQuery() with
             {
                 Pagina = pagina,
                 TamanhoPagina = tamanho,
                 Genero = genero
             };
-            var response = await mediator.Send(query);
+            var response = await sender.Send(query, cancellationToken);
             if (response == null)
             {
                 return Results.NotFound();
@@ -66,17 +75,21 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
         }
 
         private static async Task<IResult> ObtemJogosPromovidos(
-            [FromServices] ISender mediator,
+            [FromServices] ISender sender,
+            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
+            CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
+            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+
             var query = new ObtemCatalogoJogosPromovidosQuery() with
             {
                 Pagina = pagina,
                 TamanhoPagina = tamanho,
                 ApenasPromovidos = true
             };
-            var response = await mediator.Send(query);
+            var response = await sender.Send(query, cancellationToken);
             if (response == null)
             {
                 return Results.NotFound();
