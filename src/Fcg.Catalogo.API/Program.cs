@@ -1,7 +1,7 @@
 using Fcg.Catalogo.API.Endpoints.Admin;
 using Fcg.Catalogo.API.Endpoints.Anonymous;
 using Fcg.Catalogo.API.Endpoints.Usuario;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Fcg.Catalogo.Infrastructure.Repository;
@@ -87,9 +87,9 @@ builder.Services.AddAuthentication(opts =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrador"));
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("AdminRole"));
     
-    options.AddPolicy("AcessoGeral", policy => policy.RequireRole("Administrador", "Jogador"));
+    options.AddPolicy("AcessoGeral", policy => policy.RequireRole("AdminRole", "JogadorRole"));
 });
 
 builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogoDbContext>().Database.GetDbConnection());

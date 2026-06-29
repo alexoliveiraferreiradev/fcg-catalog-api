@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida;
+﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPorGeneroPaginado;

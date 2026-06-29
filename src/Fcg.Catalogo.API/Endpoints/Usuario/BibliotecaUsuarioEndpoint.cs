@@ -10,7 +10,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
     {
         public static void MapBibliotecaUsuarioPaginadaEndpoint(this WebApplication app)
         {
-            var group = app.MapGroup("/api/usuario/biblioteca").WithTags("Biblioteca do Usuário");
+            var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization("AcessoGeral").WithTags("Biblioteca do Usuário");
 
             group.MapGet("/obtem-todos",
                 async ([FromServices] ISender mediator,
@@ -18,9 +18,13 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
                        [FromQuery] int pagina = 1,
                        [FromQuery] int tamanho = 10) =>
             {
-               var curretUserId = Guid.Parse("aea0b4f3-d220-4c8d-aba8-d868be7ca593");
+                var currentUserIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!Guid.TryParse(currentUserIdClaim, out var currentUserId))
+                {
+                    return Results.Unauthorized();
+                }
 
-                var query = new ObtemBibliotecaPaginadaQuery(curretUserId, pagina, tamanho);
+                var query = new ObtemBibliotecaPaginadaQuery(currentUserId, pagina, tamanho);
 
                 var response = await mediator.Send(query);
 

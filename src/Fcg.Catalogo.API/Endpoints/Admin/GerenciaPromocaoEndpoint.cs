@@ -1,6 +1,6 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarPromocaoJogo;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocao;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida;
+﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarPromocaoJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocao;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterPromocaoPorJogoId;
 using Fcg.Catalogo.Application.Features.Response;
@@ -17,7 +17,7 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
             var group = app.MapGroup("/api/admin/promocao").RequireAuthorization().WithTags("Gerenciamento de Promoções");
 
             group.MapGet("/obtem-promovidos", ObtemJogosPromovidosPaginados)
-                .Produces<JogosResponse>()
+                .Produces<JogoResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
