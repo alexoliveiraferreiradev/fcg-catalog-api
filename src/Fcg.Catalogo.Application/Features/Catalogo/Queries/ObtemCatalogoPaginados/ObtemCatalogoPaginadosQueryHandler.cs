@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados
 {
-    public class ObtemCatalogoPaginadosQueryHandler : IRequestHandler<ObtemCatalogoPaginadosQuery, PagedResult<JogosResponse>>
+    public class ObtemCatalogoPaginadosQueryHandler : IRequestHandler<ObtemCatalogoPaginadosQuery, PagedResult<JogoResponse>>
     {
         private readonly IDbConnection _dbConnection;
 
@@ -15,7 +15,7 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPagina
             _dbConnection = dbConnection;
         }
 
-        public async Task<PagedResult<JogosResponse>> Handle(ObtemCatalogoPaginadosQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<JogoResponse>> Handle(ObtemCatalogoPaginadosQuery request, CancellationToken cancellationToken)
         {
             var offset = (request.Pagina - 1) * request.TamanhoPagina;
             var apenasPromovidos = request.ApenasPromovidos ?? false;
@@ -68,10 +68,10 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPagina
 
 
             var totalItems = await multi.ReadFirstAsync<int>();
-            var items = await multi.ReadAsync<JogosResponse>();
+            var items = await multi.ReadAsync<JogoResponse>();
 
 
-            return new PagedResult<JogosResponse>(
+            return new PagedResult<JogoResponse>(
                 items,
                 totalItems,
                 request.Pagina,

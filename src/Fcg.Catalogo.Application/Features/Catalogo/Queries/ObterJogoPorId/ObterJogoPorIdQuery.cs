@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId
 {
-    public record ObterJogoPorIdQuery(Guid jogoId) : IRequest<JogosResponse>;
+    public record ObterJogoPorIdQuery(Guid jogoId) : IRequest<JogoResponse>;
 }

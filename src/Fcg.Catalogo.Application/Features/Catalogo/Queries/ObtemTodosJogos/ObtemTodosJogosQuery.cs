@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
 {
-    public record ObtemTodosJogosQuery() : IRequest<IEnumerable<JogosResponse>>;
+    public record ObtemTodosJogosQuery() : IRequest<IEnumerable<JogoResponse>>;
 }
