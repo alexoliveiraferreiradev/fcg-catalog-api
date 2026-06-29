@@ -18,13 +18,9 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
                        [FromQuery] int pagina = 1,
                        [FromQuery] int tamanho = 10) =>
             {
-                var currentUserIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!Guid.TryParse(currentUserIdClaim, out var currentUserId))
-                {
-                    return Results.Unauthorized();
-                }
+               var curretUserId = Guid.Parse("aea0b4f3-d220-4c8d-aba8-d868be7ca593");
 
-                var query = new ObtemBibliotecaPaginadaQuery(currentUserId, pagina, tamanho);
+                var query = new ObtemBibliotecaPaginadaQuery(curretUserId, pagina, tamanho);
 
                 var response = mediator.Send(query);
 
