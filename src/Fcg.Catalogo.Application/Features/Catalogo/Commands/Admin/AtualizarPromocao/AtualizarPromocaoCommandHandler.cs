@@ -1,8 +1,8 @@
 using Fcg.Catalogo.Domain.Repositories;
-using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.Abstractions.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

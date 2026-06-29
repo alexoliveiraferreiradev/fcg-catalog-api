@@ -1,59 +1,19 @@
 using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Repositories;
-using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.Abstractions.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarJogo
 {
-    public class JogoIdDto
-    {
-    }
-
-    public class JogoIdDtoHandler
-    {
-    }
-
-    public class JogoIdDtoResponse
-    {
-    }
-
-    public class JogoIdDtoResponseHandler
-    {
-    }
-
-    public class JogoIdDtoResponseHandler2
-    {
-    }
-
     public class AtualizarJogoCommandHandler : IRequestHandler<AtualizarJogoCommand, JogoResponse>
     {
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AtualizarJogoCommandHandler> _logger;
-
-        public class JogoIdDto
-        {
-        }
-
-        public class JogoIdDtoHandler
-        {
-        }
-
-        public class JogoIdDtoResponse
-        {
-        }
-
-        public class JogoIdDtoResponseHandler
-        {
-        }
-
-        public class JogoIdDtoResponseHandler2
-        {
-        }
 
         public AtualizarJogoCommandHandler(
             IJogoRepository jogoRepository, 

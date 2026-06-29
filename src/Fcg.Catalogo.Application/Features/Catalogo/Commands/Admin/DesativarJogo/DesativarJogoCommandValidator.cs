@@ -1,4 +1,4 @@
-using Fcg.Catalogo.Domain.Resources;
+using Fcg.Core.Abstractions.Resources;
 using FluentValidation;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarJogo

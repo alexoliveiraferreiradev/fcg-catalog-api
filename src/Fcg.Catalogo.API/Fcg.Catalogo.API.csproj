@@ -19,17 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fcg.Core.WebApi" Version="1.0.0" />
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
+	 <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
+	 </PackageReference>
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.1.2" />
-    <PackageReference Include="MediatR" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.15" />
   </ItemGroup>
 

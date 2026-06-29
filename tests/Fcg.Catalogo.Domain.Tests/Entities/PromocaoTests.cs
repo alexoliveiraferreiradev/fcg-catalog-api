@@ -1,7 +1,7 @@
 using Fcg.Catalogo.Domain.Entities;
-using Fcg.Catalogo.Domain.Resources;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
+using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalogo.Domain.Tests.Entities
 {
