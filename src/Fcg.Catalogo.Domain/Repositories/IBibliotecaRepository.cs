@@ -1,5 +1,4 @@
 using Fcg.Catalogo.Domain.Entities;
-using Fcg.Core.Abstractions.Common;
 
 namespace Fcg.Catalogo.Domain.Repositories
 {
@@ -9,6 +8,7 @@ namespace Fcg.Catalogo.Domain.Repositories
         void Atualizar(Biblioteca biblioteca);
         Task<Biblioteca?> ObterPorId(Guid id);
         Task<bool> VerificaSeUsuarioPossuiJogo(Guid usuarioId, Guid jogoId);
-        
+        Task<IEnumerable<Guid>> ObterJogosAdquiridosPorUsuario(Guid usuarioId);
+
     }
 }

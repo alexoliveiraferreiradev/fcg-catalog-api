@@ -1,3 +1,4 @@
+using Dapper;
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Infrastructure.Persistence;
@@ -22,6 +23,13 @@ namespace Fcg.Catalogo.Infrastructure.Repository
         public void Atualizar(Biblioteca biblioteca)
         {
             _dbContext.Update(biblioteca);
+        }
+
+        public async Task<IEnumerable<Guid>> ObterJogosAdquiridosPorUsuario(Guid usuarioId)
+        {
+            var connecetion = _dbContext.Database.GetDbConnection();
+            const string sql = @"SELECT JogoId FROM Bibliotecas WHERE UsuarioId = @UsuarioId AND Ativo = 1";
+            return await connecetion.QueryAsync<Guid>(sql, new { UsuarioId = usuarioId });
         }
 
         public async Task<Biblioteca?> ObterPorId(Guid id)
