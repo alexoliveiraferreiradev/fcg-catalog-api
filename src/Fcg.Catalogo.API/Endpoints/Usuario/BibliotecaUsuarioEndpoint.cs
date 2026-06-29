@@ -1,4 +1,4 @@
-﻿
+
 using Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPaginada;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
 
                 var query = new ObtemBibliotecaPaginadaQuery(curretUserId, pagina, tamanho);
 
-                var response = mediator.Send(query);
+                var response = await mediator.Send(query);
 
                 if (response == null)
                 {

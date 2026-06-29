@@ -1,6 +1,7 @@
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Infrastructure.Persistence;
+using Fcg.Core.Abstractions.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalogo.Infrastructure.Repository
@@ -33,6 +34,8 @@ namespace Fcg.Catalogo.Infrastructure.Repository
             return await _dbContext.Bibliotecas.AnyAsync(x => x.UsuarioId == usuarioId && x.JogoId == jogoId && x.Ativo);
         }
 
-      
+
+        
+
     }
 }
