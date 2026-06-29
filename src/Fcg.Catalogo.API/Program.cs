@@ -1,9 +1,11 @@
+using Dapper;
 using Fcg.Catalogo.API.Endpoints.Admin;
 using Fcg.Catalogo.API.Endpoints.Anonymous;
 using Fcg.Catalogo.API.Endpoints.Usuario;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Domain.Repositories;
+using Fcg.Catalogo.Infrastructure.DapperHandlers;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Fcg.Catalogo.Infrastructure.Repository;
 using Fcg.Core.Abstractions.Interfaces;
@@ -60,6 +62,10 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 });
 builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+
+SqlMapper.AddTypeHandler(new NomeTypeHandler());
+SqlMapper.AddTypeHandler(new DescricaoTypeHandler());
+SqlMapper.AddTypeHandler(new PrecoTypeHandler());
 
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettingsSection);
