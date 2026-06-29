@@ -16,6 +16,11 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
         {
             var offset = (request.Pagina - 1) * request.TamanhoPagina;
 
+            if (_dbConnection.State != ConnectionState.Open)
+            {
+                _dbConnection.Open();
+            }
+
             const string sql = @"            
             SELECT COUNT(1) 
             FROM Bibliotecas 
