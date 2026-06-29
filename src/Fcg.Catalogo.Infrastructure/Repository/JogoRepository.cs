@@ -63,8 +63,7 @@ namespace Fcg.Catalogo.Infrastructure.Repository
                                 j.Descricao, 
                                 j.PrecoBase, 
                                 j.Ativo,j.DataCadastro, j.DataAlteracao, j.Genero
-                                FROM Jogos j where Id IN @jogosIds";
-
+                                FROM Jogos j where j.Id IN @jogosIds ";
             return await connection.QueryAsync<Jogo>(sql, new { jogosIds });
         }
     }
