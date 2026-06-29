@@ -11,6 +11,7 @@ namespace Fcg.Catalogo.Infrastructure.Persistence
         public DbSet<Biblioteca> Bibliotecas  { get; set; }
         public DbSet<Jogo> Jogos { get; set; }
         public DbSet<Promocao> Promocoes { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogoDbContext).Assembly);

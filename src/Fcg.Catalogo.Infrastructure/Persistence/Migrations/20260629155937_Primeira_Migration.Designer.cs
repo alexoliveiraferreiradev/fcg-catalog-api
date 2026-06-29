@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CatalogoDbContext))]
-    [Migration("20260627210049_Primeira Migration")]
-    partial class PrimeiraMigration
+    [Migration("20260629155937_Primeira_Migration")]
+    partial class Primeira_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -79,6 +79,56 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                     b.HasIndex("Ativo");
 
                     b.ToTable("Jogos", (string)null);
+                });
+
+            modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Pedido", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DataAlteracao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pedidos", (string)null);
+                });
+
+            modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.PedidoJogo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("JogoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NomeJogo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("PedidoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ValorJogo")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
+                    b.ToTable("PedidosJogo", (string)null);
                 });
 
             modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Promocao", b =>
@@ -361,6 +411,38 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Pedido", b =>
+                {
+                    b.OwnsOne("Fcg.Catalogo.Domain.ValueObject.Preco", "ValorTotal", b1 =>
+                        {
+                            b1.Property<Guid>("PedidoId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<decimal>("Valor")
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("ValorTotal");
+
+                            b1.HasKey("PedidoId");
+
+                            b1.ToTable("Pedidos");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PedidoId");
+                        });
+
+                    b.Navigation("ValorTotal")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.PedidoJogo", b =>
+                {
+                    b.HasOne("Fcg.Catalogo.Domain.Entities.Pedido", null)
+                        .WithMany("Jogos")
+                        .HasForeignKey("PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Promocao", b =>
                 {
                     b.HasOne("Fcg.Catalogo.Domain.Entities.Jogo", null)
@@ -429,6 +511,11 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Jogo", b =>
                 {
                     b.Navigation("Promocoes");
+                });
+
+            modelBuilder.Entity("Fcg.Catalogo.Domain.Entities.Pedido", b =>
+                {
+                    b.Navigation("Jogos");
                 });
 #pragma warning restore 612, 618
         }

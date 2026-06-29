@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class PrimeiraMigration : Migration
+    public partial class Primeira_Migration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -67,6 +67,22 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OutboxState", x => x.OutboxId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Pedidos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pedidos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +173,27 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                         principalColumn: "OutboxId");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PedidosJogo",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PedidoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JogoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NomeJogo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ValorJogo = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PedidosJogo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PedidosJogo_Pedidos_PedidoId",
+                        column: x => x.PedidoId,
+                        principalTable: "Pedidos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bibliotecas_JogoId",
                 table: "Bibliotecas",
@@ -218,6 +255,11 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                 column: "Created");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PedidosJogo_PedidoId",
+                table: "PedidosJogo",
+                column: "PedidoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Promocoes_Ativo",
                 table: "Promocoes",
                 column: "Ativo");
@@ -238,6 +280,9 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
                 name: "OutboxMessage");
 
             migrationBuilder.DropTable(
+                name: "PedidosJogo");
+
+            migrationBuilder.DropTable(
                 name: "Promocoes");
 
             migrationBuilder.DropTable(
@@ -245,6 +290,9 @@ namespace Fcg.Catalogo.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "OutboxState");
+
+            migrationBuilder.DropTable(
+                name: "Pedidos");
 
             migrationBuilder.DropTable(
                 name: "Jogos");
