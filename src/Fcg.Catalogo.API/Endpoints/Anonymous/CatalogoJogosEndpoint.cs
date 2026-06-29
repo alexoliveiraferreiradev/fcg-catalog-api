@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPaginados;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPorGeneroPaginado;
@@ -34,12 +34,11 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
 
         private static async Task<IResult> ObtemTodosJogos(
             [FromServices] ISender sender,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
 
             var query = new ObtemCatalogoPaginadosQuery(pagina, tamanho);
             var response = await sender.Send(query,cancellationToken);
@@ -52,13 +51,12 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
 
         private static async Task<IResult> ObtemJogosPorGenero(
             [FromServices] ISender sender,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             [FromRoute] GeneroJogo genero,
             CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
 
             var query = new ObtemCatalogoPorGeneroQuery() with
             {
@@ -76,12 +74,11 @@ namespace Fcg.Catalogo.API.Endpoints.Anonymous
 
         private static async Task<IResult> ObtemJogosPromovidos(
             [FromServices] ISender sender,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             CancellationToken cancellationToken,
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
 
             var query = new ObtemCatalogoJogosPromovidosQuery() with
             {

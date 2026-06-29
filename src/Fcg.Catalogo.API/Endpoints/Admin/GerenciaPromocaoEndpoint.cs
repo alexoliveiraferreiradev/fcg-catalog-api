@@ -1,4 +1,4 @@
-﻿using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarPromocaoJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarPromocaoJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocao;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado;
@@ -59,12 +59,10 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
         private static async Task<IResult> ObtemPromocaoPorId(
             [FromRoute] Guid promocaoId,
             [FromServices] ISender sender,
-            [FromServices] ObterPromocaoPorJogoIdQuery obterPromocaoPorJogoIdQuery,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             CancellationToken cancellation
             )
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellation);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellation);
 
             var query = new ObterPromocaoPorJogoIdQuery(promocaoId);
 

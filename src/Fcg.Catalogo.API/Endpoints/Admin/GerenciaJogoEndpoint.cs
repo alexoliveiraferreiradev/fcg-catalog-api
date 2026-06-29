@@ -53,10 +53,9 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
 
         private static async Task<IResult> ObtemJogoPorId(
             [FromRoute] Guid jogoId, [FromServices] ISender sender,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             CancellationToken cancellationToken)
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
 
             var query = new ObterJogoPorIdQuery(jogoId);
             var response = await sender.Send(query, cancellationToken);
