@@ -2,6 +2,7 @@ using Fcg.Catalogo.API.Endpoints.Admin;
 using Fcg.Catalogo.API.Endpoints.Anonymous;
 using Fcg.Catalogo.API.Endpoints.Usuario;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Fcg.Catalogo.Infrastructure.Repository;
@@ -58,8 +59,6 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 });
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
 builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
 
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
@@ -120,6 +119,7 @@ app.MapGerenciaJogoEndpoint();
 app.MapGerenciaPromocaoEndpoint();
 app.MapCatalogoJogosEndpoint();
 app.MapBibliotecaUsuarioPaginadaEndpoint();
+app.MapAdquirirJogo();
 
 if (app.Environment.IsDevelopment())
 {
