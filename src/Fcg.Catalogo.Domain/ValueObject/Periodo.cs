@@ -1,6 +1,6 @@
-using Fcg.Catalogo.Domain.Resources;
 using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
+using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalogo.Domain.ValueObject
 {
