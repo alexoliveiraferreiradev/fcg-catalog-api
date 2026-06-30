@@ -1,4 +1,4 @@
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.AcessoGeral.AdquirirJogo;
+using Fcg.Catalogo.Application.Features.Pedidos.Commands.RealizarPedido;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -18,7 +18,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
 
         private static async Task<IResult> AdquirirJogo(
             [FromServices] ISender sender,
-            [FromBody] AdquirirJogoCommand adquirirJogoCommand,
+            [FromBody] RealizarPedidoCommand realizarPedidoCommand,
             CancellationToken cancellationToken,
             ClaimsPrincipal user)
         {
@@ -31,7 +31,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
 
             var usuarioId = Guid.Parse(currentUserIdClaim);
 
-            var pedidoJogoCommand = adquirirJogoCommand with
+            var pedidoJogoCommand = realizarPedidoCommand with
             {
                 UsuarioId = usuarioId
             };

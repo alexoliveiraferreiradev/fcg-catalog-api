@@ -3,7 +3,6 @@ using Fcg.Catalogo.API.Endpoints.Admin;
 using Fcg.Catalogo.API.Endpoints.Anonymous;
 using Fcg.Catalogo.API.Endpoints.Usuario;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Infrastructure.DapperHandlers;
 using Fcg.Catalogo.Infrastructure.Persistence;
