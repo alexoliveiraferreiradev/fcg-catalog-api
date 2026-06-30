@@ -5,7 +5,7 @@ using System.Data;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId
 {
-    public class ObterJogoPorIdQueryHandler : IRequestHandler<ObterJogoPorIdQuery, JogosResponse>
+    public class ObterJogoPorIdQueryHandler : IRequestHandler<ObterJogoPorIdQuery, JogoResponse>
     {
         private readonly IDbConnection _dbConnection;
 
@@ -14,7 +14,7 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId
             _dbConnection = dbConnection;
         }
 
-        public async Task<JogosResponse> Handle(ObterJogoPorIdQuery request, CancellationToken cancellationToken)
+        public async Task<JogoResponse> Handle(ObterJogoPorIdQuery request, CancellationToken cancellationToken)
         {
             const string sql = @"
                 SELECT 
@@ -34,7 +34,7 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId
             FROM Jogos j
             WHERE j.Id = @JogoId;";
 
-            return await _dbConnection.QueryFirstOrDefaultAsync<JogosResponse>(sql, new { JogoId = request.jogoId });
+            return await _dbConnection.QueryFirstOrDefaultAsync<JogoResponse>(sql, new { JogoId = request.jogoId });
         }
     }
 }

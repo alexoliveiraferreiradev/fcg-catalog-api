@@ -1,3 +1,5 @@
+using Dapper;
+using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.ValueObject;
@@ -50,6 +52,19 @@ namespace Fcg.Catalogo.Infrastructure.Repository
                 .FirstOrDefaultAsync(j => j.Promocoes.Any(p => p.Id == id));
 
             return jogo?.Promocoes.FirstOrDefault(p => p.Id == id);
+        }
+
+        public async Task<IEnumerable<Jogo>> ObterJogosPorIds(IEnumerable<Guid> jogosIds)
+        {
+            var connection = _dbContext.Database.GetDbConnection();
+            const string sql = @"SELECT  
+                                j.Id, 
+                                j.Nome, 
+                                j.Descricao, 
+                                j.PrecoBase, 
+                                j.Ativo,j.DataCadastro, j.DataAlteracao, j.Genero
+                                FROM Jogos j where j.Id IN @jogosIds ";
+            return await connection.QueryAsync<Jogo>(sql, new { jogosIds });
         }
     }
 }

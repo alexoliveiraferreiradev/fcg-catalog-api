@@ -1,8 +1,8 @@
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.AdicionarJogo;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.AtualizarJogo;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarJogo;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.DesativarPromocaoInvalida;
-using Fcg.Catalogo.Application.Features.Catalogo.Commands.ReativarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarJogo;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPromocaoInvalida;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.ReativarJogo;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos;
 using Fcg.Catalogo.Application.Features.Catalogo.Queries.ObterJogoPorId;
 using Fcg.Catalogo.Application.Features.Response;
@@ -18,17 +18,17 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
             var group = app.MapGroup("/api/admin/jogo").RequireAuthorization().WithTags("Gerenciamento de Jogos");
 
             group.MapGet("/obtem-por-id/{jogoId:guid}", ObtemJogoPorId)
-             .Produces<JogosResponse>()
+             .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapGet("/obtem-todos/", ObtemTodosJogos)
-             .Produces<JogosResponse>()
+             .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapGet("/adicionar", AdicionarJogo)
-             .Produces<JogosResponse>()
+             .Produces<JogoResponse>()
              .Produces(StatusCodes.Status201Created)
              .Produces(StatusCodes.Status400BadRequest);
 
@@ -38,13 +38,13 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
              .Produces(StatusCodes.Status404NotFound); 
 
             group.MapPut("/atualizar/{jogoId:guid}", AtualizarJogo)
-             .Produces<JogosResponse>()
+             .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapPut("/reativar/{jogoId:guid}", ReativarJogo)
-            .Produces<JogosResponse>()
+            .Produces<JogoResponse>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);
@@ -53,10 +53,9 @@ namespace Fcg.Catalogo.API.Endpoints.Admin
 
         private static async Task<IResult> ObtemJogoPorId(
             [FromRoute] Guid jogoId, [FromServices] ISender sender,
-            [FromServices] DesativarPromocaoInvalidaCommand desativarPromocaoInvalidaCommand,
             CancellationToken cancellationToken)
         {
-            await sender.Send(desativarPromocaoInvalidaCommand, cancellationToken);
+            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
 
             var query = new ObterJogoPorIdQuery(jogoId);
             var response = await sender.Send(query, cancellationToken);

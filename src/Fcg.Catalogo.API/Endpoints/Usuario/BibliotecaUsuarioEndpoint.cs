@@ -1,4 +1,4 @@
-﻿
+
 using Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPaginada;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
     {
         public static void MapBibliotecaUsuarioPaginadaEndpoint(this WebApplication app)
         {
-            var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization().WithTags("Biblioteca do Usuário");
+            var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization("AcessoGeral").WithTags("Biblioteca do Usuário");
 
             group.MapGet("/obtem-todos",
                 async ([FromServices] ISender mediator,
@@ -26,7 +26,7 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
 
                 var query = new ObtemBibliotecaPaginadaQuery(currentUserId, pagina, tamanho);
 
-                var response = mediator.Send(query);
+                var response = await mediator.Send(query);
 
                 if (response == null)
                 {

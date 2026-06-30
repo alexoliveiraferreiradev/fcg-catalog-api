@@ -1,0 +1,14 @@
+using Fcg.Core.Abstractions.Resources;
+using FluentValidation;
+
+namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.ReativarJogo
+{
+    public class ReativarJogoCommandValidator : AbstractValidator<ReativarJogoCommand>
+    {
+        public ReativarJogoCommandValidator()
+        {
+            RuleFor(x => x.JogoId)
+                .NotEmpty().WithMessage(MensagensDominio.JogoNaoEncontrado);
+        }
+    }
+}

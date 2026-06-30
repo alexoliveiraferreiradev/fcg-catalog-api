@@ -8,5 +8,7 @@ namespace Fcg.Catalogo.Domain.Repositories
         void Atualizar(Biblioteca biblioteca);
         Task<Biblioteca?> ObterPorId(Guid id);
         Task<bool> VerificaSeUsuarioPossuiJogo(Guid usuarioId, Guid jogoId);
+        Task<IEnumerable<Guid>> ObterJogosAdquiridosPorUsuario(Guid usuarioId);
+
     }
 }

@@ -16,6 +16,11 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
         {
             var offset = (request.Pagina - 1) * request.TamanhoPagina;
 
+            if (_dbConnection.State != ConnectionState.Open)
+            {
+                _dbConnection.Open();
+            }
+
             const string sql = @"            
             SELECT COUNT(1) 
             FROM Bibliotecas 
@@ -23,7 +28,8 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
             
             SELECT 
                 b.JogoId AS JogoId,
-                j.Nome_Valor AS NomeJogo,    
+                j.Nome AS NomeJogo,
+                j.Descricao as Descricao,    
                 j.Genero AS Genero,
                 b.DataCadastro AS DataAquisicao
             FROM Bibliotecas b
@@ -42,7 +48,7 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
             });
 
             
-            var totalItems = await multi.ReadFirstAsync<int>();
+            var totalItems = await multi.ReadFirstOrDefaultAsync<int>();
 
             
             var items = await multi.ReadAsync<BibliotecaItemResponse>();

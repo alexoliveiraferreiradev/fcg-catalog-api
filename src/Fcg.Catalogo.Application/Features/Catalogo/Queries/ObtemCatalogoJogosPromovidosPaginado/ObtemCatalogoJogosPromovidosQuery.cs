@@ -9,5 +9,5 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosP
         int Pagina = 1,
         int TamanhoPagina = 10,
         GeneroJogo? Genero = null,
-        bool? ApenasPromovidos = null) : IRequest<PagedResult<JogosResponse>>;
+        bool? ApenasPromovidos = null) : IRequest<PagedResult<JogoResponse>>;
 }

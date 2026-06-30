@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
 {
-    public class ObtemTodosJogosQueryHandler : IRequestHandler<ObtemTodosJogosQuery, IEnumerable<JogosResponse>>
+    public class ObtemTodosJogosQueryHandler : IRequestHandler<ObtemTodosJogosQuery, IEnumerable<JogoResponse>>
     {
         private readonly IDbConnection _dbConnection;
 
@@ -20,7 +20,7 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
             _dbConnection = dbConnection;
         }
 
-        public async Task<IEnumerable<JogosResponse>> Handle(ObtemTodosJogosQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<JogoResponse>> Handle(ObtemTodosJogosQuery request, CancellationToken cancellationToken)
         {
             const string sql = @"
             SELECT 
@@ -38,7 +38,7 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
                 j.Ativo,
                 j.Genero
             FROM Jogos j ";
-            var jogos = await _dbConnection.QueryAsync<JogosResponse>(sql);
+            var jogos = await _dbConnection.QueryAsync<JogoResponse>(sql);
            
             return jogos;
         }
