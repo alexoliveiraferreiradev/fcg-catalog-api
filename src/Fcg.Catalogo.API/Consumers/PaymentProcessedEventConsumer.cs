@@ -11,12 +11,14 @@ namespace Fcg.Catalogo.API.Consumers
     {
         private readonly IBibliotecaRepository _bibliotecaRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPublishEndpoint _publishEndpoint;
 
         public PaymentProcessedEventConsumer(IBibliotecaRepository bibliotecaRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,IPublishEndpoint publishEndpoint)
         {
             _bibliotecaRepository = bibliotecaRepository;
             _unitOfWork = unitOfWork;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task Consume(ConsumeContext<PaymentProcessedEvent> context)
@@ -30,6 +32,14 @@ namespace Fcg.Catalogo.API.Consumers
 
                      _bibliotecaRepository.Adicionar(biblioteca);
                 }
+
+               await _publishEndpoint.Publish(new OrderApprovedEvent(
+                    pedido.OrderId,
+                    pedido.UserId,
+                    pedido.NomeUsuario,
+                    pedido.EmailUsuario,
+                    pedido.CreatedAt
+                    ));
 
                 await _unitOfWork.CommitAsync();    
             }
