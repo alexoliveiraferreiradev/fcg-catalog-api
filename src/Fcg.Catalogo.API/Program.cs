@@ -1,4 +1,5 @@
 using Dapper;
+using Fcg.Catalogo.API.Consumers;
 using Fcg.Catalogo.API.Endpoints.Admin;
 using Fcg.Catalogo.API.Endpoints.Anonymous;
 using Fcg.Catalogo.API.Endpoints.Usuario;
@@ -42,7 +43,7 @@ builder.Services.AddDbContext<CatalogoDbContext>(options =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumers(typeof(Program).Assembly);
+    x.AddConsumer<PaymentProcessedEventConsumer>();
     x.AddEntityFrameworkOutbox<CatalogoDbContext>(o =>
     {
         o.UseSqlServer();
