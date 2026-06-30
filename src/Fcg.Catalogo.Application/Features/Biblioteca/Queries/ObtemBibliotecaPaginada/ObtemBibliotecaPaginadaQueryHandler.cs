@@ -28,7 +28,8 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
             
             SELECT 
                 b.JogoId AS JogoId,
-                j.Nome AS NomeJogo,    
+                j.Nome AS NomeJogo,
+                j.Descricao as Descricao,    
                 j.Genero AS Genero,
                 b.DataCadastro AS DataAquisicao
             FROM Bibliotecas b
