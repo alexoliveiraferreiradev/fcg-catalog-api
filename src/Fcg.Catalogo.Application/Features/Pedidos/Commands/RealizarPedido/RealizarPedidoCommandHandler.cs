@@ -1,4 +1,3 @@
-using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -60,10 +59,12 @@ namespace Fcg.Catalogo.Application.Features.Pedidos.Commands.RealizarPedido
             await _publishEndpoint.Publish(new OrderPlacedEvent(
                 OrderId: Guid.NewGuid(),
                 UserId: request.UsuarioId,
+                EmailUsuario: request.EmailUsuario,
+                NomeUsuario: request.NomeUsuario,
                 JogosIds: request.JogosIds,
                 PrecoTotal: precoTotal), cancellationToken);
             
-            // Necessário chamar o commit para persistir a mensagem na tabela de Outbox do EF e enviá-la ao RabbitMQ
+           
             await _unitOfWork.CommitAsync();
             
             return true;
