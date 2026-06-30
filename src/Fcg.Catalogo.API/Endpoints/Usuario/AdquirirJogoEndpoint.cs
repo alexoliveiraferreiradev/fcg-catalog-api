@@ -33,7 +33,9 @@ namespace Fcg.Catalogo.API.Endpoints.Usuario
 
             var pedidoJogoCommand = realizarPedidoCommand with
             {
-                UsuarioId = usuarioId
+                UsuarioId = usuarioId,
+                NomeUsuario = user.FindFirstValue(ClaimTypes.Name),
+                EmailUsuario = user.FindFirstValue(ClaimTypes.Email),
             };
 
             var response = await sender.Send(pedidoJogoCommand);
