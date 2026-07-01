@@ -1,5 +1,8 @@
+using Fcg.Catalogo.Application.Common.Interfaces;
+using Fcg.Catalogo.Application.Features.Catalogo.EventHandlers;
 using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Catalogo.Domain.Entities;
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -12,12 +15,15 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJog
     public class AdicionarJogoCommandHandler : IRequestHandler<AdicionarJogoCommand, JogoResponse>
     {
         private readonly IJogoRepository _jogoRepository;
-        private readonly ILogger<AdicionarJogoCommandHandler> _logger;
+        private readonly ILogger<AdicionarJogoCommandHandler> _logger;        
+        private readonly IMediator _mediator;
 
-        public AdicionarJogoCommandHandler(IJogoRepository jogoRepository, ILogger<AdicionarJogoCommandHandler> logger)
+        public AdicionarJogoCommandHandler(IJogoRepository jogoRepository, ILogger<AdicionarJogoCommandHandler> logger,
+             IMediator mediator)
         {
             _jogoRepository = jogoRepository;
-            _logger = logger;
+            _logger = logger;            
+            _mediator = mediator;
         }
         public async Task<JogoResponse> Handle(AdicionarJogoCommand request, CancellationToken cancellationToken)
         {
@@ -36,6 +42,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJog
             _jogoRepository.Adicionar(jogo);
            
             _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", jogo.Id, request.Nome);
+
+            await _mediator.Publish(new JogoAdicionadoEvent(jogo.Id),cancellationToken);
 
             return new JogoResponse
             {

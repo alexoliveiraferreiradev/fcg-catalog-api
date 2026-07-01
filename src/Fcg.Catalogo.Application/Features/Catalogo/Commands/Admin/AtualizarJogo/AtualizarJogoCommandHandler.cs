@@ -1,4 +1,6 @@
+using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Application.Features.Response;
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -14,15 +16,18 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarJog
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AtualizarJogoCommandHandler> _logger;
+        private readonly IMediator _mediator;
 
         public AtualizarJogoCommandHandler(
-            IJogoRepository jogoRepository, 
-            IUnitOfWork unitOfWork, 
-            ILogger<AtualizarJogoCommandHandler> logger)
+            IJogoRepository jogoRepository,
+            IUnitOfWork unitOfWork,
+            ILogger<AtualizarJogoCommandHandler> logger,
+            IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;
         }
 
         public async Task<JogoResponse> Handle(AtualizarJogoCommand request, CancellationToken cancellationToken)
@@ -45,6 +50,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarJog
             await _unitOfWork.CommitAsync();
 
             _logger.LogInformation("[CatalogAPI] Jogo atualizado com sucesso. ID: {JogoId}", jogo.Id);
+
+            await _mediator.Publish(new JogoAtualizadoEvent(request.JogoId), cancellationToken);
 
             return new JogoResponse
             {

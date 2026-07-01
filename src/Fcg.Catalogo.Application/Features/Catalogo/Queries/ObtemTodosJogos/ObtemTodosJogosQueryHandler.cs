@@ -1,27 +1,32 @@
-﻿using Dapper;
+using Dapper;
+using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Application.Features.Response;
 using MediatR;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
 {
     public class ObtemTodosJogosQueryHandler : IRequestHandler<ObtemTodosJogosQuery, IEnumerable<JogoResponse>>
     {
         private readonly IDbConnection _dbConnection;
+        private readonly ICacheService _cacheService;
 
-        public ObtemTodosJogosQueryHandler(IDbConnection dbConnection)
+        public ObtemTodosJogosQueryHandler(IDbConnection dbConnection, ICacheService cacheService)
         {
             _dbConnection = dbConnection;
+            _cacheService = cacheService;
         }
 
         public async Task<IEnumerable<JogoResponse>> Handle(ObtemTodosJogosQuery request, CancellationToken cancellationToken)
         {
+            var cacheKey = "catalogo:todos";
+
+            var cachedCatalogo = await _cacheService.GetAsync<IEnumerable<JogoResponse>>(cacheKey,cancellationToken);
+
+            if (cachedCatalogo != null) {
+                return cachedCatalogo;
+            }
+
             const string sql = @"
             SELECT 
                 j.Id, 
@@ -38,9 +43,15 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemTodosJogos
                 j.Ativo,
                 j.Genero
             FROM Jogos j ";
-            var jogos = await _dbConnection.QueryAsync<JogoResponse>(sql);
-           
-            return jogos;
+
+            var catalogo = await _dbConnection.QueryAsync<JogoResponse>(sql);
+
+            if (catalogo != null)
+            {
+                await _cacheService.SetAsync(cacheKey, catalogo, TimeSpan.FromMinutes(5), cancellationToken);
+            }
+
+            return catalogo;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -12,15 +13,17 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.ReativarJogo
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<ReativarJogoCommandHandler> _logger;
-
+        private readonly IMediator _mediator;
         public ReativarJogoCommandHandler(
             IJogoRepository jogoRepository, 
             IUnitOfWork unitOfWork, 
-            ILogger<ReativarJogoCommandHandler> logger)
+            ILogger<ReativarJogoCommandHandler> logger,
+            IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;   
         }
 
         public async Task Handle(ReativarJogoCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.ReativarJogo
             jogo.Reativar();
             _jogoRepository.Atualizar(jogo);
             await _unitOfWork.CommitAsync();
+
+            await _mediator.Publish(new JogoReativadoEvent(jogo.Id), cancellationToken);   
 
             _logger.LogInformation("[CatalogAPI] Jogo reativado com sucesso. ID: {JogoId}", jogo.Id);
         }

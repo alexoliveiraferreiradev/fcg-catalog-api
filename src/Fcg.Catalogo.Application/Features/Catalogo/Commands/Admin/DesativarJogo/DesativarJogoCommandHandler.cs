@@ -1,3 +1,4 @@
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -12,15 +13,18 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarJog
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DesativarJogoCommandHandler> _logger;
+        private readonly IMediator _mediator;
 
         public DesativarJogoCommandHandler(
             IJogoRepository jogoRepository, 
             IUnitOfWork unitOfWork, 
-            ILogger<DesativarJogoCommandHandler> logger)
+            ILogger<DesativarJogoCommandHandler> logger,
+            IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;   
         }
 
         public async Task Handle(DesativarJogoCommand request, CancellationToken cancellationToken)
@@ -37,6 +41,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarJog
             jogo.Desativar();
             _jogoRepository.Atualizar(jogo);
             await _unitOfWork.CommitAsync();
+
+            await _mediator.Publish(new JogoDesativadoEvent(jogo.Id), cancellationToken);
 
             _logger.LogInformation("[CatalogAPI] Jogo desativado com sucesso. ID: {JogoId}", jogo.Id);
         }
