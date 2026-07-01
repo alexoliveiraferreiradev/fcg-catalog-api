@@ -56,9 +56,9 @@ namespace Fcg.Catalogo.Application.Features.Biblioteca.Queries.ObtemBibliotecaPa
             
             return new PagedResult<BibliotecaItemResponse>(
                 items,
-                totalItems,
                 request.Pagina,
-                request.TamanhoPagina);
+                request.TamanhoPagina,
+                totalItems);
         }
     }
 }
