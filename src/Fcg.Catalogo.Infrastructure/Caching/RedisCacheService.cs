@@ -28,7 +28,8 @@ namespace Fcg.Catalogo.Infrastructure.Caching
             PropertyNameCaseInsensitive = true
         };
 
-        public async Task DefinirAsync<T>(string chave, T valor, TimeSpan tempoExpiracao)
+        public async Task SetAsync<T>(string chave, T valor, TimeSpan tempoExpiracao, 
+            CancellationToken cancellationToken)
         {
             var options = new DistributedCacheEntryOptions
             {
@@ -36,24 +37,24 @@ namespace Fcg.Catalogo.Infrastructure.Caching
             };
 
             var jsonData = JsonSerializer.Serialize(valor);
-            await _cache.SetStringAsync(chave, jsonData, options);
+            await _cache.SetStringAsync(chave, jsonData, options, cancellationToken);
         }
 
-        public async Task<T?> ObterAsync<T>(string chaveCache)
+        public async Task<T?> GetAsync<T>(string chaveCache, CancellationToken cancellationToken)
         {
-            var cacheData = await _cache.GetStringAsync(chaveCache);
+            var cacheData = await _cache.GetStringAsync(chaveCache, cancellationToken);
             if (string.IsNullOrEmpty(cacheData))
                 return default;
 
             return JsonSerializer.Deserialize<T>(cacheData, _jsonOptions);
         }
 
-        public async Task RemoverAsync(string chaveCache)
+        public async Task RemoveAsync(string chaveCache)
         {
             await _cache.RemoveAsync(chaveCache);
         }
 
-        public async Task RemoverPorPrefixoAsync(string prefixo)
+        public async Task RemoveByPrefixAsync(string prefixo)
         {
             var endpoints = _redisConnection.GetEndPoints();
             var server = _redisConnection.GetServer(endpoints.First());

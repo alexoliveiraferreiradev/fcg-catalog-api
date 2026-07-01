@@ -2,9 +2,9 @@
 {
     public interface ICacheService
     {
-        Task<T?> ObterAsync<T>(string chaveCache);
-        Task DefinirAsync<T>(string chave, T valor, TimeSpan tempoExpiracao);
-        Task RemoverAsync(string chaveCache);
-        Task RemoverPorPrefixoAsync(string prefixo);
+        Task<T?> GetAsync<T>(string chaveCache,CancellationToken cancellation);
+        Task SetAsync<T>(string chave, T valor, TimeSpan tempoExpiracao, CancellationToken cancellation);
+        Task RemoveAsync(string chaveCache);
+        Task RemoveByPrefixAsync(string prefixo);
     }
 }
