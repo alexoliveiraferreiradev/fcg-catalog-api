@@ -19,8 +19,9 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosP
         }
         public async Task<PagedResult<JogoResponse>> Handle(ObtemCatalogoJogosPromovidosQuery request, CancellationToken cancellationToken)
         {
+            string g = request.Genero.HasValue ? request.Genero.Value.ToString() : "todos";
             string p = request.ApenasPromovidos.GetValueOrDefault() ? "sim" : "nao";
-            var cacheKey = $"catalogo:pag:p{request.Pagina}:t{request.TamanhoPagina}:prom_{p}";
+            var cacheKey = $"catalogo:pag:p{request.Pagina}:t{request.TamanhoPagina}:prom_{p}:g_{g}";
 
             var jogosEmCache = await _cacheService.GetAsync<PagedResult<JogoResponse>>(cacheKey, cancellationToken);
 

@@ -1,10 +1,12 @@
 using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Domain.Entities;
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Enum;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.MessageContracts;
 using MassTransit;
+using MediatR;
 
 namespace Fcg.Catalogo.API.Consumers
 {
@@ -12,14 +14,15 @@ namespace Fcg.Catalogo.API.Consumers
     {
         private readonly IBibliotecaRepository _bibliotecaRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICacheService _cacheService;
+        private readonly IMediator _mediator;
+
         
         public PaymentProcessedEventConsumer(IBibliotecaRepository bibliotecaRepository,
-            IUnitOfWork unitOfWork, ICacheService cacheService)
+            IUnitOfWork unitOfWork, IMediator mediator)
         {
             _bibliotecaRepository = bibliotecaRepository;
             _unitOfWork = unitOfWork;
-            _cacheService = cacheService;
+            _mediator = mediator;
         }
 
         public async Task Consume(ConsumeContext<PaymentProcessedEvent> context)
@@ -44,7 +47,8 @@ namespace Fcg.Catalogo.API.Consumers
 
                 await _unitOfWork.CommitAsync();
 
-                await _cacheService.RemoveByPrefixAsync($"biblioteca:u_{pedido.UserId}");
+                await _mediator.Publish(new BibliotecaEvent(pedido.UserId));
+                
             }
             
         }

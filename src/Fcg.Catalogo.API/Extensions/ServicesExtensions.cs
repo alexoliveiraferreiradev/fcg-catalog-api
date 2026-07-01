@@ -1,6 +1,8 @@
 using Dapper;
 using Fcg.Catalogo.API.Consumers;
 using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
+using Fcg.Catalogo.Domain.Events;
+using Fcg.Catalogo.Infrastructure.Caching;
 using Fcg.Catalogo.Infrastructure.DapperHandlers;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Fcg.Core.WebApi.Security;
@@ -9,6 +11,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
 
 namespace Fcg.Catalogo.API.Extensions
@@ -18,7 +21,7 @@ namespace Fcg.Catalogo.API.Extensions
         public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
         {
             builder.AddDbContextExtension().AddMassTransitExtension()
-                .AddCQRSExtension();
+                .AddCQRSExtension().AddRedisExtension();
                         
             SqlMapper.AddTypeHandler(new NomeTypeHandler());
             SqlMapper.AddTypeHandler(new DescricaoTypeHandler());
@@ -43,6 +46,23 @@ namespace Fcg.Catalogo.API.Extensions
             {
                 options.UseSqlServer(connectionString);
             });
+            return builder;
+        }
+
+        public static WebApplicationBuilder AddRedisExtension(this WebApplicationBuilder builder)
+        {
+            var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisOptions>();
+            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var configuration = ConfigurationOptions.Parse(redisConfig.Configuration, true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConfig.Configuration;
+                options.InstanceName = redisConfig.InstanceName;
+            });
+
             return builder;
         }
         public static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 

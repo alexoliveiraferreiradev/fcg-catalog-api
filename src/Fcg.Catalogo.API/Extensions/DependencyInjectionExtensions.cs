@@ -13,6 +13,12 @@ namespace Fcg.Catalogo.API.Extensions
     {
         public static WebApplicationBuilder AddDependencyInjection(this WebApplicationBuilder builder)
         {
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetSection("Redis:Configuration").Value;
+                options.InstanceName = builder.Configuration.GetSection("Redis:InstanceName").Value;
+            });
+
             builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogoDbContext>().Database.GetDbConnection());
             builder.Services.AddScoped<CatalogoDbContext>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -28,6 +28,11 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoPagina
 
             var catalogCache = await _cacheService.GetAsync<PagedResult<JogoResponse>>(cacheKey, cancellationToken);
 
+            if (catalogCache != null)
+            {
+                return catalogCache;
+            }
+
             var offset = (request.Pagina - 1) * request.TamanhoPagina;
             var apenasPromovidos = request.ApenasPromovidos ?? false;
             
