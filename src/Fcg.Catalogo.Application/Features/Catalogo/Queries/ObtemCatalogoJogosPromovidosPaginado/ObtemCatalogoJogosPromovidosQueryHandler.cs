@@ -1,25 +1,34 @@
 using Dapper;
+using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Application.Features.Response;
 using Fcg.Core.Abstractions.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosPromovidosPaginado
 {
     public class ObtemCatalogoJogosPromovidosQueryHandler : IRequestHandler<ObtemCatalogoJogosPromovidosQuery, PagedResult<JogoResponse>>
     {
         private readonly IDbConnection _dbConnection;
-        public ObtemCatalogoJogosPromovidosQueryHandler(IDbConnection dbConnection)
+        private readonly ICacheService _cacheService;
+        public ObtemCatalogoJogosPromovidosQueryHandler(IDbConnection dbConnection,
+            ICacheService cacheService)
         {
             _dbConnection = dbConnection;
+            _cacheService = cacheService;
         }
         public async Task<PagedResult<JogoResponse>> Handle(ObtemCatalogoJogosPromovidosQuery request, CancellationToken cancellationToken)
         {
+            string p = request.ApenasPromovidos.GetValueOrDefault() ? "sim" : "nao";
+            var cacheKey = $"catalogo:pag:p{request.Pagina}:t{request.TamanhoPagina}:prom_{p}";
+
+            var jogosEmCache = await _cacheService.GetAsync<PagedResult<JogoResponse>>(cacheKey, cancellationToken);
+
+            if(jogosEmCache != null)
+            {
+                return jogosEmCache;
+            }
+
             var offset = (request.Pagina - 1) * request.TamanhoPagina;
 
             const string sql = @"
@@ -66,12 +75,20 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Queries.ObtemCatalogoJogosP
             var totalItens = await multi.ReadFirstAsync<int>();
             var itens = await multi.ReadAsync<JogoResponse>();
 
-            return new PagedResult<JogoResponse>(
+            var catalogoPaginado = new PagedResult<JogoResponse>(
                 itens,
                 totalItens,
                 request.Pagina,
                 request.TamanhoPagina
             );
+
+
+            if (catalogoPaginado.Items.Any())
+            {
+                await _cacheService.SetAsync(cacheKey, catalogoPaginado, TimeSpan.FromMinutes(5), cancellationToken);
+            }
+
+            return catalogoPaginado;
         }
     }
 }
