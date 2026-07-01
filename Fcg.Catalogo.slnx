@@ -8,6 +8,5 @@
   <Folder Name="/tests/">
     <Project Path="tests/Fcg.Catalogo.Application.Tests/Fcg.Catalogo.Application.Tests.csproj" Id="e6ea4703-3d25-46e8-9da8-fe6f7be08ca8" />
     <Project Path="tests/Fcg.Catalogo.Domain.Tests/Fcg.Catalogo.Domain.Tests.csproj" Id="18099710-3c6c-40ec-a488-9e16e53beb4f" />
-    <Project Path="tests/Fcg.Catalogo.Infrastructure.Integration/Fcg.Catalogo.Infrastructure.Integration.csproj" Id="d7fb8879-1dcf-4f70-bde0-1b66c68bea06" />
   </Folder>
 </Solution>

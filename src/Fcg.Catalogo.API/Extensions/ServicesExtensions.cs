@@ -79,7 +79,10 @@ namespace Fcg.Catalogo.API.Extensions
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
-                    cfg.ConfigureEndpoints(context);
+                    cfg.ReceiveEndpoint("catalog-payment-processed-queue", e =>
+                    {
+                        e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);
+                    });
                 });
             });
 
