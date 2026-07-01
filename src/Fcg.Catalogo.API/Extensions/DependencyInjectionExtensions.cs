@@ -1,4 +1,6 @@
+using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Domain.Repositories;
+using Fcg.Catalogo.Infrastructure.Caching;
 using Fcg.Catalogo.Infrastructure.Persistence;
 using Fcg.Catalogo.Infrastructure.Repository;
 using Fcg.Core.Abstractions.Interfaces;
@@ -14,6 +16,7 @@ namespace Fcg.Catalogo.API.Extensions
             builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogoDbContext>().Database.GetDbConnection());
             builder.Services.AddScoped<CatalogoDbContext>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ICacheService, RedisCacheService>();
             builder.Services.AddScoped<IJogoRepository, JogoRepository>();
             builder.Services.AddScoped<IBibliotecaRepository, BibliotecaRepository>();
             return builder;
