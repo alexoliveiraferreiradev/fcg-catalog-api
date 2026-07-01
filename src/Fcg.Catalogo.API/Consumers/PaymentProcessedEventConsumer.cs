@@ -42,17 +42,7 @@ namespace Fcg.Catalogo.API.Consumers
 
                      _bibliotecaRepository.Adicionar(biblioteca);
                 }
-
-               await context.Publish(new OrderApprovedEvent(
-                    pedido.OrderId,
-                    pedido.UserId,
-                    pedido.EmailUsuario,
-                    pedido.NomeUsuario,
-                    pedido.CreatedAt
-                    ));
-
-                _logger.LogInformation("[CatalogoAPI] Publicado OrderApprovedEvent para o Pedido: {OrderId}", pedido.OrderId);
-
+                
                 await _unitOfWork.CommitAsync();
 
                 await _mediator.Publish(new BibliotecaEvent(pedido.UserId));
