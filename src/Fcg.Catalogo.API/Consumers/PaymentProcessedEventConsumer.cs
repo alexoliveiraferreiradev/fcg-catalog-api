@@ -1,4 +1,5 @@
-﻿using Fcg.Catalogo.Domain.Entities;
+using Fcg.Catalogo.Application.Common.Interfaces;
+using Fcg.Catalogo.Domain.Entities;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Enum;
 using Fcg.Core.Abstractions.Interfaces;
@@ -11,12 +12,14 @@ namespace Fcg.Catalogo.API.Consumers
     {
         private readonly IBibliotecaRepository _bibliotecaRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICacheService _cacheService;
         
         public PaymentProcessedEventConsumer(IBibliotecaRepository bibliotecaRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _bibliotecaRepository = bibliotecaRepository;
             _unitOfWork = unitOfWork;
+            _cacheService = cacheService;
         }
 
         public async Task Consume(ConsumeContext<PaymentProcessedEvent> context)
@@ -39,7 +42,9 @@ namespace Fcg.Catalogo.API.Consumers
                     pedido.CreatedAt
                     ));
 
-                await _unitOfWork.CommitAsync();    
+                await _unitOfWork.CommitAsync();
+
+                await _cacheService.RemoveByPrefixAsync($"biblioteca:u_{pedido.UserId}");
             }
             
         }
