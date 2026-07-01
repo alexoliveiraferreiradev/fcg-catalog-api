@@ -1,0 +1,104 @@
+using Dapper;
+using Fcg.Catalogo.API.Consumers;
+using Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarJogo;
+using Fcg.Catalogo.Infrastructure.DapperHandlers;
+using Fcg.Catalogo.Infrastructure.Persistence;
+using Fcg.Core.WebApi.Security;
+using FluentValidation;
+using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+namespace Fcg.Catalogo.API.Extensions
+{
+    public static class ServicesExtensions
+    {
+        public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
+        {
+            builder.AddDbContextExtension().AddMassTransitExtension()
+                .AddCQRSExtension();
+                        
+            SqlMapper.AddTypeHandler(new NomeTypeHandler());
+            SqlMapper.AddTypeHandler(new DescricaoTypeHandler());
+            SqlMapper.AddTypeHandler(new PrecoTypeHandler());
+
+            builder.AddJwtBearerExtension();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("AdminRole"));
+
+                options.AddPolicy("AcessoGeral", policy => policy.RequireRole("AdminRole", "JogadorRole"));
+            });
+
+            return builder;
+        }
+        
+        public static WebApplicationBuilder AddDbContextExtension(this WebApplicationBuilder builder)
+        {
+            var connectionString = builder.Configuration.GetConnectionString("CatalogoConnection");
+            builder.Services.AddDbContext<CatalogoDbContext>(options =>
+            {
+                options.UseSqlServer(connectionString);
+            });
+            return builder;
+        }
+        public static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
+        {
+            builder.Services.AddMassTransit(x =>
+            {
+                x.AddConsumer<PaymentProcessedEventConsumer>();
+                x.AddEntityFrameworkOutbox<CatalogoDbContext>(o =>
+                {
+                    o.UseSqlServer();
+                    o.UseBusOutbox();
+                });
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+
+            return builder;
+        }
+        public static WebApplicationBuilder AddCQRSExtension(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+            });
+            builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+            return builder;
+        }
+        public static WebApplicationBuilder AddJwtBearerExtension(this WebApplicationBuilder builder)
+        {
+            var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+            builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+            var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+            var key = Encoding.ASCII.GetBytes(jwtSettings.Secret);
+            builder.Services.AddAuthentication(opts =>
+            {
+                opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings.Emissor,
+                    ValidAudience = jwtSettings.ValidoEm
+                };
+            });
+            return builder;
+        }
+    }
+}
