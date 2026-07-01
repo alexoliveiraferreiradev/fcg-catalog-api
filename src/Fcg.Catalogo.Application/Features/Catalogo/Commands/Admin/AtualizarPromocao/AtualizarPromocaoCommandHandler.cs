@@ -1,3 +1,5 @@
+using Fcg.Catalogo.Application.Common.Interfaces;
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -13,15 +15,18 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarPro
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AtualizarPromocaoCommandHandler> _logger;
+        private readonly IMediator _mediator;   
 
         public AtualizarPromocaoCommandHandler(
             IJogoRepository jogoRepository, 
             IUnitOfWork unitOfWork, 
-            ILogger<AtualizarPromocaoCommandHandler> logger)
+            ILogger<AtualizarPromocaoCommandHandler> logger,
+            IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;   
         }
 
         public async Task Handle(AtualizarPromocaoCommand request, CancellationToken cancellationToken)
@@ -40,6 +45,10 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AtualizarPro
             jogo.AlteraPromocao(request.PromocaoId, novoPreco, request.NovaDataFim);
             _jogoRepository.Atualizar(jogo);
             await _unitOfWork.CommitAsync();
+
+            var novaPromocao = jogo.Promocoes.First();
+                        
+            await _mediator.Publish(new PromocaoAtualizadaEvent(jogo.Id, novaPromocao.Id),cancellationToken);
 
             _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromocaoId, request.JogoId);
         }

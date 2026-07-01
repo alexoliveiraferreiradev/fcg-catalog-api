@@ -1,4 +1,6 @@
+using Fcg.Catalogo.Application.Common.Interfaces;
 using Fcg.Catalogo.Application.Features.Response;
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Catalogo.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -12,11 +14,14 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarPro
     {
         private readonly IJogoRepository _jogoRepository;
         private readonly ILogger<AdicionarPromocaoJogoCommandHandler> _logger;
+        private readonly IMediator _mediator;
 
-        public AdicionarPromocaoJogoCommandHandler(IJogoRepository jogoRepository, ILogger<AdicionarPromocaoJogoCommandHandler> logger)
+        public AdicionarPromocaoJogoCommandHandler(IJogoRepository jogoRepository, 
+            ILogger<AdicionarPromocaoJogoCommandHandler> logger, IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _logger = logger;
+            _mediator = mediator;
         }
         public async Task<PromocaoResponse> Handle(AdicionarPromocaoJogoCommand request, CancellationToken cancellationToken)
         {
@@ -43,6 +48,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.AdicionarPro
             var novaPromocao = jogo.Promocoes.First();
 
             _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, PromocaoId: {PromocaoId}, Valor: {Valor}", jogo.Id, novaPromocao.Id, request.ValorPromocao);
+
+            await _mediator.Publish(new PromocaoAdicionadaEvent(novaPromocao.JogoId, novaPromocao.Id), cancellationToken);
 
             return new PromocaoResponse
             {

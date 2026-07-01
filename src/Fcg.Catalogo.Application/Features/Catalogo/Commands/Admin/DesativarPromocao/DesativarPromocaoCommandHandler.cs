@@ -1,3 +1,4 @@
+using Fcg.Catalogo.Domain.Events;
 using Fcg.Catalogo.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -12,15 +13,17 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPro
         private readonly IJogoRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DesativarPromocaoCommandHandler> _logger;
-
+        private readonly IMediator _mediator;
         public DesativarPromocaoCommandHandler(
             IJogoRepository jogoRepository, 
             IUnitOfWork unitOfWork, 
-            ILogger<DesativarPromocaoCommandHandler> logger)
+            ILogger<DesativarPromocaoCommandHandler> logger,
+            IMediator mediator)
         {
             _jogoRepository = jogoRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _mediator = mediator;   
         }
 
         public async Task Handle(DesativarPromocaoCommand request, CancellationToken cancellationToken)
@@ -44,6 +47,8 @@ namespace Fcg.Catalogo.Application.Features.Catalogo.Commands.Admin.DesativarPro
             jogo.DesativarPromocao(request.PromocaoId);
             _jogoRepository.Atualizar(jogo);
             await _unitOfWork.CommitAsync();
+
+            await _mediator.Publish(new PromocaoDesativadaEvent(jogo.Id,request.PromocaoId), cancellationToken);
 
             _logger.LogInformation("[CatalogAPI] Promoção desativada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromocaoId, promocao.JogoId);
         }
