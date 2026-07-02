@@ -6,9 +6,9 @@ namespace Fcg.Catalog.Domain.Events
     {
         public Guid GameId { get; }
 
-        public GameAddedEvent(Guid GameId)
+        public GameAddedEvent(Guid gameId)
         {
-            GameId = GameId;
+            GameId = gameId;
         }
     }
 }

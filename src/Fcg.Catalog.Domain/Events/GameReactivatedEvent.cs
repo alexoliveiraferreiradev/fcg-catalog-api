@@ -6,8 +6,8 @@ public class GameReactivatedEvent : INotification
 {
     public Guid GameId { get; }
 
-    public GameReactivatedEvent(Guid GameId)
+    public GameReactivatedEvent(Guid gameId)
     {
-        GameId = GameId;
+        GameId = gameId;
     }
 }

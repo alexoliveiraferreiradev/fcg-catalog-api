@@ -7,9 +7,9 @@ public class PromotionAddedEvent : INotification
     public Guid GameId { get; }
     public Guid PromotionId { get; }
 
-    public PromotionAddedEvent(Guid GameId, Guid PromotionId)
+    public PromotionAddedEvent(Guid gameId, Guid promotionId)
     {
-        GameId = GameId;
-        PromotionId = PromotionId;
+        GameId = gameId;
+        PromotionId = promotionId;
     }
 }

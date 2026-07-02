@@ -6,9 +6,9 @@ namespace Fcg.Catalog.Domain.Events
     {
         public Guid UserId { get; set; }
 
-        public LibraryEvent(Guid UserId)
+        public LibraryEvent(Guid userId)
         {
-            this.UserId = UserId; 
+            UserId = userId; 
         }
     }
 }

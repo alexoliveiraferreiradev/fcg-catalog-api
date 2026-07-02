@@ -7,12 +7,12 @@ namespace Fcg.Catalog.Domain.Entities
 {
     public class Promotion : EntityBase
     {
-        public Promotion(Guid GameId, Price valorPromocao, Period Period)
+        public Promotion(Guid gameId, Price promotionPrice, Period period)
         {
-            this.GameId = GameId;
-            ValorPromocao = valorPromocao;
+            GameId = GameId;
+            ValorPromocao = promotionPrice;
             IsActive = true;
-            this.Period = Period;
+            Period = period;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = CreatedAt;
             ValidateEntity();
@@ -41,13 +41,13 @@ namespace Fcg.Catalog.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdatePromotion(Price novoPreco, DateTime novaDataFim)
+        public void UpdatePromotion(Price newPrice, DateTime newEndDate)
         {
-            if (ValorPromocao == novoPreco) return;
-            ValorPromocao = novoPreco;
-            if (Period.EndDate != novaDataFim)
+            if (ValorPromocao == newPrice) return;
+            ValorPromocao = newPrice;
+            if (Period.EndDate != newEndDate)
             {
-                Period = new Period(this.Period.StartDate, novaDataFim);
+                Period = new Period(this.Period.StartDate, newEndDate);
             }
             UpdatedAt = DateTime.UtcNow;
         }

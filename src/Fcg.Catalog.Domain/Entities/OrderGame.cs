@@ -17,8 +17,8 @@ namespace Fcg.Catalog.Domain.Entities
 
         public OrderGame(Guid orderId, Guid gameId, string gameName, decimal gameAmount)
         {
-            this.OrderId = orderId;
-            this.GameId = gameId;
+            OrderId = orderId;
+            GameId = gameId;
             GameName = gameName;
             GameAmount = gameAmount;
             ValidateEntity();
