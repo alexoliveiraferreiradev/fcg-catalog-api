@@ -17,7 +17,7 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
         }
         public async Task<PagedResult<BibliotecaItemResponse>> Handle(GetPagedLibraryQuery request, CancellationToken cancellationToken)
         {
-            var cachaKey= $"Library:u_{request.UserId}:p{request.Page}:t{request.PageSize}";
+            var cachaKey= $"library:u_{request.UserId}:p{request.Page}:t{request.PageSize}";
             var bibliotecaEmCache = await _cacheService.GetAsync<PagedResult<BibliotecaItemResponse>>(cachaKey, cancellationToken);
             if (bibliotecaEmCache != null)
             {

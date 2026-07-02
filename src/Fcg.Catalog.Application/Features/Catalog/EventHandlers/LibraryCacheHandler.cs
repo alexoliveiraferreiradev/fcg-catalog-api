@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
 using MediatR;
@@ -18,7 +18,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async  Task Handle(LibraryEvent notification, CancellationToken cancellationToken)
         {
-            await _cacheService.RemoveByPrefixAsync($"Library:u_{notification.UserId}");
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando invalidação de cache da biblioteca do UserId: {UserId}", notification.UserId);
+            await _cacheService.RemoveByPrefixAsync($"library:u_{notification.UserId}");
+            _logger.LogInformation("[CatalogAPI] [Cache] Cache da biblioteca invalidado com sucesso para UserId: {UserId}", notification.UserId);
         }
     }
 }

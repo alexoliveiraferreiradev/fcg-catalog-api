@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -18,12 +18,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async Task Handle(GameAddedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[Cache] Iniciando limpeza de cache para o novo GameId: {GameId}", notification.GameId);
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando limpeza de cache para o novo GameId: {GameId}", notification.GameId);
             
             await _cacheService.RemoveAsync("Catalog:todos");
             await _cacheService.RemoveByPrefixAsync("Catalog:pag:");
 
-            _logger.LogInformation("[Cache] Cache de listagem de Games invalidado com sucesso.");
+            _logger.LogInformation("[CatalogAPI] [Cache] Cache de listagem de Games invalidado com sucesso.");
         }
     }
 }

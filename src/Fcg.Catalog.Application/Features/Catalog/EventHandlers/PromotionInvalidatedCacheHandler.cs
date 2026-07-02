@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,10 +17,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async Task Handle(InvalidPromotionEvent notification, CancellationToken cancellationToken)
         {
-            await _cacheService.RemoveAsync("Catalog:todos");
-            await _cacheService.RemoveByPrefixAsync("Catalog:pag:");
-            await _cacheService.RemoveByPrefixAsync("Catalog:Game:detalhes:");
-            await _cacheService.RemoveByPrefixAsync("Catalog:Promotion:detalhes:");
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando invalidação em massa de cache de promoções expiradas.");
+            await _cacheService.RemoveAsync("catalog:games");
+            await _cacheService.RemoveByPrefixAsync("catalog:pag:");
+            await _cacheService.RemoveByPrefixAsync("catalog:game:");
+            await _cacheService.RemoveByPrefixAsync("catalog:promotion:");
+            _logger.LogInformation("[CatalogAPI] [Cache] Cache de promoções invalidado em massa com sucesso.");
         }
     }
 }
