@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 {
-    public class BibliotecaCacheHandler : INotificationHandler<LibraryEvent>
+    public class LibraryCacheHandler : INotificationHandler<LibraryEvent>
     {
         private readonly ICacheService _cacheService;
-        private readonly ILogger<BibliotecaCacheHandler> _logger;
-        public BibliotecaCacheHandler(ICacheService cacheService, ILogger<BibliotecaCacheHandler> logger)
+        private readonly ILogger<LibraryCacheHandler> _logger;
+        public LibraryCacheHandler(ICacheService cacheService, ILogger<LibraryCacheHandler> logger)
         {
             _cacheService = cacheService;
             _logger = logger;   

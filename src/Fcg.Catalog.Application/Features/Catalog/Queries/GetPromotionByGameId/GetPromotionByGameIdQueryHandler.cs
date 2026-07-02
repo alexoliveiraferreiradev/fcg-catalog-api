@@ -20,7 +20,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
 
         public async Task<PromotionResponse> Handle(GetPromotionByGameIdQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"Catalog:Promotion:detalhes:{request.PromotionId}";
+            var cacheKey = $"catalog:promotion:{request.PromotionId}";
 
             var cachedPromocao = await _cacheService.GetAsync<PromotionResponse>(cacheKey, cancellationToken);
 

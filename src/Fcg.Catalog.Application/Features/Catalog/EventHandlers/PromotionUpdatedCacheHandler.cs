@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 {
-    public class PromocaoAtualizadaCacheHandler : INotificationHandler<PromotionUpdatedEvent>
+    public class PromotionUpdatedCacheHandler : INotificationHandler<PromotionUpdatedEvent>
     {
         private readonly ICacheService _cacheService;
-        private readonly ILogger<PromocaoAtualizadaCacheHandler> _logger;   
+        private readonly ILogger<PromotionUpdatedCacheHandler> _logger;   
 
-        public PromocaoAtualizadaCacheHandler(ICacheService cacheService, ILogger<PromocaoAtualizadaCacheHandler> logger)
+        public PromotionUpdatedCacheHandler(ICacheService cacheService, ILogger<PromotionUpdatedCacheHandler> logger)
         {
             _cacheService = cacheService;
             _logger = logger;

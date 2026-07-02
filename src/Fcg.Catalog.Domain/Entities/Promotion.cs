@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.ValueObject;
+using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Resources;
@@ -9,7 +9,7 @@ namespace Fcg.Catalog.Domain.Entities
     {
         public Promotion(Guid gameId, Price promotionPrice, Period period)
         {
-            GameId = GameId;
+            GameId = gameId;
             ValorPromocao = promotionPrice;
             IsActive = true;
             Period = period;

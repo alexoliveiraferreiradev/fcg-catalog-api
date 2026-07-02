@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 {
-    public class PromocaoDesativadaCacheHandler : INotificationHandler<PromotionDeactivatedEvent>
+    public class PromotionDeactivatedCacheHandler : INotificationHandler<PromotionDeactivatedEvent>
     {
         private readonly ICacheService _cacheService;
-        private readonly ILogger<PromocaoDesativadaCacheHandler> _logger;
-        public PromocaoDesativadaCacheHandler(ICacheService cacherService, ILogger<PromocaoDesativadaCacheHandler> logger)
+        private readonly ILogger<PromotionDeactivatedCacheHandler> _logger;
+        public PromotionDeactivatedCacheHandler(ICacheService cacherService, ILogger<PromotionDeactivatedCacheHandler> logger)
         {
             _cacheService = cacherService;
             _logger = logger;

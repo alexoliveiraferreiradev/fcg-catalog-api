@@ -3,7 +3,7 @@ using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalog.Domain.Entities
 {
-    public class Library : AggregateRoot
+    public class UserLibrary : AggregateRoot
     {       
         public Guid UserId { get; private set; }
         public virtual Game Game { get; private set; }
@@ -12,7 +12,7 @@ namespace Fcg.Catalog.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
         public bool IsActive { get; private set; }
 
-        public Library(Guid userId, Guid gameId)
+        public UserLibrary(Guid userId, Guid gameId)
         {
             UserId = userId;
             GameId = gameId;

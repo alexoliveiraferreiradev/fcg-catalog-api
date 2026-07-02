@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 {
-    public class JogoAtualizadoCacheHandler : INotificationHandler<GameUpdatedEvent>
+    public class GameUpdatedCacheHandler : INotificationHandler<GameUpdatedEvent>
     {
-        private readonly ILogger<JogoAtualizadoCacheHandler> _logger;   
+        private readonly ILogger<GameUpdatedCacheHandler> _logger;   
         private readonly ICacheService _cacheService;
 
-        public JogoAtualizadoCacheHandler(ICacheService cacheService, ILogger<JogoAtualizadoCacheHandler> logger)
+        public GameUpdatedCacheHandler(ICacheService cacheService, ILogger<GameUpdatedCacheHandler> logger)
         {
             _cacheService = cacheService;
             _logger = logger;

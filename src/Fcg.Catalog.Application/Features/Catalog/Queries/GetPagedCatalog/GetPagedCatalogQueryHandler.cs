@@ -21,10 +21,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
 
         public async Task<PagedResult<GameResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
         {
-            string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
-            string p = request.OnlyPromoted.GetValueOrDefault() ? "sim" : "nao";
+            string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "genres";
+            string p = request.OnlyPromoted.GetValueOrDefault() ? "yes" : "no";
 
-            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.PageSize}:g_{g}:prom_{p}";
+            var cacheKey = $"catalog:pag:p{request.Page}:t{request.PageSize}:g_{g}:prom_{p}";
 
             var cachedCatalog = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
 

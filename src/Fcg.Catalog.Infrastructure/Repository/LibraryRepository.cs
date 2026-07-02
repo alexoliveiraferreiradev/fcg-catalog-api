@@ -15,12 +15,12 @@ namespace Fcg.Catalog.Infrastructure.Repository
         {
             _dbContext = dbContext;
         }
-        public void Add(Library Library)
+        public void Add(UserLibrary Library)
         {            
             _dbContext.Libraries.Add(Library);
         }
 
-        public void Update(Library Library)
+        public void Update(UserLibrary Library)
         {
             _dbContext.Update(Library);
         }
@@ -32,7 +32,7 @@ namespace Fcg.Catalog.Infrastructure.Repository
             return await connecetion.QueryAsync<Guid>(sql, new { UserId = UserId });
         }
 
-        public async Task<Library?> GetById(Guid id)
+        public async Task<UserLibrary?> GetById(Guid id)
         {
            return await _dbContext.Libraries.Where(x=>x.Id == id).FirstOrDefaultAsync();
         }

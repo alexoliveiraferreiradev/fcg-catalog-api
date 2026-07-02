@@ -19,7 +19,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
 
         public async Task<IEnumerable<GameResponse>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = "Catalog:todos";
+            var cacheKey = "catalog:games";
 
             var cachedCatalog = await _cacheService.GetAsync<IEnumerable<GameResponse>>(cacheKey,cancellationToken);
 
@@ -44,14 +44,14 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
                 j.Genre
             FROM Games j ";
 
-            var Catalog = await _dbConnection.QueryAsync<GameResponse>(sql);
+            var catalog = await _dbConnection.QueryAsync<GameResponse>(sql);
 
-            if (Catalog != null)
+            if (catalog != null)
             {
-                await _cacheService.SetAsync(cacheKey, Catalog, TimeSpan.FromMinutes(5), cancellationToken);
+                await _cacheService.SetAsync(cacheKey, catalog, TimeSpan.FromMinutes(5), cancellationToken);
             }
 
-            return Catalog;
+            return catalog;
         }
     }
 }

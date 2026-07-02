@@ -8,7 +8,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence
     {
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options) :base(options){            
         }
-        public DbSet<Library> Libraries  { get; set; }
+        public DbSet<UserLibrary> Libraries  { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Order> Orders { get; set; }

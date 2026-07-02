@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 {
-    public class JogoReativadoCacheHandler : INotificationHandler<GameDeactivatedEvent>
+    public class GameReactivatedCacheHandler : INotificationHandler<GameDeactivatedEvent>
     {
         private readonly ICacheService _cacheService;
-        private readonly ILogger<JogoReativadoCacheHandler> _logger;
-        public JogoReativadoCacheHandler(ICacheService cacheService, ILogger<JogoReativadoCacheHandler> logger)
+        private readonly ILogger<GameReactivatedCacheHandler> _logger;
+        public GameReactivatedCacheHandler(ICacheService cacheService, ILogger<GameReactivatedCacheHandler> logger)
         {
             _cacheService = cacheService;
             _logger = logger;

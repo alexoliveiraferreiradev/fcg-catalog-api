@@ -44,6 +44,7 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
 
         private static async Task<IResult> GetGamesByPromotion(
             [FromServices] ISender sender,
+            [FromQuery] GameGenre? genre,
             CancellationToken cancellationToken,
             [FromQuery] int Page = 1,
             [FromQuery] int PageSize = 10)
@@ -54,6 +55,7 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             {
                 Page = Page,
                 PageSize = PageSize,
+                Genre = genre,
                 OnlyPromoted = true
             };
             var response = await sender.Send(query, cancellationToken);

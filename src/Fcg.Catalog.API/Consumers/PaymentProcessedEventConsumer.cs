@@ -36,7 +36,7 @@ namespace Fcg.Catalog.API.Consumers
 
                 foreach(var guidJogo in Order.JogosIds)
                 {
-                    var Library = new Library(Order.UserId, guidJogo);
+                    var Library = new UserLibrary(Order.UserId, guidJogo);
 
                      _bibliotecaRepository.Add(Library);
                 }

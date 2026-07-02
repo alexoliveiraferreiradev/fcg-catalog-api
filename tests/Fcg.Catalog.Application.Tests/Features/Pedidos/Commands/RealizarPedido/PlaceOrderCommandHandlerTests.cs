@@ -76,7 +76,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 
             _bibliotecaRepositoryMock
                 .Setup(r => r.GetPurchasedGamesByUser(UserId))
-                .ReturnsAsync(new List<Guid>()); // Library vazia
+                .ReturnsAsync(new List<Guid>()); // UserLibrary vazia
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);

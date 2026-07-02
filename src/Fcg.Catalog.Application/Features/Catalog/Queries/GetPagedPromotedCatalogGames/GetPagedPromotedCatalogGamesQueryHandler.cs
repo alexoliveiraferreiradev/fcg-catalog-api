@@ -19,9 +19,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
         }
         public async Task<PagedResult<GameResponse>> Handle(GetPagedPromotedCatalogGamesQuery request, CancellationToken cancellationToken)
         {
-            string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
-            string p = request.OnlyPromoted.GetValueOrDefault() ? "sim" : "nao";
-            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.PageSize}:prom_{p}:g_{g}";
+            string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "genres";
+            string p = request.OnlyPromoted.GetValueOrDefault() ? "yes" : "no";
+            var cacheKey = $"catalog:pag:p{request.Page}:t{request.PageSize}:prom_{p}:g_{g}";
 
             var cachedGames = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
 

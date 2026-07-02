@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
-    public class BibliotecaMapping : IEntityTypeConfiguration<Library>
+    public class BibliotecaMapping : IEntityTypeConfiguration<UserLibrary>
     {
-        public void Configure(EntityTypeBuilder<Library> builder)
+        public void Configure(EntityTypeBuilder<UserLibrary> builder)
         {
             builder.ToTable("Libraries");
 

@@ -20,7 +20,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetGameById
 
         public async Task<GameResponse> Handle(GetGameByIdQuery request, CancellationToken cancellationToken)
         {
-            var cacheKey = $"Catalog:Game:detalhes:{request.GameId}";
+            var cacheKey = $"catalog:game:{request.GameId}";
 
             var cachedJogo = await _cacheService.GetAsync<GameResponse>(cacheKey,cancellationToken);
 
