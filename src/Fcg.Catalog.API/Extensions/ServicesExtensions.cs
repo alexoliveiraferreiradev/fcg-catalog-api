@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Fcg.Catalog.API.Consumers;
-using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AdicionarJogo;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Infrastructure.Caching;
 using Fcg.Catalog.Infrastructure.DapperHandlers;

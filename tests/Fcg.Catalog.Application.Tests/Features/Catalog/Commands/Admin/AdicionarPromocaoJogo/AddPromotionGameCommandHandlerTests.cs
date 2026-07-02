@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AdicionarPromocaoJogo;
+﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AdicionarPromocaoJogo
+namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromotionGame
 {
     public class AdicionarPromocaoJogoCommandHandlerTests
     {

@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AtualizarJogo;
+﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -15,7 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AtualizarJogo
+namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGame
 {
     public class AtualizarJogoCommandHandlerTests
     {

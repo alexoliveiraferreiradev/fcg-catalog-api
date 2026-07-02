@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DesativarJogo;
+﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -15,7 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.DesativarJogo
+namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.DeactivateGame
 {
     public class DesativarJogoCommandHandlerTests
     {

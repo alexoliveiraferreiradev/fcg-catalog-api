@@ -1,4 +1,4 @@
-using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AdicionarJogo;
+Ôªøusing Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AdicionarJogo
+namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
 {
     public class AdicionarJogoCommandHandlerTests
     {
@@ -42,7 +42,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Adiciona
             var command = new AddGameCommand
             {
                 Name = "Novo Game",
-                Description = "Uma descriÁ„o super legal para o Game",
+                Description = "Uma descri√ß√£o super legal para o Game",
                 Price = 150.0m,
                 Genre = GameGenre.Estrategia
             };
@@ -70,21 +70,21 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Adiciona
             var command = new AddGameCommand
             {
                 Name = "Game Duplicado",
-                Description = "DescriÁ„o",
+                Description = "Descri√ß√£o",
                 Price = 50.0m,
                 Genre = GameGenre.Acao
             };
 
             _jogoRepositoryMock
                 .Setup(r => r.GameExistsWithName(command.Name))
-                .ReturnsAsync(true); // Name j· existe
+                .ReturnsAsync(true); // Name j√° existe
 
             // Act
             Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             await act.Should().ThrowAsync<DomainException>()
-                .WithMessage("*J· existe um jogo com esse nome.*");
+                .WithMessage("*J√° existe um jogo com esse nome.*");
         }
     }
 }

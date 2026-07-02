@@ -1,10 +1,10 @@
-﻿using Fcg.Catalog.Application.Features.Orders.Commands.RealizarPedido;
+﻿using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.RealizarPedido
+namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 {
     public class RealizarPedidoCommandValidatorTests
     {

@@ -1,6 +1,6 @@
 ﻿using Fcg.Catalog.API.Endpoints.Admin;
 using Fcg.Catalog.API.Endpoints.Anonymous;
-using Fcg.Catalog.API.Endpoints.Usuario;
+using Fcg.Catalog.API.Endpoints.User;
 
 namespace Fcg.Catalog.API.Extensions
 {
@@ -8,11 +8,11 @@ namespace Fcg.Catalog.API.Extensions
     {
         public static WebApplication MapEndpoints(this WebApplication app)
         {
-            app.MapGerenciaJogoEndpoint();
-            app.MapGerenciaPromocaoEndpoint();
-            app.MapCatalogJogosEndpoint();
-            app.MapBibliotecaUsuarioPaginadaEndpoint();
-            app.MapAdquirirJogo();
+            app.MapGamesEndpoints();
+            app.MapPromotionsEndpoints();
+            app.MapCatalogEndpoints();
+            app.MapLibraryUserEndpoints();
+            app.MapOrderEndpoints();
             return app;
         }
 }

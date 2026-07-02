@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using Fcg.Catalog.Application.Features.Orders.Commands.RealizarPedido;
+using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Repositories;
@@ -18,7 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.RealizarPedido
+namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 {
     public class RealizarPedidoCommandHandlerTests
     {

@@ -1,5 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
-using Fcg.Catalog.Domain.Entities;
+﻿using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Enum;
@@ -7,7 +6,6 @@ using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.MessageContracts;
 using MassTransit;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.API.Consumers
 {
@@ -34,7 +32,7 @@ namespace Fcg.Catalog.API.Consumers
 
             if(Order.Status == PaymentStatus.Approved)
             {
-                _logger.LogInformation("[CatalogAPI] Pagamento Approved para o Order: {OrderId}. Adicionando Games à Library do Usuário: {UserId}", Order.OrderId, Order.UserId);
+                _logger.LogInformation("[CatalogAPI] Pagamento aprovado para o Order: {OrderId}. Adicionando Games à Library do Usuário: {UserId}", Order.OrderId, Order.UserId);
 
                 foreach(var guidJogo in Order.JogosIds)
                 {
@@ -51,7 +49,7 @@ namespace Fcg.Catalog.API.Consumers
             }
             else 
             {
-                _logger.LogInformation("[CatalogAPI] Pagamento não Approved (Status: {Status}) para o Order: {OrderId}", Order.Status, Order.OrderId);
+                _logger.LogInformation("[CatalogAPI] Pagamento não aprovado (Status: {Status}) para o Order: {OrderId}", Order.Status, Order.OrderId);
             }
         }
     }
