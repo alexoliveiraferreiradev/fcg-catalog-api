@@ -9,16 +9,16 @@ namespace Fcg.Catalog.API.Endpoints.User
     {
         public static void MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/usuario/catalogo").RequireAuthorization("AcessoGeral").WithTags("Compra");
+            var group = app.MapGroup("/api/orders").RequireAuthorization("AcessoGeral").WithTags("Compra");
 
-            group.MapPost("/carrinho", PlaceOrder)
+            group.MapPost("", PlaceOrder)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound); 
         }
 
         private static async Task<IResult> PlaceOrder(
             [FromServices] ISender sender,
-            [FromBody] RealizarPedidoCommand realizarPedidoCommand,
+            [FromBody] PlaceOrderCommand PlaceOrderCommand,
             CancellationToken cancellationToken,
             ClaimsPrincipal user)
         {
@@ -31,7 +31,7 @@ namespace Fcg.Catalog.API.Endpoints.User
 
             var UserId = Guid.Parse(currentUserIdClaim);
 
-            var pedidoJogoCommand = realizarPedidoCommand with
+            var pedidoJogoCommand = PlaceOrderCommand with
             {
                 UserId = UserId,
                 NomeUsuario = user.FindFirstValue(ClaimTypes.Name),

@@ -257,7 +257,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         }
 
         [Fact]
-        public void DesativarPromocao_PromocaoExistente_DeveDesativar()
+        public void DeactivatePromotion_PromocaoExistente_DeveDesativar()
         {
             // Arrange
             var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
@@ -272,7 +272,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         }
 
         [Fact]
-        public void DesativarPromocao_PromocaoNaoEncontrada_DeveLancarDomainException()
+        public void DeactivatePromotion_PromocaoNaoEncontrada_DeveLancarDomainException()
         {
             // Arrange
             var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);

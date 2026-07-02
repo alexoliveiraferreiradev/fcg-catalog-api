@@ -14,24 +14,24 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapPromotionsEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/promocao").RequireAuthorization().WithTags("Gerenciamento de Promoções");
+            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization().WithTags("Gerenciamento de Promoções");
 
-            group.MapGet("/obtem-promovidos", GetPagedCatalogGamePromotion)
+            group.MapGet("", GetPagedCatalogGamePromotion)
                 .Produces<JogoResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
-            group.MapGet("/obtem-por-id/{PromotionId:guid}", GetPromotionById)
+            group.MapGet("/{PromotionId:guid}", GetPromotionById)
                 .Produces<PromocaoResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
-            group.MapPost("/cria-promocao", CreatePromotion)
+            group.MapPost("", CreatePromotion)
                 .Produces<PromocaoResponse>()
                 .Produces(StatusCodes.Status201Created)
                 .Produces(StatusCodes.Status400BadRequest);
 
-            group.MapPut("/desativar-promocao/{PromotionId:guid}", DeactivatePromotion)
+            group.MapPut("/{PromotionId:guid}/deactivate", DeactivatePromotion)
                 .Produces(StatusCodes.Status204NoContent)
                 .Produces(StatusCodes.Status404NotFound);
 
@@ -62,9 +62,9 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             CancellationToken cancellation
             )
         {
-            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellation);
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellation);
 
-            var query = new ObterPromocaoPorJogoIdQuery(PromotionId);
+            var query = new GetPromotionByGameIdQuery(PromotionId);
 
             var response = await sender.Send(query, cancellation);
 
@@ -90,12 +90,12 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
         private static async Task<IResult> DeactivatePromotion(
             [FromRoute] Guid PromotionId,
-            [FromServices] DesativarPromocaoCommand desativarPromocaoCommand, 
+            [FromServices] DeactivatePromotionCommand DeactivatePromotionCommand, 
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var command = desativarPromocaoCommand with { PromotionId = PromotionId };
+            var command = DeactivatePromotionCommand with { PromotionId = PromotionId };
             await sender.Send(command, cancellationToken);
             return Results.NoContent();
         }

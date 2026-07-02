@@ -13,19 +13,19 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
         public static void MapCatalogEndpoints(this WebApplication app)
         {
 
-            var group = app.MapGroup("/api/catalogo-jogos").WithTags("Catálogo de Games").AllowAnonymous();
+            var group = app.MapGroup("/api/catalog/games").WithTags("Catálogo de Games").AllowAnonymous();
 
-            group.MapGet("/obtem-todos", GetAllGames)
+            group.MapGet("", GetAllGames)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
 
-            group.MapGet("obtem-por-genero/{Genre}", GetGamesByGenre)
+            group.MapGet("?genre={Genre}", GetGamesByGenre)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
 
-            group.MapGet("obtem-promovidos", GetGamesByPromotion)
+            group.MapGet("/promoted", GetGamesByPromotion)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
@@ -38,9 +38,9 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
-            var query = new ObtemCatalogPaginadosQuery(pagina, tamanho);
+            var query = new GetPagedCatalogQuery(pagina, tamanho);
             var response = await sender.Send(query,cancellationToken);
             if (response == null)
             {
@@ -56,9 +56,9 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
-            var query = new ObtemCatalogPorGeneroQuery() with
+            var query = new GetPagedCatalogByGenreQuery() with
             {
                 Pagina = pagina,
                 TamanhoPagina = tamanho,
@@ -78,7 +78,7 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromQuery] int pagina = 1,
             [FromQuery] int tamanho = 10)
         {
-            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
             var query = new ObtemCatalogJogosPromovidosQuery() with
             {

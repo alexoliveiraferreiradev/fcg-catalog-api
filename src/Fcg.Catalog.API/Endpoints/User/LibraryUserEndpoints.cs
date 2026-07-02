@@ -10,9 +10,9 @@ namespace Fcg.Catalog.API.Endpoints.User
     {
         public static void MapLibraryUserEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/usuario/biblioteca").RequireAuthorization("AcessoGeral").WithTags("Biblioteca do Usuário");
+            var group = app.MapGroup("/api/library").RequireAuthorization("AcessoGeral").WithTags("Biblioteca do Usuário");
 
-            group.MapGet("/obtem-todos",
+            group.MapGet("",
                 async ([FromServices] ISender mediator,
                        ClaimsPrincipal user,
                        [FromQuery] int pagina = 1,
@@ -24,7 +24,7 @@ namespace Fcg.Catalog.API.Endpoints.User
                     return Results.Unauthorized();
                 }
 
-                var query = new ObtemBibliotecaPaginadaQuery(currentUserId, pagina, tamanho);
+                var query = new GetPagedLibraryQuery(currentUserId, pagina, tamanho);
 
                 var response = await mediator.Send(query);
 

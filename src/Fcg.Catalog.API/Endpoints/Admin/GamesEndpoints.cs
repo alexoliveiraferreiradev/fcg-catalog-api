@@ -15,35 +15,35 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapGamesEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/jogo").RequireAuthorization().WithTags("Gerenciamento de Games");
+            var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Gerenciamento de Games");
 
-            group.MapGet("/obtem-por-id/{GameId:guid}", GetGameById)
+            group.MapGet("/games/{GameId:guid}", GetGameById)
              .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
-            group.MapGet("/obtem-todos/", GetAllGames)
+            group.MapGet("", GetAllGames)
              .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
-            group.MapGet("/adicionar-jogo", AddGame)
+            group.MapGet("", AddGame)
              .Produces<JogoResponse>()
              .Produces(StatusCodes.Status201Created)
              .Produces(StatusCodes.Status400BadRequest);
 
-            group.MapPut("/desativar-jogo/{GameId:guid}", DeactiveGame)
+            group.MapPut("/{GameId:guid}/deactivate", DeactiveGame)
              .Produces(StatusCodes.Status204NoContent)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound); 
 
-            group.MapPut("/atualizar-jogo/{GameId:guid}", UpdateGame)
+            group.MapPut("/{GameId:guid}", UpdateGame)
              .Produces<JogoResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound);
 
-            group.MapPut("/reativar-jogo/{GameId:guid}", ReactiveGame)
+            group.MapPut("/{GameId:guid}/activate", ReactiveGame)
             .Produces<JogoResponse>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
@@ -55,7 +55,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             [FromRoute] Guid GameId, [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
-            await sender.Send(new DesativarPromocaoInvalidaCommand(), cancellationToken);
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
             var query = new GetGameByIdQuery(GameId);
             var response = await sender.Send(query, cancellationToken);
@@ -69,7 +69,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         private static async Task<IResult> GetAllGames(
             [FromServices] ISender mediator)
         {
-            var query = new ObtemTodosJogosQuery();
+            var query = new GetAllGamesQuery();
             var response = await mediator.Send(query);
             if (response == null)
             {
@@ -85,17 +85,17 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             CancellationToken cancellationToken)
         {
             var response = await sender.Send(AddGameCommand, cancellationToken);
-            return Results.Created($"/api/admin/jogo/obtem-por-id/{response.Id}", response);
+            return Results.Created($"/api/admin/games/{response.Id}", response);
         }
 
         private static async Task<IResult> DeactiveGame(
-            [FromBody] DesativarJogoCommand desativarJogo,
+            [FromBody] DeactivateGameCommand DeactivateGame,
             [FromRoute] Guid GameId,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var command = new DesativarJogoCommand(GameId);
+            var command = new DeactivateGameCommand(GameId);
 
             await sender.Send(command, cancellationToken);
 
@@ -115,11 +115,11 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
         private static async Task<IResult> ReactiveGame(
             [FromRoute] Guid GameId,
-            [FromServices] ReativarJogoCommand reativarJogoCommand,
+            [FromServices] ReactivateGameCommand ReactivateGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
-            var command =  reativarJogoCommand with
+            var command =  ReactivateGameCommand with
             {
                 GameId = GameId,    
             };
