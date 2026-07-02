@@ -1,5 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
-using Fcg.Catalog.Application.Features.Response;
+﻿using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
@@ -47,7 +46,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
 
             var novaPromocao = Game.Promotions.First();
 
-            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, promoÃ§Ã£oId: {promoÃ§Ã£oId}, Valor: {Valor}", Game.Id, novaPromocao.Id, request.PromotionValue);
+            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, PromocaoId: {PromocaoId}, Valor: {Valor}", Game.Id, novaPromocao.Id, request.PromotionValue);
 
             await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
 

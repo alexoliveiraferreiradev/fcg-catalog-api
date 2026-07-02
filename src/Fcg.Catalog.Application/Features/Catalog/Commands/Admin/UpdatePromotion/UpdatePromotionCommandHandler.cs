@@ -31,7 +31,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
 
         public async Task Handle(UpdatePromotionCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. promoÃ§Ã£oId: {promoÃ§Ã£oId}, JogoId: {JogoId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. PromocaoId: {PromocaoId}, JogoId: {JogoId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
 
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
@@ -50,7 +50,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
                         
             await _mediator.Publish(new PromotionUpdatedEvent(Game.Id, novaPromocao.Id),cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. promoÃ§Ã£oId: {promoÃ§Ã£oId}, JogoId: {JogoId}", request.PromotionId, request.GameId);
+            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, request.GameId);
         }
     }
 }

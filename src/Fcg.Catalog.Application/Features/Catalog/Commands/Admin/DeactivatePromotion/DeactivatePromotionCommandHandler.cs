@@ -28,12 +28,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
 
         public async Task Handle(DeactivatePromotionCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para desativar promoção. promoÃ§Ã£oId: {promoÃ§Ã£oId}", request.PromotionId);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para desativar promoção. PromocaoId: {PromocaoId}", request.PromotionId);
 
             var Promotion = await _jogoRepository.GetPromotionById(request.PromotionId);
             if (Promotion == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao desativar promoção. Promoção não encontrada. promoÃ§Ã£oId: {promoÃ§Ã£oId}", request.PromotionId);
+                _logger.LogWarning("[CatalogAPI] Falha ao desativar promoção. Promoção não encontrada. PromocaoId: {PromocaoId}", request.PromotionId);
                 throw new DomainException(DomainMessages.PromotionNotFound);
             }
 
@@ -50,7 +50,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
 
             await _mediator.Publish(new PromotionDeactivatedEvent(Game.Id,request.PromotionId), cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Promoção desativada com sucesso. promoÃ§Ã£oId: {promoÃ§Ã£oId}, JogoId: {JogoId}", request.PromotionId, Promotion.GameId);
+            _logger.LogInformation("[CatalogAPI] Promoção desativada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, Promotion.GameId);
         }
     }
 }
