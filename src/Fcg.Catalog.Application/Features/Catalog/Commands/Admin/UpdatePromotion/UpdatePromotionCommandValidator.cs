@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion
 {
-    public class AtualizarPromocaoCommandValidator : AbstractValidator<AtualizarPromocaoCommand>
+    public class UpdatePromotionCommandValidator : AbstractValidator<UpdatePromotionCommand>
     {
-        public AtualizarPromocaoCommandValidator()
+        public UpdatePromotionCommandValidator()
         {
             RuleFor(x => x.PromotionId)
                 .NotEmpty().WithMessage(DomainMessages.PromotionNotFound);

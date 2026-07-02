@@ -3,21 +3,21 @@ using FluentValidation;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
 {
-    public class AdicionarJogoCommandValidator : AbstractValidator<AddGameCommand>
+    public class AddGameCommandValidator : AbstractValidator<AddGameCommand>
     {
-        public AdicionarJogoCommandValidator()
+        public AddGameCommandValidator()
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage(DomainMessages.GameNameRequired)
                 .Length(3, 20).WithMessage(DomainMessages.GameNameLengthInvalid)
                 .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ]+$")
-                .NotEqual("Name do Game").WithMessage(DomainMessages.GameNameNotReal);
+                .NotEqual("Nome do Jogo").WithMessage(DomainMessages.GameNameNotReal);
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage(DomainMessages.GameDescriptionRequired)
                 .Length(5, 100).WithMessage(DomainMessages.GameDescriptionLengthInvalid)
                 .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ]+$")
-                .NotEqual("Descrição do Game").WithMessage(DomainMessages.GameDescriptionNotReal);
+                .NotEqual("Descrição do Jogo").WithMessage(DomainMessages.GameDescriptionNotReal);
 
             RuleFor(x => x.Price)
                 .GreaterThan(0).WithMessage(DomainMessages.InvalidValue);

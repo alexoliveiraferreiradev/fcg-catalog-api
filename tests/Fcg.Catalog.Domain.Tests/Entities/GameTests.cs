@@ -185,7 +185,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         }
 
         [Fact]
-        public void AlteraPromocao_ComDadosValidos_DeveAtualizarPromocao()
+        public void AlteraPromocao_ComDadosValidos_DeveUpdatePromotion()
         {
             // Arrange
             var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);

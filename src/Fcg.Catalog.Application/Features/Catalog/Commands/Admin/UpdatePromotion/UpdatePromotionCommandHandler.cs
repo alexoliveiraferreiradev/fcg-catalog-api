@@ -10,17 +10,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion
 {
-    public class AtualizarPromocaoCommandHandler : IRequestHandler<AtualizarPromocaoCommand>
+    public class UpdatePromotionCommandHandler : IRequestHandler<UpdatePromotionCommand>
     {
         private readonly IGameRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<AtualizarPromocaoCommandHandler> _logger;
+        private readonly ILogger<UpdatePromotionCommandHandler> _logger;
         private readonly IMediator _mediator;   
 
-        public AtualizarPromocaoCommandHandler(
+        public UpdatePromotionCommandHandler(
             IGameRepository GameRepository, 
             IUnitOfWork unitOfWork, 
-            ILogger<AtualizarPromocaoCommandHandler> logger,
+            ILogger<UpdatePromotionCommandHandler> logger,
             IMediator mediator)
         {
             _jogoRepository = GameRepository;
@@ -29,7 +29,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
             _mediator = mediator;   
         }
 
-        public async Task Handle(AtualizarPromocaoCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdatePromotionCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para Update promoção. PromotionId: {PromotionId}, GameId: {GameId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
 

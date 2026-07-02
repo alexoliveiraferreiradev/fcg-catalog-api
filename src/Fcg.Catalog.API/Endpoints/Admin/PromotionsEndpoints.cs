@@ -78,12 +78,12 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
 
         private static async Task<IResult> CreatePromotion(
-            [FromBody] AdicionarPromocaoJogoCommand adicionarPromocaoJogoCommand,
+            [FromBody] AddPromotionGameCommand AddPromotionGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var response = await sender.Send(adicionarPromocaoJogoCommand, cancellationToken);
+            var response = await sender.Send(AddPromotionGameCommand, cancellationToken);
             return Results.Created($"/api/admin/promocao/obtem-por-id/{response.PromotionId}", response);
         }
 

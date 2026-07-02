@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGame
 {
-    public class AtualizarJogoCommandHandlerTests
+    public class UpdateGameCommandHandlerTests
     {
         private readonly Mock<IGameRepository> _jogoRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
@@ -25,7 +25,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
         private readonly Mock<IMediator> _mediatorMock;
         private readonly UpdateGameCommandHandler _handler;
 
-        public AtualizarJogoCommandHandlerTests()
+        public UpdateGameCommandHandlerTests()
         {
             _jogoRepositoryMock = new Mock<IGameRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -51,7 +51,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
         }
 
         [Fact]
-        public async Task Handle_DeveAtualizarJogoEPublicarEvento_QuandoValido()
+        public async Task Handle_DeveUpdateGameEPublicarEvento_QuandoValido()
         {
             // Arrange
             var Game = CriarJogoValido();

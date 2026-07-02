@@ -133,7 +133,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         #region UpdatePromotion Tests
 
         [Fact]
-        public void AtualizarPromocao_ComNovosDados_DeveAtualizarValores()
+        public void UpdatePromotion_ComNovosDados_DeveAtualizarValores()
         {
             // Arrange
             var Promotion = new Promotion(Guid.NewGuid(), ObterPrecoValido(80m), ObterPeriodoValido());

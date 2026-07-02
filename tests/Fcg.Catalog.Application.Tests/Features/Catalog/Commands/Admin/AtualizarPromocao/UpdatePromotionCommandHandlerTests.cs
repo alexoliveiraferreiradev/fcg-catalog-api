@@ -18,22 +18,22 @@ using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdatePromotion
 {
-    public class AtualizarPromocaoCommandHandlerTests
+    public class UpdatePromotionCommandHandlerTests
     {
         private readonly Mock<IGameRepository> _jogoRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly Mock<ILogger<AtualizarPromocaoCommandHandler>> _loggerMock;
+        private readonly Mock<ILogger<UpdatePromotionCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
-        private readonly AtualizarPromocaoCommandHandler _handler;
+        private readonly UpdatePromotionCommandHandler _handler;
 
-        public AtualizarPromocaoCommandHandlerTests()
+        public UpdatePromotionCommandHandlerTests()
         {
             _jogoRepositoryMock = new Mock<IGameRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _loggerMock = new Mock<ILogger<AtualizarPromocaoCommandHandler>>();
+            _loggerMock = new Mock<ILogger<UpdatePromotionCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
 
-            _handler = new AtualizarPromocaoCommandHandler(
+            _handler = new UpdatePromotionCommandHandler(
                 _jogoRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _loggerMock.Object,
@@ -52,14 +52,14 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdatePr
         }
 
         [Fact]
-        public async Task Handle_DeveAtualizarPromocao_QuandoValido()
+        public async Task Handle_DeveUpdatePromotion_QuandoValido()
         {
             // Arrange
             var Game = CriarJogoValido();
             Game.AddPromotion(new Price(80.0m), new Period(DateTime.UtcNow.AddDays(5)));
             var Promotion = Game.Promotions.First();
 
-            var command = new AtualizarPromocaoCommand
+            var command = new UpdatePromotionCommand
             {
                 PromotionId = Promotion.Id,
                 GameId = Game.Id,
@@ -83,7 +83,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdatePr
         public async Task Handle_DeveLancarDomainException_QuandoJogoNaoEncontrado()
         {
             // Arrange
-            var command = new AtualizarPromocaoCommand { GameId = Guid.NewGuid() };
+            var command = new UpdatePromotionCommand { GameId = Guid.NewGuid() };
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync((Game)null);
 
             // Act

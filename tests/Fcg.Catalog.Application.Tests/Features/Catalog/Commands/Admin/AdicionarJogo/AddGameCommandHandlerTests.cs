@@ -15,14 +15,14 @@ using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
 {
-    public class AdicionarJogoCommandHandlerTests
+    public class AddGameCommandHandlerTests
     {
         private readonly Mock<IGameRepository> _jogoRepositoryMock;
         private readonly Mock<ILogger<AddGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
         private readonly AddGameCommandHandler _handler;
 
-        public AdicionarJogoCommandHandlerTests()
+        public AddGameCommandHandlerTests()
         {
             _jogoRepositoryMock = new Mock<IGameRepository>();
             _loggerMock = new Mock<ILogger<AddGameCommandHandler>>();
@@ -36,7 +36,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
         }
 
         [Fact]
-        public async Task Handle_DeveAdicionarJogoEPublicarEvento_QuandoNomeEstiverDisponivel()
+        public async Task Handle_DeveAddGameEPublicarEvento_QuandoNomeEstiverDisponivel()
         {
             // Arrange
             var command = new AddGameCommand

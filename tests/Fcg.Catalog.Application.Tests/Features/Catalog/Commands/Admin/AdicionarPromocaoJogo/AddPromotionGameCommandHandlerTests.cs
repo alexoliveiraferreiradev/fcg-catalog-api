@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -16,20 +16,20 @@ using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromotionGame
 {
-    public class AdicionarPromocaoJogoCommandHandlerTests
+    public class AddPromotionGameCommandHandlerTests
     {
         private readonly Mock<IGameRepository> _jogoRepositoryMock;
-        private readonly Mock<ILogger<AdicionarPromocaoJogoCommandHandler>> _loggerMock;
+        private readonly Mock<ILogger<AddPromotionGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
-        private readonly AdicionarPromocaoJogoCommandHandler _handler;
+        private readonly AddPromotionGameCommandHandler _handler;
 
-        public AdicionarPromocaoJogoCommandHandlerTests()
+        public AddPromotionGameCommandHandlerTests()
         {
             _jogoRepositoryMock = new Mock<IGameRepository>();
-            _loggerMock = new Mock<ILogger<AdicionarPromocaoJogoCommandHandler>>();
+            _loggerMock = new Mock<ILogger<AddPromotionGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
 
-            _handler = new AdicionarPromocaoJogoCommandHandler(
+            _handler = new AddPromotionGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _loggerMock.Object,
                 _mediatorMock.Object
@@ -51,7 +51,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromo
         {
             // Arrange
             var Game = CriarJogoValido();
-            var command = new AdicionarPromocaoJogoCommand(Game.Id, 50.0m, DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
+            var command = new AddPromotionGameCommand(Game.Id, 50.0m, DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
 
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
 
@@ -60,7 +60,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromo
 
             // Assert
             result.Should().NotBeNull();
-            result.ValorPromocao.Should().Be(command.ValorPromocao);
+            result.ValorPromocao.Should().Be(command.PromotionValue);
             
             _jogoRepositoryMock.Verify(r => r.Update(Game), Times.Once);
             _mediatorMock.Verify(m => m.Publish(It.IsAny<PromotionAddedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -73,7 +73,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromo
             var Game = CriarJogoValido();
             Game.AddPromotion(new Price(80.0m), new Period(DateTime.UtcNow.AddDays(2))); // Adiciona promo existente
             
-            var command = new AdicionarPromocaoJogoCommand(Game.Id, 50.0m, DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
+            var command = new AddPromotionGameCommand(Game.Id, 50.0m, DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
 
             // Act

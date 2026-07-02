@@ -3,20 +3,20 @@ using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame
 {
-    public record AdicionarPromocaoJogoCommand : IRequest<PromocaoResponse>
+    public record AddPromotionGameCommand : IRequest<PromocaoResponse>
     {
         public Guid GameId { get; init; }
-        public decimal ValorPromocao { get; init; }
+        public decimal PromotionValue { get; init; }
         public DateTime StartDate { get; init; }
         public DateTime EndDate { get; init; }
 
-        public AdicionarPromocaoJogoCommand()
+        public AddPromotionGameCommand()
         {
         }
 
-        public AdicionarPromocaoJogoCommand(Guid GameId, decimal valorPromocao, DateTime StartDate, DateTime EndDate)
+        public AddPromotionGameCommand(Guid GameId, decimal promotionValue, DateTime StartDate, DateTime EndDate)
         {
-            this.GameId = GameId; this.ValorPromocao = valorPromocao; this.StartDate = StartDate; this.EndDate = EndDate;
+            this.GameId = GameId; PromotionValue = promotionValue; this.StartDate = StartDate; this.EndDate = EndDate;
         }
     }
 }
