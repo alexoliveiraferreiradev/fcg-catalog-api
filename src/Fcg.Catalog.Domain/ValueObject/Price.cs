@@ -1,4 +1,4 @@
-using Fcg.Core.Abstractions.Common;
+﻿using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalog.Domain.ValueObject
@@ -9,7 +9,7 @@ namespace Fcg.Catalog.Domain.ValueObject
 
         public Price(decimal amount)
         {
-            AssertionConcern.AssertArgumentValueFormat(amount, MensagensDominio.ValorInvalido);
+            AssertionConcern.AssertArgumentValueFormat(amount, DomainMessages.InvalidValue);
             this.Amount = amount;
         }
 

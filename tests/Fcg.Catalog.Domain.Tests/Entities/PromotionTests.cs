@@ -42,7 +42,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => new Promotion(jogoIdVazio, Amount, Period));
-            Assert.Equal(MensagensDominio.JogoNaoEncontrado, excecao.Message);
+            Assert.Equal(DomainMessages.GameNotFound, excecao.Message);
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => new Promotion(GameId, Amount, periodoNulo));
-            Assert.Equal(MensagensDominio.PeriodoObrigatorio, excecao.Message);
+            Assert.Equal(DomainMessages.PeriodRequired, excecao.Message);
         }
 
         #endregion
@@ -125,7 +125,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Promotion.Deactivate());
-            Assert.Equal(MensagensDominio.PromocaoInativa, excecao.Message);
+            Assert.Equal(DomainMessages.PromotionAlreadyDeactivated, excecao.Message);
         }
 
         #endregion

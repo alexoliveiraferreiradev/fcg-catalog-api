@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Fcg.Catalog.Application\Fcg.Catalog.Application.csproj" />
@@ -7,7 +7,7 @@
   <ItemGroup>
 	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
 	<PackageReference Include="MassTransit.RabbitMQ" Version="9.1.2" />
-	<PackageReference Include="Fcg.Core.WebApi" Version="1.0.1" />
+	<PackageReference Include="Fcg.Core.WebApi" Version="1.0.2" />
 	<PackageReference Include="FluentValidation" Version="12.1.1" />
 	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
 	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />

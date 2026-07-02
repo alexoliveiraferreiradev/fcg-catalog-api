@@ -8,16 +8,16 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         public AtualizarPromocaoCommandValidator()
         {
             RuleFor(x => x.PromotionId)
-                .NotEmpty().WithMessage(MensagensDominio.PromocaoNaoEncontrada);
+                .NotEmpty().WithMessage(DomainMessages.PromotionNotFound);
 
             RuleFor(x => x.GameId)
-                .NotEmpty().WithMessage(MensagensDominio.JogoNaoEncontrado);
+                .NotEmpty().WithMessage(DomainMessages.GameNotFound);
 
             RuleFor(x => x.NovoValorPromocao)
-                .GreaterThan(0).WithMessage(MensagensDominio.ValorInvalido);
+                .GreaterThan(0).WithMessage(DomainMessages.InvalidValue);
 
             RuleFor(x => x.NovaDataFim)
-                .GreaterThan(DateTime.UtcNow).WithMessage(MensagensDominio.DataFimInvalida);
+                .GreaterThan(DateTime.UtcNow).WithMessage(DomainMessages.EndDateInvalid);
         }
     }
 }

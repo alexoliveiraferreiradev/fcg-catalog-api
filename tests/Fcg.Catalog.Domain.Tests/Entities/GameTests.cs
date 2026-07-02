@@ -48,7 +48,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => new Game(Name, Description, Price, generoInvalido));
-            Assert.Equal(MensagensDominio.JogoGeneroObrigatorio, excecao.Message);
+            Assert.Equal(DomainMessages.GameGenreInvalid, excecao.Message);
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.Deactivate());
-            Assert.Equal(MensagensDominio.JogoInvalido, excecao.Message);
+            Assert.Equal(DomainMessages.GameIsDeactivated, excecao.Message);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.Reactivate());
-            Assert.Equal(MensagensDominio.JogoAtivo, excecao.Message);
+            Assert.Equal(DomainMessages.GameAlreadyActive, excecao.Message);
         }
 
         #endregion
@@ -145,7 +145,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.Update(novoNome, novaDescricao, novoPreco, novoGenero));
-            Assert.Equal(MensagensDominio.JogoInvalido, excecao.Message);
+            Assert.Equal(DomainMessages.GameIsDeactivated, excecao.Message);
         }
 
         #endregion
@@ -181,7 +181,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.AddPromotion(precoPromocionalInvalido, EndDate));
-            Assert.Equal(MensagensDominio.PromocaoValorMaior, excecao.Message);
+            Assert.Equal(DomainMessages.PromotionValueHigher, excecao.Message);
         }
 
         [Fact]
@@ -221,7 +221,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.UpdatePromotion(promoId, novoPrecoInvalido, novaDataFim));
-            Assert.Equal(MensagensDominio.PromocaoValorMaior, excecao.Message);
+            Assert.Equal(DomainMessages.PromotionValueHigher, excecao.Message);
         }
 
         [Fact]
@@ -280,7 +280,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.DeactivatePromotion(promoIdInexistente));
-            Assert.Equal(MensagensDominio.PromocaoNaoEncontrada, excecao.Message);
+            Assert.Equal(DomainMessages.PromotionNotFound, excecao.Message);
         }
 
         #endregion

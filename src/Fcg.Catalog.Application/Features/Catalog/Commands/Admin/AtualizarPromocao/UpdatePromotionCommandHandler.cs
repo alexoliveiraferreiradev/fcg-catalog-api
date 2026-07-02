@@ -37,7 +37,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Update promoção. Game não encontrado. GameId: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             var novoPreco = new Price(request.NovoValorPromocao);

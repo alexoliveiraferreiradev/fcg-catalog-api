@@ -37,26 +37,26 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            AssertionConcern.AssertArgumentRange((int)Genre, 1, 20, MensagensDominio.JogoGeneroObrigatorio);
+            AssertionConcern.AssertArgumentRange((int)Genre, 1, 20, DomainMessages.GameGenreInvalid);
         }
 
         public void Deactivate()
         {
-            if (!IsActive) throw new DomainException(MensagensDominio.JogoInvalido);
+            if (!IsActive) throw new DomainException(DomainMessages.GameIsDeactivated);
             IsActive = false;
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void Reactivate()
         {
-            if (IsActive) throw new DomainException(MensagensDominio.JogoAtivo);
+            if (IsActive) throw new DomainException(DomainMessages.GameAlreadyActive);
             IsActive = true;
             UpdatedAt = DateTime.UtcNow;
         }
 
         public void Update(Name novoNome, Description novaDescricao, Price novoPreco, GameGenre novoGenero)
         {
-            if (!IsActive) throw new DomainException(MensagensDominio.JogoInvalido);
+            if (!IsActive) throw new DomainException(DomainMessages.GameIsDeactivated);
 
             UpdateName(novoNome);
             UpdateDescription(novaDescricao);
@@ -67,7 +67,7 @@ namespace Fcg.Catalog.Domain.Entities
 
         private void UpdateGenre(GameGenre novoGenero)
         {
-            AssertionConcern.AssertArgumentRange((int)novoGenero, 1, 20, MensagensDominio.JogoGeneroObrigatorio);
+            AssertionConcern.AssertArgumentRange((int)novoGenero, 1, 20, DomainMessages.GameGenreInvalid);
             if (Genre == novoGenero) return;
             Genre = novoGenero;
         }
@@ -80,28 +80,28 @@ namespace Fcg.Catalog.Domain.Entities
 
         private void UpdateDescription(Description novaDescricao)
         {
-            AssertionConcern.AssertArgumentNotNull(novaDescricao, MensagensDominio.JogoDescricaoObrigatoria);
+            AssertionConcern.AssertArgumentNotNull(novaDescricao, DomainMessages.GameDescriptionRequired);
             if (Description == novaDescricao) return;
             Description = novaDescricao;
         }
 
         private void UpdateName(Name novoNome)
         {
-            AssertionConcern.AssertArgumentNotNull(novoNome, MensagensDominio.JogoNomeObrigatorio);
+            AssertionConcern.AssertArgumentNotNull(novoNome, DomainMessages.GameNameRequired);
             if (Name == novoNome) return;
             Name = novoNome;
         }
 
         public void AddPromotion(Price valorPromocao, Period EndDate)
         {
-            if (valorPromocao.Amount >= BasePrice.Amount) throw new DomainException(MensagensDominio.PromocaoValorMaior);
+            if (valorPromocao.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
             foreach (var p in _promotions.Where(x => x.IsActive)) p.Deactivate();
             _promotions.Add(new Promotion(Id, valorPromocao, EndDate));
             UpdatedAt = DateTime.UtcNow;
         }
         public void UpdatePromotion(Guid PromotionId, Price novoPreco, DateTime novaDataFim)
         {
-            if (novoPreco.Amount >= BasePrice.Amount) throw new DomainException(MensagensDominio.PromocaoValorMaior);
+            if (novoPreco.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
             foreach (var p in _promotions.Where(x => x.Id == PromotionId)) p.UpdatePromotion(novoPreco, novaDataFim);
         }
         public Price GetCurrentPrice()
@@ -115,7 +115,7 @@ namespace Fcg.Catalog.Domain.Entities
         public void DeactivatePromotion(Guid PromotionId)
         {
             var Promotion = _promotions.FirstOrDefault(x => x.Id == PromotionId);
-            if (Promotion == null) throw new DomainException(MensagensDominio.PromocaoNaoEncontrada);
+            if (Promotion == null) throw new DomainException(DomainMessages.PromotionNotFound);
             Promotion.Deactivate();
             UpdatedAt = DateTime.UtcNow;
         }

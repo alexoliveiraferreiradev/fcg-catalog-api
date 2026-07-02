@@ -33,7 +33,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AdicionarJogo
             if(nomeJaExistente)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Add Game. Já existe um Game cadastrado com o Name: {Name}", request.Name);
-                throw new DomainException(MensagensDominio.JogoMesmoNomeExistente);
+                throw new DomainException(DomainMessages.GameNameAlreadyExists);
             }
             var Price = new Price(request.Price);
             var nomeJogo = new Name(request.Name);

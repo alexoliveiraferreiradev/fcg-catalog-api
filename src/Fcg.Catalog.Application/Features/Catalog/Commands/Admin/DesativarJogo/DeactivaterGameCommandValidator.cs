@@ -8,7 +8,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DesativarJogo
         public DesativarJogoCommandValidator()
         {
             RuleFor(x => x.GameId)
-                .NotEmpty().WithMessage(MensagensDominio.JogoNaoEncontrado);
+                .NotEmpty().WithMessage(DomainMessages.GameNotFound);
         }
     }
 }

@@ -24,8 +24,8 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            AssertionConcern.AssertArgumentNotEquals(UserId, Guid.Empty, MensagensDominio.UsuarioNaoEncontrado);
-            AssertionConcern.AssertArgumentNotEquals(GameId, Guid.Empty, MensagensDominio.JogoNaoEncontrado);
+            AssertionConcern.AssertArgumentNotEquals(UserId, Guid.Empty, DomainMessages.UserNotFound);
+            AssertionConcern.AssertArgumentNotEquals(GameId, Guid.Empty, DomainMessages.GameNotFound);
         }
 
     }

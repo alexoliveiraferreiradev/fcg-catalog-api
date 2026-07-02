@@ -38,7 +38,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AtualizarJogo
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Update Game. Game não encontrado. ID: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             var novoNome = new Name(request.NovoNome);

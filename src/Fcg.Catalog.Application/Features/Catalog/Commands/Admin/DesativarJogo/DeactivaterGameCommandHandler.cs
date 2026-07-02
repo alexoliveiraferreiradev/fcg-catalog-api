@@ -35,7 +35,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DesativarJogo
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Deactivate Game. Game não encontrado. ID: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             Game.Deactivate();

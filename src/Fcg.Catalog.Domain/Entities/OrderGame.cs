@@ -1,4 +1,4 @@
-using Fcg.Core.Abstractions.Common;
+﻿using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Resources;
 
@@ -26,12 +26,12 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            AssertionConcern.AssertArgumentNotEmpty(OrderId, MensagensDominio.PedidoSemUsuario); // Using an existing message or default
-            AssertionConcern.AssertArgumentNotEmpty(GameId, MensagensDominio.JogoNaoEncontrado);
-            AssertionConcern.AssertArgumentNotNull(GameName, MensagensDominio.JogoNomeObrigatorio);
+            AssertionConcern.AssertArgumentNotEmpty(OrderId, DomainMessages.OrderWithoutUser); // Using an existing message or default
+            AssertionConcern.AssertArgumentNotEmpty(GameId, DomainMessages.GameNotFound);
+            AssertionConcern.AssertArgumentNotNull(GameName, DomainMessages.GameNameRequired);
 
             if (GameAmount < 0)
-                throw new DomainException("O Amount do item não pode ser negativo");
+                throw new DomainException("O Amount do item nÃ£o pode ser negativo");
         }
     }
 }

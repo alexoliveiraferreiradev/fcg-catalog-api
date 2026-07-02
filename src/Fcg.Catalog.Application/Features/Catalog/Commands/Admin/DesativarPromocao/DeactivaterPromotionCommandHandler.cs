@@ -34,14 +34,14 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
             if (Promotion == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Deactivate promoção. Promoção não encontrada. PromotionId: {PromotionId}", request.PromotionId);
-                throw new DomainException(MensagensDominio.PromocaoNaoEncontrada);
+                throw new DomainException(DomainMessages.PromotionNotFound);
             }
 
             var Game = await _jogoRepository.GetById(Promotion.GameId);
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Deactivate promoção. Game não encontrado. GameId: {GameId}", Promotion.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             Game.DeactivatePromotion(request.PromotionId);

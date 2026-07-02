@@ -8,7 +8,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReativarJogo
         public ReativarJogoCommandValidator()
         {
             RuleFor(x => x.GameId)
-                .NotEmpty().WithMessage(MensagensDominio.JogoNaoEncontrado);
+                .NotEmpty().WithMessage(DomainMessages.GameNotFound);
         }
     }
 }

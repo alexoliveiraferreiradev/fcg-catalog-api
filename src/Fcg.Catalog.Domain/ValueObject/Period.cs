@@ -1,4 +1,4 @@
-using Fcg.Core.Abstractions.Common;
+﻿using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Resources;
 
@@ -11,7 +11,7 @@ namespace Fcg.Catalog.Domain.ValueObject
 
         public Period(DateTime StartDate, DateTime EndDate)
         {
-            if (EndDate <= StartDate) throw new DomainException(MensagensDominio.DataFimInvalida);
+            if (EndDate <= StartDate) throw new DomainException(DomainMessages.EndDateInvalid);
             this.StartDate = StartDate;
             this.EndDate = EndDate;
         }

@@ -1,4 +1,4 @@
-using Fcg.Core.Abstractions.Common;
+﻿using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalog.Domain.ValueObject
@@ -9,9 +9,9 @@ namespace Fcg.Catalog.Domain.ValueObject
 
         public Description(string value)
         {
-            AssertionConcern.AssertArgumentRealValues(value, MensagensDominio.DescricaoJogoNaoReal);
-            AssertionConcern.AssertArgumentEmpty(value, MensagensDominio.JogoDescricaoObrigatoria);
-            AssertionConcern.AssertArgumentLength(value, 5, 500, MensagensDominio.JogoDescricaoTamanhoInvalido);
+            AssertionConcern.AssertArgumentRealValues(value, DomainMessages.GameDescriptionNotReal);
+            AssertionConcern.AssertArgumentEmpty(value, DomainMessages.GameDescriptionRequired);
+            AssertionConcern.AssertArgumentLength(value, 5, 500, DomainMessages.GameDescriptionLengthInvalid);
             this.Value = value;
         }
 

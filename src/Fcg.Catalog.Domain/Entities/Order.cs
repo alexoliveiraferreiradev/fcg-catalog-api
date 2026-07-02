@@ -1,4 +1,4 @@
-using Fcg.Catalog.Domain.Enum;
+﻿using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -32,22 +32,22 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            if (UserId == Guid.Empty) throw new DomainException(MensagensDominio.PedidoSemUsuario);
+            if (UserId == Guid.Empty) throw new DomainException(DomainMessages.OrderWithoutUser);
         }
 
         public void AddItem(Guid gameId, string gameName, decimal gameAmount)
         {
-            if (Status != OrderStatus.Rascunho) throw new DomainException(MensagensDominio.PedidoJogoNaoRascunhos);
-            if (gameId == Guid.Empty) throw new DomainException(MensagensDominio.JogoNaoEncontrado);
-            if (_games.Any(j => j.GameId == gameId)) throw new DomainException(MensagensDominio.PedidoJogoJaAdicionado);
+            if (Status != OrderStatus.Rascunho) throw new DomainException(DomainMessages.OrderGameNotDraft);
+            if (gameId == Guid.Empty) throw new DomainException(DomainMessages.GameNotFound);
+            if (_games.Any(j => j.GameId == gameId)) throw new DomainException(DomainMessages.OrderGameAlreadyAdded);
 
             _games.Add(new OrderGame(Id, gameId, gameName, gameAmount));
         }
 
         public void FinalizeOrder()
         {
-            if (Status != OrderStatus.Rascunho) throw new DomainException(MensagensDominio.PedidoNaoRascunhos);
-            if (!_games.Any()) throw new DomainException(MensagensDominio.PedidoSemJogos);
+            if (Status != OrderStatus.Rascunho) throw new DomainException(DomainMessages.OrderNotDraft);
+            if (!_games.Any()) throw new DomainException(DomainMessages.OrderWithoutGames);
             Status = OrderStatus.Finalizado;
             CalculateTotalAmount();
             UpdatedAt = DateTime.UtcNow;

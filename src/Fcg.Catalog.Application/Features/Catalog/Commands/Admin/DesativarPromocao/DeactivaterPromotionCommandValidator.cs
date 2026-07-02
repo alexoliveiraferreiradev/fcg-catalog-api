@@ -8,7 +8,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
         public DesativarPromocaoCommandValidator()
         {
             RuleFor(x => x.PromotionId)
-                .NotEmpty().WithMessage(MensagensDominio.PromocaoNaoEncontrada);
+                .NotEmpty().WithMessage(DomainMessages.PromotionNotFound);
         }
     }
 }

@@ -32,13 +32,13 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AdicionarPromo
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Add promoção. Game não encontrado. GameId: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             if (Game.Promotions.Any())
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Add promoção. O Game já possui promoções registradas. GameId: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoPromocoes);
+                throw new DomainException(DomainMessages.GameWithPromotions);
             }
 
             var valorPromocao = new Price(request.ValorPromocao);   

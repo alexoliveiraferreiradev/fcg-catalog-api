@@ -1,4 +1,4 @@
-using Fcg.Catalog.Domain.ValueObject;
+﻿using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Resources;
@@ -27,8 +27,8 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            if (GameId == Guid.Empty) throw new DomainException(MensagensDominio.JogoNaoEncontrado);
-            AssertionConcern.AssertArgumentNotNull(Period, MensagensDominio.PeriodoObrigatorio);
+            if (GameId == Guid.Empty) throw new DomainException(DomainMessages.GameNotFound);
+            AssertionConcern.AssertArgumentNotNull(Period, DomainMessages.PeriodRequired);
         }
 
         public bool IsValid() =>
@@ -36,7 +36,7 @@ namespace Fcg.Catalog.Domain.Entities
 
         public void Deactivate()
         {
-            if (!IsActive) throw new DomainException(MensagensDominio.PromocaoInativa);
+            if (!IsActive) throw new DomainException(DomainMessages.PromotionAlreadyDeactivated);
             IsActive = false;
             UpdatedAt = DateTime.UtcNow;
         }

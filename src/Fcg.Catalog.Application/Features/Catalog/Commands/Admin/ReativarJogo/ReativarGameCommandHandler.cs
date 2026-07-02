@@ -34,7 +34,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReativarJogo
             if (Game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Reactivate Game. Game não encontrado. ID: {GameId}", request.GameId);
-                throw new DomainException(MensagensDominio.JogoNaoEncontrado);
+                throw new DomainException(DomainMessages.GameNotFound);
             }
 
             Game.Reactivate();
