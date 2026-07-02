@@ -1,4 +1,4 @@
-# Fiap Cloud Games (FCG) - Catálogo API
+﻿# Fiap Cloud Games (FCG) - Catálogo API
 
 Este microsserviço é o **núcleo de domínio do Catálogo de Jogos e Gestão de Biblioteca de Usuários** da plataforma **Fiap Cloud Games (FCG)**. Desenvolvido com **.NET 9** e baseado nos princípios de **Clean Architecture**, **Domain-Driven Design (DDD)** e **CQRS**, o projeto gerencia a criação, catalogação, desativação e promoções de jogos, além de controlar quais jogos pertencem à biblioteca individual de cada usuário.
 
@@ -22,15 +22,15 @@ O projeto está estruturado em camadas para separar responsabilidades de forma c
 
 ```
 src/
-├── Fcg.Catalogo.Domain         # Regras de Negócio, Entidades de Domínio, Invariantes e Value Objects
-├── Fcg.Catalogo.Application    # Casos de Uso (Commands/Queries), DTOs, Event Handlers e MediatR Handlers
-├── Fcg.Catalogo.Infrastructure # Acesso a Dados (EF Core), Mapeamentos e Repositórios Concretos
-└── Fcg.Catalogo.API            # Host da API HTTP, Middlewares e Ponto de Entrada (Program.cs)
+├── Fcg.Catalog.Domain         # Regras de Negócio, Entidades de Domínio, Invariantes e Value Objects
+├── Fcg.Catalog.Application    # Casos de Uso (Commands/Queries), DTOs, Event Handlers e MediatR Handlers
+├── Fcg.Catalog.Infrastructure # Acesso a Dados (EF Core), Mapeamentos e Repositórios Concretos
+└── Fcg.Catalog.API            # Host da API HTTP, Middlewares e Ponto de Entrada (Program.cs)
 ```
 
 ### Detalhamento das Camadas
 
-#### 1. `Fcg.Catalogo.Domain` (Domínio)
+#### 1. `Fcg.Catalog.Domain` (Domínio)
 Contém o núcleo das regras de negócio do catálogo:
 - **Entidades de Domínio**:
   - `Jogo`: Agregado raiz responsável por controlar informações do jogo, status de ativação, preço base e a lista de promoções associadas.
@@ -41,19 +41,19 @@ Contém o núcleo das regras de negócio do catálogo:
 - **Regras e Validações**: `AssertionConcern` para assegurar a consistência dos dados de entrada.
 - **Contratos (Interfaces)**: Interfaces `IJogoRepository` e `IBibliotecaRepository` para desacoplamento do banco de dados.
 
-#### 2. `Fcg.Catalogo.Application` (Aplicação)
+#### 2. `Fcg.Catalog.Application` (Aplicação)
 Orquestra os fluxos de dados e implementa os casos de uso usando **CQRS**:
 - **Commands & Queries**: Separados por contexto (`Biblioteca` e `Jogos`), representados como **C# records** para garantir imutabilidade.
 - **Handlers**: Processam as operações de gravação e leitura via `IRequestHandler` do MediatR.
 - **Event Handlers**: Estruturas de eventos preparadas para reagir a gatilhos externos (ex.: `PaymentProcessedEvent`).
 - **DTOs**: Estruturas de resposta para transferir dados de forma otimizada (ex.: `JogosResponse`, `PromocaoResponse`, `BibliotecaItemResponse`).
 
-#### 3. `Fcg.Catalogo.Infrastructure` (Infraestrutura)
+#### 3. `Fcg.Catalog.Infrastructure` (Infraestrutura)
 Lida com a comunicação técnica de persistência dos dados:
 - **Persistência (EF Core)**: Configuração do `ApplicationDbContext` que carrega mapeamentos explícitos como `JogoMapping`, `PromocaoMapping` e `BibliotecaMapping`.
 - **Repositórios Concretos**: Implementações das interfaces em `JogoRepository` (que gerencia o catálogo e aplica atualizações em lote de promoções expiradas) e `BibliotecaRepository`.
 
-#### 4. `Fcg.Catalogo.API` (Apresentação)
+#### 4. `Fcg.Catalog.API` (Apresentação)
 Host responsável por inicializar a API HTTP, configurar middlewares, injeção de dependências e expor endpoints de gerenciamento.
 
 ---
@@ -86,12 +86,12 @@ O microsserviço provê operações completas divididas nos contextos de catálo
 - Banco de dados SQL Server acessível.
 
 ### Configuração
-No arquivo `appsettings.json` (ou `appsettings.Development.json`) do projeto `Fcg.Catalogo.API`, configure a connection string para o banco de dados:
+No arquivo `appsettings.json` (ou `appsettings.Development.json`) do projeto `Fcg.Catalog.API`, configure a connection string para o banco de dados:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=SEU_SERVIDOR;Database=FcgCatalogoDb;Trusted_Connection=True;TrustServerCertificate=True;"
+    "DefaultConnection": "Server=SEU_SERVIDOR;Database=FcgCatalogDb;Trusted_Connection=True;TrustServerCertificate=True;"
   }
 }
 ```
@@ -107,12 +107,12 @@ dotnet build
 #### Aplicar migrações do Entity Framework Core:
 ```bash
 # Executar a partir da raiz do repositório
-dotnet ef database update --project src/Fcg.Catalogo.Infrastructure/ --startup-project src/Fcg.Catalogo.API/
+dotnet ef database update --project src/Fcg.Catalog.Infrastructure/ --startup-project src/Fcg.Catalog.API/
 ```
 
 #### Executar a API localmente:
 ```bash
-dotnet run --project src/Fcg.Catalogo.API/
+dotnet run --project src/Fcg.Catalog.API/
 ```
 
 ---
@@ -121,9 +121,9 @@ dotnet run --project src/Fcg.Catalogo.API/
 
 O projeto conta com suítes de testes estruturadas na pasta `/tests`:
 
-- **Fcg.Catalogo.Domain.Tests**: Testes para validação das regras de negócio do agregado de `Jogo`, `Promocao`, `Biblioteca` e Value Objects.
-- **Fcg.Catalogo.Application.Tests**: Valida a lógica de execução e respostas dos MediatR Handlers.
-- **Fcg.Catalogo.Infrastructure.Integration**: Testes de comunicação direta com o banco de dados e execução de queries.
+- **Fcg.Catalog.Domain.Tests**: Testes para validação das regras de negócio do agregado de `Jogo`, `Promocao`, `Biblioteca` e Value Objects.
+- **Fcg.Catalog.Application.Tests**: Valida a lógica de execução e respostas dos MediatR Handlers.
+- **Fcg.Catalog.Infrastructure.Integration**: Testes de comunicação direta com o banco de dados e execução de queries.
 
 Para rodar todos os testes da solução de forma unificada:
 ```bash

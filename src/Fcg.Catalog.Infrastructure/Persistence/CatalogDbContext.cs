@@ -1,0 +1,24 @@
+﻿using Fcg.Catalog.Domain.Entities;
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
+
+namespace Fcg.Catalog.Infrastructure.Persistence
+{
+    public class CatalogDbContext : DbContext
+    {
+        public CatalogDbContext(DbContextOptions<CatalogDbContext> options) :base(options){            
+        }
+        public DbSet<Biblioteca> Bibliotecas  { get; set; }
+        public DbSet<Jogo> Jogos { get; set; }
+        public DbSet<Promocao> Promocoes { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
+            modelBuilder.AddOutboxStateEntity();
+        }
+    }
+}
