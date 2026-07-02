@@ -22,9 +22,9 @@ namespace Fcg.Catalog.Domain.Entities
 
         public Order(Guid userId)
         {
-            this.UserId = userId;
+            UserId = userId;
             _games = new List<OrderGame>();
-            Status = OrderStatus.Rascunho;
+            Status = OrderStatus.Draft;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = CreatedAt;
             ValidateEntity();
@@ -37,7 +37,7 @@ namespace Fcg.Catalog.Domain.Entities
 
         public void AddItem(Guid gameId, string gameName, decimal gameAmount)
         {
-            if (Status != OrderStatus.Rascunho) throw new DomainException(DomainMessages.OrderGameNotDraft);
+            if (Status != OrderStatus.Draft) throw new DomainException(DomainMessages.OrderGameNotDraft);
             if (gameId == Guid.Empty) throw new DomainException(DomainMessages.GameNotFound);
             if (_games.Any(j => j.GameId == gameId)) throw new DomainException(DomainMessages.OrderGameAlreadyAdded);
 
@@ -46,9 +46,9 @@ namespace Fcg.Catalog.Domain.Entities
 
         public void FinalizeOrder()
         {
-            if (Status != OrderStatus.Rascunho) throw new DomainException(DomainMessages.OrderNotDraft);
+            if (Status != OrderStatus.Draft) throw new DomainException(DomainMessages.OrderNotDraft);
             if (!_games.Any()) throw new DomainException(DomainMessages.OrderWithoutGames);
-            Status = OrderStatus.Finalizado;
+            Status = OrderStatus.Completed;
             CalculateTotalAmount();
             UpdatedAt = DateTime.UtcNow;
         }

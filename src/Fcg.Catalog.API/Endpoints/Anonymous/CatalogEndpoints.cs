@@ -1,7 +1,6 @@
 ﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
-using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames;
 using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog;
-using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalogByGenre;
+using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames;
 using Fcg.Catalog.Domain.Enum;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,6 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
     {
         public static void MapCatalogEndpoints(this WebApplication app)
         {
-
             var group = app.MapGroup("/api/catalog/games").WithTags("Catálogo de Games").AllowAnonymous();
 
             group.MapGet("", GetAllGames)

@@ -44,7 +44,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
                 Name = "Novo Game",
                 Description = "Uma descrição super legal para o Game",
                 Price = 150.0m,
-                Genre = GameGenre.Estrategia
+                Genre = GameGenre.Strategy
             };
 
             _jogoRepositoryMock
@@ -72,7 +72,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
                 Name = "Game Duplicado",
                 Description = "Descrição",
                 Price = 50.0m,
-                Genre = GameGenre.Acao
+                Genre = GameGenre.Action
             };
 
             _jogoRepositoryMock

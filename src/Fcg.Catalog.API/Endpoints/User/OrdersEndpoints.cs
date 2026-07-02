@@ -9,7 +9,7 @@ namespace Fcg.Catalog.API.Endpoints.User
     {
         public static void MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/orders").RequireAuthorization("AcessoGeral").WithTags("Compra");
+            var group = app.MapGroup("/api/orders").RequireAuthorization("AcessoGeral").WithTags("Compras");
 
             group.MapPost("", PlaceOrder)
                 .Produces(StatusCodes.Status200OK)

@@ -23,12 +23,12 @@ namespace Fcg.Catalog.Domain.Entities
         }
 
 
-        public Game(Name GameName, Description GameDescription, Price precoJogo, GameGenre GameGenre)
+        public Game(Name gameName, Description gameDescription, Price priceGame, GameGenre gameGenre)
         {
-            Name = GameName;
-            Description = GameDescription;
-            BasePrice = precoJogo;
-            Genre = GameGenre;
+            Name = gameName;
+            Description = gameDescription;
+            BasePrice = priceGame;
+            Genre = gameGenre;
             IsActive = true;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = CreatedAt;
@@ -54,55 +54,55 @@ namespace Fcg.Catalog.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void Update(Name novoNome, Description novaDescricao, Price novoPreco, GameGenre novoGenero)
+        public void Update(Name newName, Description nemGameDescription, Price newPrice, GameGenre newGenre)
         {
             if (!IsActive) throw new DomainException(DomainMessages.GameIsDeactivated);
 
-            UpdateName(novoNome);
-            UpdateDescription(novaDescricao);
-            UpdatePrice(novoPreco);
-            UpdateGenre(novoGenero);
+            UpdateName(newName);
+            UpdateDescription(nemGameDescription);
+            UpdatePrice(newPrice);
+            UpdateGenre(newGenre);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private void UpdateGenre(GameGenre novoGenero)
+        private void UpdateGenre(GameGenre newGenre)
         {
-            AssertionConcern.AssertArgumentRange((int)novoGenero, 1, 20, DomainMessages.GameGenreInvalid);
-            if (Genre == novoGenero) return;
-            Genre = novoGenero;
+            AssertionConcern.AssertArgumentRange((int)newGenre, 1, 20, DomainMessages.GameGenreInvalid);
+            if (Genre == newGenre) return;
+            Genre = newGenre;
         }
 
-        private void UpdatePrice(Price novoPreco)
+        private void UpdatePrice(Price newPrice)
         {
-            if (BasePrice == novoPreco) return;
-            BasePrice = novoPreco;
+            if (BasePrice == newPrice) return;
+            BasePrice = newPrice;
         }
 
-        private void UpdateDescription(Description novaDescricao)
+        private void UpdateDescription(Description newGameDescription)
         {
-            AssertionConcern.AssertArgumentNotNull(novaDescricao, DomainMessages.GameDescriptionRequired);
-            if (Description == novaDescricao) return;
-            Description = novaDescricao;
+            AssertionConcern.AssertArgumentNotNull(newGameDescription, DomainMessages.GameDescriptionRequired);
+            if (Description == newGameDescription) return;
+            Description = newGameDescription;
         }
 
-        private void UpdateName(Name novoNome)
+        private void UpdateName(Name newName)
         {
-            AssertionConcern.AssertArgumentNotNull(novoNome, DomainMessages.GameNameRequired);
-            if (Name == novoNome) return;
-            Name = novoNome;
+            AssertionConcern.AssertArgumentNotNull(newName, DomainMessages.GameNameRequired);
+            if (Name == newName) return;
+            Name = newName;
         }
 
-        public void AddPromotion(Price valorPromocao, Period EndDate)
+        public void AddPromotion(Price promotionValue, Period endDate)
         {
-            if (valorPromocao.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
+            if (promotionValue.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
             foreach (var p in _promotions.Where(x => x.IsActive)) p.Deactivate();
-            _promotions.Add(new Promotion(Id, valorPromocao, EndDate));
+            _promotions.Add(new Promotion(Id, promotionValue, endDate));
             UpdatedAt = DateTime.UtcNow;
         }
-        public void UpdatePromotion(Guid PromotionId, Price novoPreco, DateTime novaDataFim)
+        public void UpdatePromotion(Guid promotionId, Price newPrice, DateTime newEndDate)
         {
-            if (novoPreco.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
-            foreach (var p in _promotions.Where(x => x.Id == PromotionId)) p.UpdatePromotion(novoPreco, novaDataFim);
+            if (newPrice.Amount >= BasePrice.Amount) throw new DomainException(DomainMessages.PromotionValueHigher);
+            foreach (var p in _promotions.Where(x => x.Id == promotionId)) p.UpdatePromotion(newPrice, newEndDate);
         }
         public Price GetCurrentPrice()
         {
@@ -112,9 +112,9 @@ namespace Fcg.Catalog.Domain.Entities
 
             return new Price(precoReferencia.Amount);
         }
-        public void DeactivatePromotion(Guid PromotionId)
+        public void DeactivatePromotion(Guid promotionId)
         {
-            var Promotion = _promotions.FirstOrDefault(x => x.Id == PromotionId);
+            var Promotion = _promotions.FirstOrDefault(x => x.Id == promotionId);
             if (Promotion == null) throw new DomainException(DomainMessages.PromotionNotFound);
             Promotion.Deactivate();
             UpdatedAt = DateTime.UtcNow;

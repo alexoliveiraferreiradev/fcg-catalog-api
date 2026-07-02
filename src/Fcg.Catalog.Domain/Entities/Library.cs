@@ -12,10 +12,10 @@ namespace Fcg.Catalog.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
         public bool IsActive { get; private set; }
 
-        public Library(Guid UserId, Guid GameId)
+        public Library(Guid userId, Guid gameId)
         {
-            UserId = UserId;
-            GameId = GameId;
+            UserId = userId;
+            GameId = gameId;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = CreatedAt;
             IsActive = true;

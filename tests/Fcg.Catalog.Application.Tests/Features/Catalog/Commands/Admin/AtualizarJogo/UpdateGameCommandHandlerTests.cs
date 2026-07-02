@@ -61,7 +61,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
                 NovoNome = "Game Novo",
                 NovaDescricao = "Nova Description longa",
                 NovoPreco = 120.00m,
-                NovoGenero = GameGenre.Acao
+                NovoGenero = GameGenre.Action
             };
 
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);

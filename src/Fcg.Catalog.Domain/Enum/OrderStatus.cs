@@ -2,8 +2,8 @@
 {
     public enum OrderStatus
     {
-        Rascunho = 1,
-        Finalizado = 2,
-        Cancelado = 3
+        Draft = 1,
+        Completed = 2,
+        Cancelled = 3
     }
 }
