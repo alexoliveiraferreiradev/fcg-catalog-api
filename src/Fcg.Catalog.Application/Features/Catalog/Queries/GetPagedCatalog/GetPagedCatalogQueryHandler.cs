@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
 {
-    public class GetPagedCatalogQueryHandler : IRequestHandler<GetPagedCatalogQuery, PagedResult<JogoResponse>>
+    public class GetPagedCatalogQueryHandler : IRequestHandler<GetPagedCatalogQuery, PagedResult<GameResponse>>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -19,29 +19,29 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             _cacheService = cacheService;
         }
 
-        public async Task<PagedResult<JogoResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<GameResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
         {
             string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
-            string p = request.ApenasPromovidos.GetValueOrDefault() ? "sim" : "nao";
+            string p = request.OnlyPromoted.GetValueOrDefault() ? "sim" : "nao";
 
-            var cacheKey = $"Catalog:pag:p{request.Pagina}:t{request.TamanhoPagina}:g_{g}:prom_{p}";
+            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.TamanhoPagina}:g_{g}:prom_{p}";
 
-            var catalogCache = await _cacheService.GetAsync<PagedResult<JogoResponse>>(cacheKey, cancellationToken);
+            var catalogCache = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
 
             if (catalogCache != null)
             {
                 return catalogCache;
             }
 
-            var offset = (request.Pagina - 1) * request.TamanhoPagina;
-            var apenasPromovidos = request.ApenasPromovidos ?? false;
+            var offset = (request.Page - 1) * request.TamanhoPagina;
+            var OnlyPromoted = request.OnlyPromoted ?? false;
             
             const string sql = @"            
             SELECT COUNT(1) 
             FROM Games j
             WHERE (@Genre IS NULL OR j.Genre = @Genre)
               AND (j.IsActive = 1)
-              AND (@ApenasPromovidos = 0 OR EXISTS (
+              AND (@OnlyPromoted = 0 OR EXISTS (
                   SELECT 1 FROM Promotions p 
                   WHERE p.GameId = j.Id 
                     AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
@@ -51,20 +51,20 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
                 j.Id,
                 j.Name,    
                 j.Description,
-                j.BasePrice AS PrecoOriginal,
+                j.BasePrice AS OriginalPrice,
                 COALESCE(
                     (SELECT TOP 1 p.ValorPromocao 
                      FROM Promotions p 
                      WHERE p.GameId = j.Id 
                        AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
                     j.BasePrice
-                ) AS PrecoAtual,
+                ) AS CurrentPrice,
                 j.Genre,
                 j.IsActive
             FROM Games j
             WHERE (@Genre IS NULL OR j.Genre = @Genre)
               AND (j.IsActive = 1)
-              AND (@ApenasPromovidos = 0 OR EXISTS (
+              AND (@OnlyPromoted = 0 OR EXISTS (
                   SELECT 1 FROM Promotions p 
                   WHERE p.GameId = j.Id 
                     AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
@@ -77,20 +77,20 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             using var multi = await _dbConnection.QueryMultipleAsync(sql, new
             {                
                 Genre = request.Genre.HasValue ? (int?)request.Genre.Value : null,
-                ApenasPromovidos = apenasPromovidos ? 1 : 0,
+                OnlyPromoted = OnlyPromoted ? 1 : 0,
                 Offset = offset,
                 TamanhoPagina = request.TamanhoPagina
             });
 
 
             var totalItems = await multi.ReadFirstAsync<int>();
-            var items = await multi.ReadAsync<JogoResponse>();
+            var items = await multi.ReadAsync<GameResponse>();
 
 
-            var CatalogPaginado = new PagedResult<JogoResponse>(
+            var CatalogPaginado = new PagedResult<GameResponse>(
                 items,
                 totalItems,
-                request.Pagina,
+                request.Page,
                 request.TamanhoPagina);
 
             if(CatalogPaginado.Items.Any())

@@ -6,7 +6,7 @@ using MediatR;
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalogByGenre
 {
     public record GetPagedCatalogByGenreQuery(
-        int Pagina = 1,
+        int Page = 1,
         int TamanhoPagina = 10,
-        GameGenre? Genre = null) : IRequest<PagedResult<JogoResponse>>;
+        GameGenre? Genre = null) : IRequest<PagedResult<GameResponse>>;
 }

@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Orders.Query.GetOrderHistory
 {
-    public record GetOrderHistoryQuery(Guid UserId) : IRequest<IEnumerable<PedidoHistoricoResponse>>;
+    public record GetOrderHistoryQuery(Guid UserId) : IRequest<IEnumerable<OrderHistoryResponse>>;
 }

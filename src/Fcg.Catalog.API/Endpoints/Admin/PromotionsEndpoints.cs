@@ -17,17 +17,17 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             var group = app.MapGroup("/api/admin/promotions").RequireAuthorization().WithTags("Gerenciamento de Promoções");
 
             group.MapGet("", GetPagedCatalogGamePromotion)
-                .Produces<JogoResponse>()
+                .Produces<GameResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
             group.MapGet("/{PromotionId:guid}", GetPromotionById)
-                .Produces<PromocaoResponse>()
+                .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound);
 
             group.MapPost("", CreatePromotion)
-                .Produces<PromocaoResponse>()
+                .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status201Created)
                 .Produces(StatusCodes.Status400BadRequest);
 
@@ -41,11 +41,11 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         private static async Task<IResult> GetPagedCatalogGamePromotion(
             [FromServices] ISender sender,
             CancellationToken cancellation,
-            [FromQuery] int pagina = 1,
-            [FromQuery] int tamanho = 10
+            [FromQuery] int Page = 1,
+            [FromQuery] int PageSize = 10
             )
         {
-            var query = new ObtemCatalogJogosPromovidosQuery(pagina, tamanho);
+            var query = new ObtemCatalogJogosPromovidosQuery(Page, PageSize);
             var response = await sender.Send(query, cancellation);
 
             if (response == null || !response.Items.Any())

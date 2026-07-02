@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame
 {
-    public class AddPromotionGameCommandHandler : IRequestHandler<AddPromotionGameCommand, PromocaoResponse>
+    public class AddPromotionGameCommandHandler : IRequestHandler<AddPromotionGameCommand, PromotionResponse>
     {
         private readonly IGameRepository _jogoRepository;
         private readonly ILogger<AddPromotionGameCommandHandler> _logger;
@@ -23,7 +23,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
             _logger = logger;
             _mediator = mediator;
         }
-        public async Task<PromocaoResponse> Handle(AddPromotionGameCommand request, CancellationToken cancellationToken)
+        public async Task<PromotionResponse> Handle(AddPromotionGameCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para Add promoção ao Game. GameId: {GameId}, Amount: {Amount}", request.GameId, request.PromotionValue);
 
@@ -51,11 +51,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
 
             await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
 
-            return new PromocaoResponse
+            return new PromotionResponse
             {
                 GameId = Game.Id,
-                DescricaoJogo = Game.Description.Value,
-                NomeJogo = Game.Name.Value,
+                GameDescription = Game.Description.Value,
+                GameName = Game.Name.Value,
                 PromotionId = novaPromocao.Id,
                 ValorPromocao = novaPromocao.ValorPromocao.Amount,
                 EndDate = novaPromocao.Period.EndDate,

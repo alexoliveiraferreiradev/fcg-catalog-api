@@ -35,12 +35,12 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
         private static async Task<IResult> GetAllGames(
             [FromServices] ISender sender,
             CancellationToken cancellationToken,
-            [FromQuery] int pagina = 1,
-            [FromQuery] int tamanho = 10)
+            [FromQuery] int Page = 1,
+            [FromQuery] int PageSize = 10)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
-            var query = new GetPagedCatalogQuery(pagina, tamanho);
+            var query = new GetPagedCatalogQuery(Page, PageSize);
             var response = await sender.Send(query,cancellationToken);
             if (response == null)
             {
@@ -53,15 +53,15 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromServices] ISender sender,
             [FromRoute] GameGenre Genre,
             CancellationToken cancellationToken,
-            [FromQuery] int pagina = 1,
-            [FromQuery] int tamanho = 10)
+            [FromQuery] int Page = 1,
+            [FromQuery] int PageSize = 10)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
             var query = new GetPagedCatalogByGenreQuery() with
             {
-                Pagina = pagina,
-                TamanhoPagina = tamanho,
+                Page = Page,
+                TamanhoPagina = PageSize,
                 Genre = Genre
             };
             var response = await sender.Send(query, cancellationToken);
@@ -75,16 +75,16 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
         private static async Task<IResult> GetGamesByPromotion(
             [FromServices] ISender sender,
             CancellationToken cancellationToken,
-            [FromQuery] int pagina = 1,
-            [FromQuery] int tamanho = 10)
+            [FromQuery] int Page = 1,
+            [FromQuery] int PageSize = 10)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
             var query = new ObtemCatalogJogosPromovidosQuery() with
             {
-                Pagina = pagina,
-                TamanhoPagina = tamanho,
-                ApenasPromovidos = true
+                Page = Page,
+                TamanhoPagina = PageSize,
+                OnlyPromoted = true
             };
             var response = await sender.Send(query, cancellationToken);
             if (response == null)

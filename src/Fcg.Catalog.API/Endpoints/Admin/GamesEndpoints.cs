@@ -18,17 +18,17 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Gerenciamento de Games");
 
             group.MapGet("/games/{GameId:guid}", GetGameById)
-             .Produces<JogoResponse>()
+             .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapGet("", GetAllGames)
-             .Produces<JogoResponse>()
+             .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapGet("", AddGame)
-             .Produces<JogoResponse>()
+             .Produces<GameResponse>()
              .Produces(StatusCodes.Status201Created)
              .Produces(StatusCodes.Status400BadRequest);
 
@@ -38,13 +38,13 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .Produces(StatusCodes.Status404NotFound); 
 
             group.MapPut("/{GameId:guid}", UpdateGame)
-             .Produces<JogoResponse>()
+             .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound);
 
             group.MapPut("/{GameId:guid}/activate", ReactiveGame)
-            .Produces<JogoResponse>()
+            .Produces<GameResponse>()
             .Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status404NotFound);

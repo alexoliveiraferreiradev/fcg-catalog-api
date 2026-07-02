@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
 {
-    public class AddGameCommandHandler : IRequestHandler<AddGameCommand, JogoResponse>
+    public class AddGameCommandHandler : IRequestHandler<AddGameCommand, GameResponse>
     {
         private readonly IGameRepository _jogoRepository;
         private readonly ILogger<AddGameCommandHandler> _logger;        
@@ -25,7 +25,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
             _logger = logger;            
             _mediator = mediator;
         }
-        public async Task<JogoResponse> Handle(AddGameCommand request, CancellationToken cancellationToken)
+        public async Task<GameResponse> Handle(AddGameCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para Add novo Game. Name: {Name}, Genre: {Genre}, Price: {Price}", request.Name, request.Genre, request.Price);
 
@@ -36,28 +36,28 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
                 throw new DomainException(DomainMessages.GameNameAlreadyExists);
             }
             var Price = new Price(request.Price);
-            var nomeJogo = new Name(request.Name);
-            var descricaoJogo = new Description(request.Description);
-            var Game = new Game(nomeJogo, descricaoJogo, Price, request.Genre);
+            var GameName = new Name(request.Name);
+            var GameDescription = new Description(request.Description);
+            var Game = new Game(GameName, GameDescription, Price, request.Genre);
             _jogoRepository.Add(Game);
            
             _logger.LogInformation("[CatalogAPI] Game adicionado com sucesso ao repositório. ID: {GameId}, Name: {Name}", Game.Id, request.Name);
 
             await _mediator.Publish(new GameAddedEvent(Game.Id),cancellationToken);
 
-            return new JogoResponse
+            return new GameResponse
             {
                 Id = Game.Id,
                 Name = Game.Name.Value,
                 Description = Game.Description.Value,
-                PrecoOriginal = Game.BasePrice.Amount,
+                OriginalPrice = Game.BasePrice.Amount,
                 Genre = Game.Genre
             };
         }
 
-        public async Task<bool> VerificaDuplicidadeNome(string nomeJogo)
+        public async Task<bool> VerificaDuplicidadeNome(string GameName)
         {
-            return await _jogoRepository.GameExistsWithName(nomeJogo);
+            return await _jogoRepository.GameExistsWithName(GameName);
         }
     }
 }

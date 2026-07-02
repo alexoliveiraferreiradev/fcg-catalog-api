@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames
 {
-    public class ObtemCatalogJogosPromovidosQueryHandler : IRequestHandler<ObtemCatalogJogosPromovidosQuery, PagedResult<JogoResponse>>
+    public class ObtemCatalogJogosPromovidosQueryHandler : IRequestHandler<ObtemCatalogJogosPromovidosQuery, PagedResult<GameResponse>>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -17,20 +17,20 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
             _dbConnection = dbConnection;
             _cacheService = cacheService;
         }
-        public async Task<PagedResult<JogoResponse>> Handle(ObtemCatalogJogosPromovidosQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<GameResponse>> Handle(ObtemCatalogJogosPromovidosQuery request, CancellationToken cancellationToken)
         {
             string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
-            string p = request.ApenasPromovidos.GetValueOrDefault() ? "sim" : "nao";
-            var cacheKey = $"Catalog:pag:p{request.Pagina}:t{request.TamanhoPagina}:prom_{p}:g_{g}";
+            string p = request.OnlyPromoted.GetValueOrDefault() ? "sim" : "nao";
+            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.TamanhoPagina}:prom_{p}:g_{g}";
 
-            var jogosEmCache = await _cacheService.GetAsync<PagedResult<JogoResponse>>(cacheKey, cancellationToken);
+            var jogosEmCache = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
 
             if(jogosEmCache != null)
             {
                 return jogosEmCache;
             }
 
-            var offset = (request.Pagina - 1) * request.TamanhoPagina;
+            var offset = (request.Page - 1) * request.TamanhoPagina;
 
             const string sql = @"
                 SELECT COUNT(1) 
@@ -47,11 +47,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
                     j.Id,
                     j.Name,    
                     j.Description,
-                    j.BasePrice AS PrecoOriginal,
+                    j.BasePrice AS OriginalPrice,
                     (SELECT TOP 1 p.ValorPromocao 
                      FROM Promotions p 
                      WHERE p.GameId = j.Id 
-                       AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate) AS PrecoAtual,
+                       AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate) AS CurrentPrice,
                     j.Genre,
                     j.IsActive
                 FROM Games j
@@ -74,12 +74,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
             });
 
             var totalItens = await multi.ReadFirstAsync<int>();
-            var itens = await multi.ReadAsync<JogoResponse>();
+            var itens = await multi.ReadAsync<GameResponse>();
 
-            var CatalogPaginado = new PagedResult<JogoResponse>(
+            var CatalogPaginado = new PagedResult<GameResponse>(
                 itens,
                 totalItens,
-                request.Pagina,
+                request.Page,
                 request.TamanhoPagina
             );
 

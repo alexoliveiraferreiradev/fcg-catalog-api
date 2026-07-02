@@ -57,7 +57,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
             // Assert
             response.Should().NotBeNull();
             response.Name.Should().Be(command.Name);
-            response.PrecoOriginal.Should().Be(command.Price);
+            response.OriginalPrice.Should().Be(command.Price);
 
             _jogoRepositoryMock.Verify(r => r.Add(It.Is<Game>(j => j.Name.Value == command.Name)), Times.Once);
             _mediatorMock.Verify(m => m.Publish(It.IsAny<GameAddedEvent>(), It.IsAny<CancellationToken>()), Times.Once);

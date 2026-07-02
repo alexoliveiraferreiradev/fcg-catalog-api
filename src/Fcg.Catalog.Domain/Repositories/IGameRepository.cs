@@ -7,7 +7,7 @@ namespace Fcg.Catalog.Domain.Repositories
     {
         void Add(Game Game);
         void Update(Game Game);
-        Task<bool> GameExistsWithName(string nomeJogo);
+        Task<bool> GameExistsWithName(string GameName);
         Task<Game?> GetById(Guid id);       
         Task<Promotion?> GetPromotionById(Guid id);        
         Task DeactivateInvalidPromotions();

@@ -1,14 +1,14 @@
 ﻿namespace Fcg.Catalog.Application.Features.Response
 {
-    public class PedidoItemResponse
+    public class OrderItemResponse
     {
         public Guid GameId { get; set; }
-        public string NomeJogo { get; set; }
-        public decimal PrecoOriginal { get; set; }
-        public decimal Desconto => PrecoOriginal - PrecoPago;
-        public decimal PrecoPago { get; set; }
+        public string GameName { get; set; }
+        public decimal OriginalPrice { get; set; }
+        public decimal Discount => OriginalPrice - PaidPrice;
+        public decimal PaidPrice { get; set; }
 
-        public PedidoItemResponse()
+        public OrderItemResponse()
         {
 
         }

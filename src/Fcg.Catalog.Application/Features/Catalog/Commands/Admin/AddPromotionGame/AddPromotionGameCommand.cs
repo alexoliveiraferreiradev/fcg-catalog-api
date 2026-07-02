@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame
 {
-    public record AddPromotionGameCommand : IRequest<PromocaoResponse>
+    public record AddPromotionGameCommand : IRequest<PromotionResponse>
     {
         public Guid GameId { get; init; }
         public decimal PromotionValue { get; init; }

@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Fcg.Catalog.Application.Features.Orders.Query.GetOrderHistory
 {
-    public class GetOrderHistoryQueryHandler : IRequestHandler<GetOrderHistoryQuery, IEnumerable<PedidoHistoricoResponse>>
+    public class GetOrderHistoryQueryHandler : IRequestHandler<GetOrderHistoryQuery, IEnumerable<OrderHistoryResponse>>
     {
-        public Task<IEnumerable<PedidoHistoricoResponse>> Handle(GetOrderHistoryQuery request, CancellationToken cancellationToken)
+        public Task<IEnumerable<OrderHistoryResponse>> Handle(GetOrderHistoryQuery request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -237,10 +237,10 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             Game.AddPromotion(precoPromocional, Period);
 
             // Act
-            var precoAtual = Game.GetCurrentPrice();
+            var CurrentPrice = Game.GetCurrentPrice();
 
             // Assert
-            Assert.Equal(precoPromocional.Amount, precoAtual.Amount);
+            Assert.Equal(precoPromocional.Amount, CurrentPrice.Amount);
         }
 
         [Fact]
@@ -250,10 +250,10 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
 
             // Act
-            var precoAtual = Game.GetCurrentPrice();
+            var CurrentPrice = Game.GetCurrentPrice();
 
             // Assert
-            Assert.Equal(Game.BasePrice.Amount, precoAtual.Amount);
+            Assert.Equal(Game.BasePrice.Amount, CurrentPrice.Amount);
         }
 
         [Fact]

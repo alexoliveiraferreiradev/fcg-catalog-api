@@ -36,9 +36,9 @@ namespace Fcg.Catalog.Infrastructure.Repository
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, false).SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
         }
 
-        public async Task<bool> GameExistsWithName(string nomeJogo)
+        public async Task<bool> GameExistsWithName(string GameName)
         {
-            return await _dbContext.Games.AnyAsync(x=>x.Name.Value.ToUpper().Equals(nomeJogo.ToUpper()));   
+            return await _dbContext.Games.AnyAsync(x=>x.Name.Value.ToUpper().Equals(GameName.ToUpper()));   
         }
 
         public async Task<Game?> GetById(Guid id)

@@ -23,10 +23,10 @@ namespace Fcg.Catalog.Domain.Entities
         }
 
 
-        public Game(Name nomeJogo, Description descricaoJogo, Price precoJogo, GameGenre GameGenre)
+        public Game(Name GameName, Description GameDescription, Price precoJogo, GameGenre GameGenre)
         {
-            Name = nomeJogo;
-            Description = descricaoJogo;
+            Name = GameName;
+            Description = GameDescription;
             BasePrice = precoJogo;
             Genre = GameGenre;
             IsActive = true;

@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
 {
-    public record GetPromotionByGameIdQuery(Guid PromotionId) :IRequest<PromocaoResponse>;
+    public record GetPromotionByGameIdQuery(Guid PromotionId) :IRequest<PromotionResponse>;
 }

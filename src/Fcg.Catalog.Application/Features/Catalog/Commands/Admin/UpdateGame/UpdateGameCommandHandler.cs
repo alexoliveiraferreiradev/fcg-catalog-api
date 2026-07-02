@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
 {
-    public class UpdateGameCommandHandler : IRequestHandler<UpdateGameCommand, JogoResponse>
+    public class UpdateGameCommandHandler : IRequestHandler<UpdateGameCommand, GameResponse>
     {
         private readonly IGameRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -30,7 +30,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
             _mediator = mediator;
         }
 
-        public async Task<JogoResponse> Handle(UpdateGameCommand request, CancellationToken cancellationToken)
+        public async Task<GameResponse> Handle(UpdateGameCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para Update Game. ID: {GameId}, NovoNome: {NovoNome}", request.GameId, request.NovoNome);
 
@@ -53,12 +53,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
 
             await _mediator.Publish(new GameUpdatedEvent(request.GameId), cancellationToken);
 
-            return new JogoResponse
+            return new GameResponse
             {
                 Id = Game.Id,
                 Name = Game.Name.Value,
                 Description = Game.Description.Value,
-                PrecoOriginal = Game.BasePrice.Amount,
+                OriginalPrice = Game.BasePrice.Amount,
                 Genre = Game.Genre,
                 IsActive = Game.IsActive
             };

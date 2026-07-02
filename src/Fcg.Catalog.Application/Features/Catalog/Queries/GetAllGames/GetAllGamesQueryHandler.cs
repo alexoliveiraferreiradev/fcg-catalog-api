@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
 {
-    public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, IEnumerable<JogoResponse>>
+    public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, IEnumerable<GameResponse>>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -17,11 +17,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
             _cacheService = cacheService;
         }
 
-        public async Task<IEnumerable<JogoResponse>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<GameResponse>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = "Catalog:todos";
 
-            var cachedCatalog = await _cacheService.GetAsync<IEnumerable<JogoResponse>>(cacheKey,cancellationToken);
+            var cachedCatalog = await _cacheService.GetAsync<IEnumerable<GameResponse>>(cacheKey,cancellationToken);
 
             if (cachedCatalog != null) {
                 return cachedCatalog;
@@ -32,19 +32,19 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
                 j.Id, 
                 j.Name, 
                 j.Description, 
-                j.BasePrice as PrecoOriginal,             
+                j.BasePrice as OriginalPrice,             
                     COALESCE(
                         (SELECT TOP 1 p.ValorPromocao 
                         FROM Promotions p 
                         WHERE p.GameId = j.Id 
                         AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
                         j.BasePrice
-                    ) as PrecoAtual,
+                    ) as CurrentPrice,
                 j.IsActive,
                 j.Genre
             FROM Games j ";
 
-            var Catalog = await _dbConnection.QueryAsync<JogoResponse>(sql);
+            var Catalog = await _dbConnection.QueryAsync<GameResponse>(sql);
 
             if (Catalog != null)
             {

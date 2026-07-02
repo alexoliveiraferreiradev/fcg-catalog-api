@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Fcg.Catalog.Application.Features.Response
 {
-    public record JogoFiltroRequest
+    public record GameFilterRequest
     {
-        public int Pagina { get; init; } = 1;
-        public int Tamanho { get; init; } = 10;
-        public string? Busca { get; init; }
+        public int Page { get; init; } = 1;
+        public int PageSize { get; init; } = 10;
+        public string? Search { get; init; }
         public GameGenre? Genre { get; init; }
-        public bool? ApenasPromovidos { get; init; }
+        public bool? OnlyPromoted { get; init; }
     }
 }

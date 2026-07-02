@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
 {
-    public record AddGameCommand : IRequest<JogoResponse>
+    public record AddGameCommand : IRequest<GameResponse>
     {
         public string Name { get; init; }
         public string Description { get; init; }

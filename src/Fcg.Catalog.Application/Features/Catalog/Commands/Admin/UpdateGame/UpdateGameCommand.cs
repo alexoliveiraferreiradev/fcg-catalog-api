@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
 {
-    public record UpdateGameCommand : IRequest<JogoResponse>
+    public record UpdateGameCommand : IRequest<GameResponse>
     {
         public Guid GameId { get; init; }
         public string NovoNome { get; init; }

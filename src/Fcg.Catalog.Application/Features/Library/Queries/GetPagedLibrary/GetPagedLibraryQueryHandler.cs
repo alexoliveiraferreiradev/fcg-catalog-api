@@ -17,14 +17,14 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
         }
         public async Task<PagedResult<BibliotecaItemResponse>> Handle(GetPagedLibraryQuery request, CancellationToken cancellationToken)
         {
-            var cachaKey= $"Library:u_{request.UserId}:p{request.Pagina}:t{request.TamanhoPagina}";
+            var cachaKey= $"Library:u_{request.UserId}:p{request.Page}:t{request.TamanhoPagina}";
             var bibliotecaEmCache = await _cacheService.GetAsync<PagedResult<BibliotecaItemResponse>>(cachaKey, cancellationToken);
             if (bibliotecaEmCache != null)
             {
                 return bibliotecaEmCache;
             }
 
-            var offset = (request.Pagina - 1) * request.TamanhoPagina;
+            var offset = (request.Page - 1) * request.TamanhoPagina;
 
             if (_dbConnection.State != ConnectionState.Open)
             {
@@ -38,7 +38,7 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
             
             SELECT 
                 b.GameId AS GameId,
-                j.Name AS NomeJogo,
+                j.Name AS GameName,
                 j.Description as Description,    
                 j.Genre AS Genre,
                 b.CreatedAt AS DataAquisicao
@@ -65,7 +65,7 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
 
             var bibliotecaPaginada = new PagedResult<BibliotecaItemResponse>(
                 items,
-                request.Pagina,
+                request.Page,
                 request.TamanhoPagina,
                 totalItems);
             

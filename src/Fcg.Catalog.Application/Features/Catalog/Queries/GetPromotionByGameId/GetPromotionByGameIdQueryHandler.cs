@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
 {
-    public class GetPromotionByGameIdQueryHandler : IRequestHandler<GetPromotionByGameIdQuery, PromocaoResponse>
+    public class GetPromotionByGameIdQueryHandler : IRequestHandler<GetPromotionByGameIdQuery, PromotionResponse>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -18,11 +18,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
             _cacheService = cacheService;
         }
 
-        public async Task<PromocaoResponse> Handle(GetPromotionByGameIdQuery request, CancellationToken cancellationToken)
+        public async Task<PromotionResponse> Handle(GetPromotionByGameIdQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = $"Catalog:Promotion:detalhes:{request.PromotionId}";
 
-            var cachedPromocao = await _cacheService.GetAsync<PromocaoResponse>(cacheKey, cancellationToken);
+            var cachedPromocao = await _cacheService.GetAsync<PromotionResponse>(cacheKey, cancellationToken);
 
             if (cachedPromocao != null)
             {
@@ -35,15 +35,15 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
                 p.Id AS PromotionId,
                 p.GameId,
                 p.ValorPromocao,
-                j.Name AS NomeJogo,
-                j.Description AS DescricaoJogo,
+                j.Name AS GameName,
+                j.Description AS GameDescription,
                 p.StartDate,
                 p.EndDate
             FROM Promotions p
             INNER JOIN Games j ON p.GameId = j.Id
             WHERE p.Id = @PromotionId;";
 
-            var promocaoDetalhe = await _dbConnection.QueryFirstOrDefaultAsync<PromocaoResponse>(sql, new { PromotionId = request.PromotionId });
+            var promocaoDetalhe = await _dbConnection.QueryFirstOrDefaultAsync<PromotionResponse>(sql, new { PromotionId = request.PromotionId });
 
             if(promocaoDetalhe != null)
             {
