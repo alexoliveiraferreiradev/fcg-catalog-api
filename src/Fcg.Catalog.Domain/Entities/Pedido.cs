@@ -27,10 +27,10 @@ namespace Fcg.Catalog.Domain.Entities
             Status = PedidoStatus.Rascunho;
             DataCadastro = DateTime.UtcNow;
             DataAlteracao = DataCadastro;
-            ValidarEntidade();
+            ValidateEntity();
         }
 
-        protected override void ValidarEntidade()
+        protected override void ValidateEntity()
         {
             if (UsuarioId == Guid.Empty) throw new DomainException(MensagensDominio.PedidoSemUsuario);
         }

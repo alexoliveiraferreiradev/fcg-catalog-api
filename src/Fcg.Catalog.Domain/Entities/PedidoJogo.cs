@@ -21,10 +21,10 @@ namespace Fcg.Catalog.Domain.Entities
             JogoId = jogoId;
             NomeJogo = nomeJogo;
             ValorJogo = valorJogo;
-            ValidarEntidade();
+            ValidateEntity();
         }
 
-        protected override void ValidarEntidade()
+        protected override void ValidateEntity()
         {
             AssertionConcern.AssertArgumentNotEmpty(PedidoId, MensagensDominio.PedidoSemUsuario); // Using an existing message or default
             AssertionConcern.AssertArgumentNotEmpty(JogoId, MensagensDominio.JogoNaoEncontrado);

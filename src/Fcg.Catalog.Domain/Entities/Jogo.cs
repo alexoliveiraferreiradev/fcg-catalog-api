@@ -32,10 +32,10 @@ namespace Fcg.Catalog.Domain.Entities
             Ativo = true;
             DataCadastro = DateTime.UtcNow;
             DataAlteracao = DataCadastro;
-            ValidarEntidade();
+            ValidateEntity();
         }
 
-        protected override void ValidarEntidade()
+        protected override void ValidateEntity()
         {
             AssertionConcern.AssertArgumentRange((int)Genero, 1, 20, MensagensDominio.JogoGeneroObrigatorio);
         }

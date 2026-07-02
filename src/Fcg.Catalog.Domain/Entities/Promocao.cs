@@ -15,7 +15,7 @@ namespace Fcg.Catalog.Domain.Entities
             Periodo = periodo;
             DataCadastro = DateTime.UtcNow;
             DataAlteracao = DataCadastro;
-            ValidarEntidade();
+            ValidateEntity();
         }
         protected Promocao() { }
         public Guid JogoId { get; private set; }
@@ -25,7 +25,7 @@ namespace Fcg.Catalog.Domain.Entities
         public Periodo Periodo { get; private set; }
         public DateTime DataAlteracao { get; private set; }
 
-        protected override void ValidarEntidade()
+        protected override void ValidateEntity()
         {
             if (JogoId == Guid.Empty) throw new DomainException(MensagensDominio.JogoNaoEncontrado);
             AssertionConcern.AssertArgumentNotNull(Periodo, MensagensDominio.PeriodoObrigatorio);

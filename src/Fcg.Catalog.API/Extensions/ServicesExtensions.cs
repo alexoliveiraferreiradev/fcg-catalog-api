@@ -117,8 +117,8 @@ namespace Fcg.Catalog.API.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateAudience = true,
                     ValidateIssuer = true,
-                    ValidIssuer = jwtSettings.Emissor,
-                    ValidAudience = jwtSettings.ValidoEm
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience
                 };
             });
             return builder;

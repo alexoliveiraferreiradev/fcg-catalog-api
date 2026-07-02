@@ -19,10 +19,10 @@ namespace Fcg.Catalog.Domain.Entities
             DataCadastro = DateTime.UtcNow;
             DataAlteracao = DataCadastro;
             Ativo = true;
-            ValidarEntidade();
+            ValidateEntity();
         }
 
-        protected override void ValidarEntidade()
+        protected override void ValidateEntity()
         {
             AssertionConcern.AssertArgumentNotEquals(UsuarioId, Guid.Empty, MensagensDominio.UsuarioNaoEncontrado);
             AssertionConcern.AssertArgumentNotEquals(JogoId, Guid.Empty, MensagensDominio.JogoNaoEncontrado);
