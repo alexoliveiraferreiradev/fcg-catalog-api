@@ -1,0 +1,50 @@
+using Fcg.Catalog.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
+{
+    public class PedidoMapping : IEntityTypeConfiguration<Order>
+    {
+        public void Configure(EntityTypeBuilder<Order> builder)
+        {
+            builder.ToTable("Orders");
+
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.UserId)
+                .IsRequired();
+
+            builder.Property(p => p.Status)
+                .HasConversion<int>()
+                .IsRequired();
+
+            builder.Property(p => p.CreatedAt)
+                .IsRequired();
+
+            builder.Property(p => p.UpdatedAt)
+                .IsRequired();
+
+            builder.OwnsOne(p => p.TotalAmount, Price =>
+            {
+                Price.Property(p => p.Amount)
+                    .HasColumnName("TotalAmount")
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+            });
+
+            builder.HasMany(p => p.Games)
+                .WithOne()
+                .HasForeignKey(pj => pj.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Metadata.FindNavigation(nameof(Order.Games))
+                ?.SetPropertyAccessMode(PropertyAccessMode.Field);
+        }
+    }
+}

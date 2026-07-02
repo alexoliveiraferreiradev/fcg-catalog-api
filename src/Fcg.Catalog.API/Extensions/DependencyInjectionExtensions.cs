@@ -23,8 +23,8 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddScoped<CatalogDbContext>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
-            builder.Services.AddScoped<IJogoRepository, JogoRepository>();
-            builder.Services.AddScoped<IBibliotecaRepository, BibliotecaRepository>();
+            builder.Services.AddScoped<IGameRepository, GameRepository>();
+            builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
             return builder;
         }
     }

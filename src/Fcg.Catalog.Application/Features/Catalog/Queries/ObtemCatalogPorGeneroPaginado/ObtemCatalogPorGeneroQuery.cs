@@ -8,5 +8,5 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.ObtemCatalogPorGenero
     public record ObtemCatalogPorGeneroQuery(
         int Pagina = 1,
         int TamanhoPagina = 10,
-        GeneroJogo? Genero = null) : IRequest<PagedResult<JogoResponse>>;
+        GameGenre? Genre = null) : IRequest<PagedResult<JogoResponse>>;
 }

@@ -20,7 +20,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.ObtemCatalogPorGenero
 
         public async Task<PagedResult<JogoResponse>> Handle(ObtemCatalogPorGeneroQuery request, CancellationToken cancellationToken)
         {
-            string g = request.Genero.HasValue ? request.Genero.Value.ToString() : "todos";
+            string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
             
             var cacheKey = $"Catalog:pag:p{request.Pagina}:t{request.TamanhoPagina}:g_{g}";
             
@@ -35,34 +35,34 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.ObtemCatalogPorGenero
 
             const string sql = @"
                 SELECT COUNT(1) 
-                FROM Jogos j
-                WHERE j.Ativo = 1
-                  AND (@Genero IS NULL OR j.Genero = @Genero);
+                FROM Games j
+                WHERE j.IsActive = 1
+                  AND (@Genre IS NULL OR j.Genre = @Genre);
 
                 SELECT 
                     j.Id,
-                    j.Nome,    
-                    j.Descricao,
-                    j.PrecoBase AS PrecoOriginal,
+                    j.Name,    
+                    j.Description,
+                    j.BasePrice AS PrecoOriginal,
                     COALESCE(
                         (SELECT TOP 1 p.ValorPromocao 
-                         FROM Promocoes p 
-                         WHERE p.JogoId = j.Id 
-                           AND GETUTCDATE() BETWEEN p.DataInicio AND p.DataFim), 
-                        j.PrecoBase
+                         FROM Promotions p 
+                         WHERE p.GameId = j.Id 
+                           AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
+                        j.BasePrice
                     ) AS PrecoAtual,
-                    j.Genero,
-                    j.Ativo
-                FROM Jogos j
-                WHERE j.Ativo = 1
-                  AND (@Genero IS NULL OR j.Genero = @Genero)
-                ORDER BY j.DataCadastro DESC
+                    j.Genre,
+                    j.IsActive
+                FROM Games j
+                WHERE j.IsActive = 1
+                  AND (@Genre IS NULL OR j.Genre = @Genre)
+                ORDER BY j.CreatedAt DESC
                 OFFSET @Offset ROWS 
                 FETCH NEXT @TamanhoPagina ROWS ONLY;";
 
             using var multi = await _dbConnection.QueryMultipleAsync(sql, new
             {
-                Genero = request.Genero.HasValue ? (int?)request.Genero.Value : null,
+                Genre = request.Genre.HasValue ? (int?)request.Genre.Value : null,
                 Offset = offset,
                 TamanhoPagina = request.TamanhoPagina
             });

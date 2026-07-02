@@ -8,10 +8,10 @@ namespace Fcg.Catalog.Infrastructure.Persistence
     {
         public CatalogDbContext(DbContextOptions<CatalogDbContext> options) :base(options){            
         }
-        public DbSet<Biblioteca> Bibliotecas  { get; set; }
-        public DbSet<Jogo> Jogos { get; set; }
-        public DbSet<Promocao> Promocoes { get; set; }
-        public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<Library> Libraries  { get; set; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<Order> Orders { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogDbContext).Assembly);

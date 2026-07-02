@@ -14,7 +14,7 @@ namespace Fcg.Catalog.API.Extensions
                 {
                     Title = "FIAP Cloud Games API",
                     Version = "v1",
-                    Description = "API para gestão de catálogo de jogos e processamento de pedidos.",
+                    Description = "API para gestão de catálogo de Games e processamento de Orders.",
                     Contact = new OpenApiContact
                     {
                         Name = "Alex Oliveira Ferreira"

@@ -28,7 +28,7 @@ namespace Fcg.Catalog.Infrastructure.Caching
             PropertyNameCaseInsensitive = true
         };
 
-        public async Task SetAsync<T>(string chave, T valor, TimeSpan tempoExpiracao, 
+        public async Task SetAsync<T>(string chave, T Amount, TimeSpan tempoExpiracao, 
             CancellationToken cancellationToken)
         {
             var options = new DistributedCacheEntryOptions
@@ -36,7 +36,7 @@ namespace Fcg.Catalog.Infrastructure.Caching
                 AbsoluteExpirationRelativeToNow = tempoExpiracao
             };
 
-            var jsonData = JsonSerializer.Serialize(valor);
+            var jsonData = JsonSerializer.Serialize(Amount);
             await _cache.SetStringAsync(chave, jsonData, options, cancellationToken);
         }
 

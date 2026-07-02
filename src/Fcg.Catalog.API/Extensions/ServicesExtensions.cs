@@ -23,9 +23,9 @@ namespace Fcg.Catalog.API.Extensions
             builder.AddDbContextExtension().AddMassTransitExtension()
                 .AddCQRSExtension().AddRedisExtension();
                         
-            SqlMapper.AddTypeHandler(new NomeTypeHandler());
-            SqlMapper.AddTypeHandler(new DescricaoTypeHandler());
-            SqlMapper.AddTypeHandler(new PrecoTypeHandler());
+            SqlMapper.AddTypeHandler(new NameTypeHandler());
+            SqlMapper.AddTypeHandler(new DescriptionTypeHandler());
+            SqlMapper.AddTypeHandler(new PriceTypeHandler());
 
             builder.AddJwtBearerExtension();
 
@@ -92,9 +92,9 @@ namespace Fcg.Catalog.API.Extensions
         {
             builder.Services.AddMediatR(cfg =>
             {
-                cfg.RegisterServicesFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(AddGameCommand).Assembly);
             });
-            builder.Services.AddValidatorsFromAssembly(typeof(AdicionarJogoCommand).Assembly);
+            builder.Services.AddValidatorsFromAssembly(typeof(AddGameCommand).Assembly);
             return builder;
         }
         public static WebApplicationBuilder AddJwtBearerExtension(this WebApplicationBuilder builder)
