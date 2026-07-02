@@ -33,7 +33,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
 
         public async Task<bool> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI]  Iniciando processamento do Order para o usuário: {UserId}", request.UserId);
+            _logger.LogInformation("[CatalogAPI]  Iniciando processamento do pedido para o usuário: {UsuarioId}", request.UserId);
 
             var Games = await _jogoRepository.GetGamesByIds(request.JogosIds);
             var idsEncontrados = Games.Select(j => j.Id);
@@ -43,7 +43,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             if (idsInexistentes.Any())
             {
                 var idsFormatados = string.Join(", ", idsInexistentes);
-                _logger.LogWarning("[CatalogAPI]  Order negado. Os seguintes Games não foram encontrados: {IdsInexistentes}", idsFormatados);
+                _logger.LogWarning("[CatalogAPI]  pedido negado. Os seguintes Jogos não foram encontrados: {IdsInexistentes}", idsFormatados);
                 throw new DomainException($"A compra foi cancelada. Os seguintes IDs de Games não foram encontrados no catálogo: {idsFormatados}");
             }
 
@@ -52,13 +52,13 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             {
                 if (jogosJaPossuidos.Contains(Game.Id))
                 {
-                    _logger.LogWarning("[CatalogAPI]  Order negado. Usuário {UserId} já possui o Game {GameId}", request.UserId, Game.Id);
+                    _logger.LogWarning("[CatalogAPI]  pedido negado. Usuário {UsuarioId} já possui o Jogo {JogoId}", request.UserId, Game.Id);
                     throw new DomainException($"O usuário já possui o Game {Game.Name.Value} em sua Library.");
                 }
 
                 if (!Game.IsActive)
                 {
-                    _logger.LogWarning("[CatalogAPI]  Order negado. Game {GameId} inativo", Game.Id);
+                    _logger.LogWarning("[CatalogAPI]  pedido negado. Jogo {JogoId} inativo", Game.Id);
                     throw new DomainException($"O Game {Game.Name.Value} não está mais disponível para aquisição.");
                 }
 
@@ -66,7 +66,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             }
 
             var orderId = Guid.NewGuid();
-            _logger.LogInformation("[CatalogAPI]  Validações concluídas. Publicando OrderPlacedEvent (OrderId: {OrderId}, Total: {PrecoTotal})", orderId, precoTotal);
+            _logger.LogInformation("[CatalogAPI]  Validações concluídas. Publicando OrderPlacedEvent (PedidoId: {PedidoId}, Total: {PrecoTotal})", orderId, precoTotal);
 
             await _publishEndpoint.Publish(new OrderPlacedEvent(
                 OrderId: orderId,
@@ -78,7 +78,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("[Orders] Processamento do Order {OrderId} Completed com sucesso.", orderId);
+            _logger.LogInformation("[Pedidos] Processamento do pedido {PedidoId} concluÃ­do com sucesso.", orderId);
             
             return true;
         }

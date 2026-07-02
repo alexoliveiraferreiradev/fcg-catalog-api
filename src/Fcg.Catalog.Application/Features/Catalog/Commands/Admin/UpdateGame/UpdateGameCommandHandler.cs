@@ -32,12 +32,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
 
         public async Task<GameResponse> Handle(UpdateGameCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para Update Game. ID: {GameId}, NovoNome: {NovoNome}", request.GameId, request.NovoNome);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar Jogo. ID: {JogoId}, NovoNome: {NovoNome}", request.GameId, request.NovoNome);
 
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Update Game. Game não encontrado. ID: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao atualizar Jogo. Jogo não encontrado. ID: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
@@ -49,7 +49,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
             _jogoRepository.Update(Game);
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("[CatalogAPI] Game atualizado com sucesso. ID: {GameId}", Game.Id);
+            _logger.LogInformation("[CatalogAPI] Jogo atualizado com sucesso. ID: {JogoId}", Game.Id);
 
             await _mediator.Publish(new GameUpdatedEvent(request.GameId), cancellationToken);
 

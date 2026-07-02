@@ -14,9 +14,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         {
         }
 
-        public AddPromotionGameCommand(Guid GameId, decimal promotionValue, DateTime StartDate, DateTime EndDate)
+        public AddPromotionGameCommand(Guid gameId, decimal promotionValue, DateTime startDate, DateTime endDate)
         {
-            this.GameId = GameId; PromotionValue = promotionValue; this.StartDate = StartDate; this.EndDate = EndDate;
+            GameId = gameId; PromotionValue = promotionValue; StartDate = startDate; EndDate = endDate;
         }
     }
 }

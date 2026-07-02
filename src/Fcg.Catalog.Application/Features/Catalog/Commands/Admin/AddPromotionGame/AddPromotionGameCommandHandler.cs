@@ -25,19 +25,19 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         }
         public async Task<PromotionResponse> Handle(AddPromotionGameCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para Add promoção ao Game. GameId: {GameId}, Amount: {Amount}", request.GameId, request.PromotionValue);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para adicionar promoção ao Jogo. JogoId: {JogoId}, Valor: {Valor}", request.GameId, request.PromotionValue);
 
             var Period = new Period(request.StartDate, request.EndDate);
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Add promoção. Game não encontrado. GameId: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao adicionar promoção. Jogo não encontrado. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
             if (Game.Promotions.Any())
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Add promoção. O Game já possui promoções registradas. GameId: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao adicionar promoção. O Jogo já possui promoções registradas. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameWithPromotions);
             }
 
@@ -47,7 +47,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
 
             var novaPromocao = Game.Promotions.First();
 
-            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. GameId: {GameId}, PromotionId: {PromotionId}, Amount: {Amount}", Game.Id, novaPromocao.Id, request.PromotionValue);
+            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, promoÃ§Ã£oId: {promoÃ§Ã£oId}, Valor: {Valor}", Game.Id, novaPromocao.Id, request.PromotionValue);
 
             await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
 

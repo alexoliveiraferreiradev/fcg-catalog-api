@@ -28,12 +28,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame
 
         public async Task Handle(ReactivateGameCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando reativação do Game. ID: {GameId}", request.GameId);
+            _logger.LogInformation("[CatalogAPI] Iniciando reativação do Jogo. ID: {JogoId}", request.GameId);
 
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Reactivate Game. Game não encontrado. ID: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao reativar Jogo. Jogo não encontrado. ID: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
@@ -43,7 +43,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame
 
             await _mediator.Publish(new GameReactivatedEvent(Game.Id), cancellationToken);   
 
-            _logger.LogInformation("[CatalogAPI] Game reativado com sucesso. ID: {GameId}", Game.Id);
+            _logger.LogInformation("[CatalogAPI] Jogo reativado com sucesso. ID: {JogoId}", Game.Id);
         }
     }
 }

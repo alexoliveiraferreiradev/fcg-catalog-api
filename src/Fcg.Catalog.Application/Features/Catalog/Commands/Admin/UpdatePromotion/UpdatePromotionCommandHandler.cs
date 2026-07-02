@@ -31,12 +31,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
 
         public async Task Handle(UpdatePromotionCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para Update promoção. PromotionId: {PromotionId}, GameId: {GameId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. promoÃ§Ã£oId: {promoÃ§Ã£oId}, JogoId: {JogoId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
 
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Update promoção. Game não encontrado. GameId: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao atualizar promoção. Jogo não encontrado. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
@@ -50,7 +50,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
                         
             await _mediator.Publish(new PromotionUpdatedEvent(Game.Id, novaPromocao.Id),cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromotionId: {PromotionId}, GameId: {GameId}", request.PromotionId, request.GameId);
+            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. promoÃ§Ã£oId: {promoÃ§Ã£oId}, JogoId: {JogoId}", request.PromotionId, request.GameId);
         }
     }
 }

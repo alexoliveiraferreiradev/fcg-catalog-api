@@ -29,12 +29,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame
 
         public async Task Handle(DeactivateGameCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando desativação de Game. ID: {GameId}", request.GameId);
+            _logger.LogInformation("[CatalogAPI] Iniciando desativação de Jogo. ID: {JogoId}", request.GameId);
 
             var Game = await _jogoRepository.GetById(request.GameId);
             if (Game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Deactivate Game. Game não encontrado. ID: {GameId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao desativar Jogo. Jogo não encontrado. ID: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
@@ -44,7 +44,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame
 
             await _mediator.Publish(new GameDeactivatedEvent(Game.Id), cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Game desativado com sucesso. ID: {GameId}", Game.Id);
+            _logger.LogInformation("[CatalogAPI] Jogo desativado com sucesso. ID: {JogoId}", Game.Id);
         }
     }
 }

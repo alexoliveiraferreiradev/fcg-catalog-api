@@ -27,12 +27,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         }
         public async Task<GameResponse> Handle(AddGameCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para Add novo Game. Name: {Name}, Genre: {Genre}, Price: {Price}", request.Name, request.Genre, request.Price);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para adicionar novo jogo. Nome jogo: {Nome}, Gênero: {Genre}, Preço: {Preco}", request.Name, request.Genre, request.Price);
 
             var nomeJaExistente = await CheckNameDuplicity(request.Name);
             if(nomeJaExistente)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao Add Game. Já existe um Game cadastrado com o Name: {Name}", request.Name);
+                _logger.LogWarning("[CatalogAPI] Falha ao adicionar novo jogo. Já existe um jogo cadastrado com o Nome: {Nome}", request.Name);
                 throw new DomainException(DomainMessages.GameNameAlreadyExists);
             }
             var Price = new Price(request.Price);
@@ -41,7 +41,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
             var Game = new Game(GameName, GameDescription, Price, request.Genre);
             _jogoRepository.Add(Game);
            
-            _logger.LogInformation("[CatalogAPI] Game adicionado com sucesso ao repositório. ID: {GameId}, Name: {Name}", Game.Id, request.Name);
+            _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", Game.Id, request.Name);
 
             await _mediator.Publish(new GameAddedEvent(Game.Id),cancellationToken);
 
