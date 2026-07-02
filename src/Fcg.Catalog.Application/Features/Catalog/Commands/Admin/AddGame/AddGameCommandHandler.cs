@@ -29,7 +29,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para Add novo Game. Name: {Name}, Genre: {Genre}, Price: {Price}", request.Name, request.Genre, request.Price);
 
-            var nomeJaExistente = await VerificaDuplicidadeNome(request.Name);
+            var nomeJaExistente = await CheckNameDuplicity(request.Name);
             if(nomeJaExistente)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao Add Game. Já existe um Game cadastrado com o Name: {Name}", request.Name);
@@ -55,7 +55,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
             };
         }
 
-        public async Task<bool> VerificaDuplicidadeNome(string GameName)
+        public async Task<bool> CheckNameDuplicity(string GameName)
         {
             return await _jogoRepository.GameExistsWithName(GameName);
         }

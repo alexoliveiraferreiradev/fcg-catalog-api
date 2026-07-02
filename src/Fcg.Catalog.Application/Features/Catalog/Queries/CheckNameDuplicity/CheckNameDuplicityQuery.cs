@@ -1,6 +1,6 @@
-﻿using MediatR;
+using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.CheckNameDuplicity
 {
-    public record VerificaDuplicidadeDoNomeQuery(string GameName) : IRequest<bool>;
+    public record CheckNameDuplicityQuery(string GameName) : IRequest<bool>;
 }

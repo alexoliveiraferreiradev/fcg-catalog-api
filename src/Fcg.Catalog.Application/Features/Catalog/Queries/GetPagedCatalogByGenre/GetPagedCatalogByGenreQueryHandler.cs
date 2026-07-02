@@ -22,16 +22,16 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalogByGenr
         {
             string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "todos";
             
-            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.TamanhoPagina}:g_{g}";
+            var cacheKey = $"Catalog:pag:p{request.Page}:t{request.PageSize}:g_{g}";
             
-            var CatalogCache = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey,cancellationToken);
+            var cachedCatalog = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey,cancellationToken);
 
-            if (CatalogCache != null)
+            if (cachedCatalog != null)
             {
-                return CatalogCache;
+                return cachedCatalog;
             }
 
-            var offset = (request.Page - 1) * request.TamanhoPagina;
+            var offset = (request.Page - 1) * request.PageSize;
 
             const string sql = @"
                 SELECT COUNT(1) 
@@ -58,33 +58,33 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalogByGenr
                   AND (@Genre IS NULL OR j.Genre = @Genre)
                 ORDER BY j.CreatedAt DESC
                 OFFSET @Offset ROWS 
-                FETCH NEXT @TamanhoPagina ROWS ONLY;";
+                FETCH NEXT @PageSize ROWS ONLY;";
 
             using var multi = await _dbConnection.QueryMultipleAsync(sql, new
             {
                 Genre = request.Genre.HasValue ? (int?)request.Genre.Value : null,
                 Offset = offset,
-                TamanhoPagina = request.TamanhoPagina
+                PageSize = request.PageSize
             });
 
             var totalItens = await multi.ReadFirstAsync<int>();
             var itens = await multi.ReadAsync<GameResponse>();
 
 
-            var CatalogPaginado = new PagedResult<GameResponse>(
+            var pagedCatalog = new PagedResult<GameResponse>(
                 itens,
                 totalItens,
                 request.Page,
-                request.TamanhoPagina
+                request.PageSize
             );
 
 
-            if (CatalogPaginado.Items.Any())
+            if (pagedCatalog.Items.Any())
             {
-                await _cacheService.SetAsync(cacheKey, CatalogPaginado, TimeSpan.FromMinutes(5), cancellationToken);
+                await _cacheService.SetAsync(cacheKey, pagedCatalog, TimeSpan.FromMinutes(5), cancellationToken);
             }
 
-            return CatalogPaginado;
+            return pagedCatalog;
         }
     }
 }

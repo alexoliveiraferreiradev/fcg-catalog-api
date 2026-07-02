@@ -7,6 +7,6 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalogByGenr
 {
     public record GetPagedCatalogByGenreQuery(
         int Page = 1,
-        int TamanhoPagina = 10,
+        int PageSize = 10,
         GameGenre? Genre = null) : IRequest<PagedResult<GameResponse>>;
 }

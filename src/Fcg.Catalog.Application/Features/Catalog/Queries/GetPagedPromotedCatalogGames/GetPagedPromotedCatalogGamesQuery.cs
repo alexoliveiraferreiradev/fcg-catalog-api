@@ -5,9 +5,9 @@ using MediatR;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames
 {
-    public record ObtemCatalogJogosPromovidosQuery(
+    public record GetPagedPromotedCatalogGamesQuery(
         int Page = 1,
-        int TamanhoPagina = 10,
+        int PageSize = 10,
         GameGenre? Genre = null,
         bool? OnlyPromoted = null) : IRequest<PagedResult<GameResponse>>;
 }

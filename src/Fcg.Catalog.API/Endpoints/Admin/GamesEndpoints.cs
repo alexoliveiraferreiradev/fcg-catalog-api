@@ -15,9 +15,9 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapGamesEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Gerenciamento de Games");
+            var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Admin - Gerenciamento de Games");
 
-            group.MapGet("/games/{GameId:guid}", GetGameById)
+            group.MapGet("/{GameId:guid}", GetGameById)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
@@ -27,7 +27,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound);
 
-            group.MapGet("", AddGame)
+            group.MapPost("", AddGame)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status201Created)
              .Produces(StatusCodes.Status400BadRequest);

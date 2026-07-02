@@ -17,14 +17,14 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
         }
         public async Task<PagedResult<BibliotecaItemResponse>> Handle(GetPagedLibraryQuery request, CancellationToken cancellationToken)
         {
-            var cachaKey= $"Library:u_{request.UserId}:p{request.Page}:t{request.TamanhoPagina}";
+            var cachaKey= $"Library:u_{request.UserId}:p{request.Page}:t{request.PageSize}";
             var bibliotecaEmCache = await _cacheService.GetAsync<PagedResult<BibliotecaItemResponse>>(cachaKey, cancellationToken);
             if (bibliotecaEmCache != null)
             {
                 return bibliotecaEmCache;
             }
 
-            var offset = (request.Page - 1) * request.TamanhoPagina;
+            var offset = (request.Page - 1) * request.PageSize;
 
             if (_dbConnection.State != ConnectionState.Open)
             {
@@ -47,14 +47,14 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
             WHERE b.UserId = @UserId AND b.IsActive = 1
             ORDER BY b.CreatedAt DESC
             OFFSET @Offset ROWS 
-            FETCH NEXT @TamanhoPagina ROWS ONLY;";
+            FETCH NEXT @PageSize ROWS ONLY;";
 
             
             using var multi = await _dbConnection.QueryMultipleAsync(sql, new
             {
                 UserId = request.UserId,
                 Offset = offset,
-                TamanhoPagina = request.TamanhoPagina
+                PageSize = request.PageSize
             });
 
             
@@ -66,7 +66,7 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
             var bibliotecaPaginada = new PagedResult<BibliotecaItemResponse>(
                 items,
                 request.Page,
-                request.TamanhoPagina,
+                request.PageSize,
                 totalItems);
             
             if(bibliotecaPaginada.Items.Any())

@@ -14,7 +14,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapPromotionsEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization().WithTags("Gerenciamento de Promoções");
+            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization().WithTags("Admin - Gerenciamento de Promoções");
 
             group.MapGet("", GetPagedCatalogGamePromotion)
                 .Produces<GameResponse>()
@@ -45,7 +45,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             [FromQuery] int PageSize = 10
             )
         {
-            var query = new ObtemCatalogJogosPromovidosQuery(Page, PageSize);
+            var query = new GetPagedPromotedCatalogGamesQuery(Page, PageSize);
             var response = await sender.Send(query, cancellation);
 
             if (response == null || !response.Items.Any())
