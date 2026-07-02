@@ -12,15 +12,13 @@ namespace Fcg.Catalog.API.Consumers
     public class PaymentProcessedEventConsumer : IConsumer<PaymentProcessedEvent>
     {
         private readonly ILibraryRepository _bibliotecaRepository;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly ILogger<PaymentProcessedEventConsumer> _logger;
         
         public PaymentProcessedEventConsumer(ILibraryRepository LibraryRepository,
-            IUnitOfWork unitOfWork, IMediator mediator, ILogger<PaymentProcessedEventConsumer> logger)
+            IMediator mediator, ILogger<PaymentProcessedEventConsumer> logger)
         {
             _bibliotecaRepository = LibraryRepository;
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
             _logger = logger;
         }
@@ -40,9 +38,6 @@ namespace Fcg.Catalog.API.Consumers
 
                      _bibliotecaRepository.Add(Library);
                 }
-                
-                await _unitOfWork.CommitAsync();
-
                 await _mediator.Publish(new LibraryEvent(Order.UserId));
                 
                 _logger.LogInformation("[CatalogAPI] Publicado LibraryEvent para o Usuário: {UserId}", Order.UserId);
