@@ -8,6 +8,7 @@ using Fcg.Catalog.Application.Features.Catalog.Queries.GetGameById;
 using Fcg.Catalog.Application.Features.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Fcg.Catalog.API.Filters;
 
 namespace Fcg.Catalog.API.Endpoints.Admin
 {
@@ -34,9 +35,10 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithName("AdminGetAllGames");
 
             group.MapPost("", AddGame)
+             .AddEndpointFilter<ValidationFilter<AddGameCommand>>()
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status201Created)
-             .Produces(StatusCodes.Status400BadRequest)
+             .ProducesValidationProblem()
              .WithSummary("Cadastra um novo game.")
              .WithDescription("Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status.")
              .WithName("AdminAddGame");
@@ -50,9 +52,10 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithName("AdminDeactivateGame"); 
 
             group.MapPut("/{GameId:guid}", UpdateGame)
+             .AddEndpointFilter<ValidationFilter<UpdateGameCommand>>()
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
-             .Produces(StatusCodes.Status400BadRequest)
+             .ProducesValidationProblem()
              .Produces(StatusCodes.Status404NotFound)
              .WithSummary("Atualiza os dados de um game.")
              .WithDescription("Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição).")

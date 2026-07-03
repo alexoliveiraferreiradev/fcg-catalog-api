@@ -2,6 +2,7 @@ using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Fcg.Catalog.API.Filters;
 
 namespace Fcg.Catalog.API.Endpoints.User
 {
@@ -12,8 +13,9 @@ namespace Fcg.Catalog.API.Endpoints.User
             var group = app.MapGroup("/api/orders").RequireAuthorization("GeneralAccess").WithTags("Compras");
 
             group.MapPost("", PlaceOrder)
+                .AddEndpointFilter<ValidationFilter<PlaceOrderCommand>>()
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status400BadRequest)
+                .ProducesValidationProblem()
                 .Produces(StatusCodes.Status401Unauthorized)
                 .Produces(StatusCodes.Status404NotFound)
                 .WithSummary("Realiza a compra de um game.")

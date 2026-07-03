@@ -6,6 +6,7 @@ using Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId;
 using Fcg.Catalog.Application.Features.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Fcg.Catalog.API.Filters;
 
 
 namespace Fcg.Catalog.API.Endpoints.Admin
@@ -33,9 +34,10 @@ namespace Fcg.Catalog.API.Endpoints.Admin
                 .WithName("AdminGetPromotionById");
 
             group.MapPost("", CreatePromotion)
+                .AddEndpointFilter<ValidationFilter<AddPromotionGameCommand>>()
                 .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status201Created)
-                .Produces(StatusCodes.Status400BadRequest)
+                .ProducesValidationProblem()
                 .WithSummary("Cria uma nova promoção para um game.")
                 .WithDescription("Cadastra uma nova promoção associada a um game, aplicando um percentual de desconto com datas de início e término.")
                 .WithName("AdminCreatePromotion");
