@@ -27,11 +27,8 @@ namespace Fcg.Catalog.API.Extensions
         public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
         {
             builder.AddDbContextExtension().AddMassTransitExtension()
-                .AddCQRSExtension().AddRedisExtension();
-                        
-           
-
-            builder.AddJwtBearerExtension();
+                .AddCQRSExtension().AddRedisExtension()
+                .AddJwtBearerExtension();                                 
 
             builder.Services.AddAuthorization(options =>
             {
@@ -88,7 +85,8 @@ namespace Fcg.Catalog.API.Extensions
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
+                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));                    
                     cfg.ReceiveEndpoint("catalog-payment-processed-queue", e =>
                     {
                         e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);

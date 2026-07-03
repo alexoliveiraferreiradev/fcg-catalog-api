@@ -1,4 +1,4 @@
-﻿
+
 using Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +34,13 @@ namespace Fcg.Catalog.API.Endpoints.User
                 }
 
                 return Results.Ok(response);
-            });
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithSummary("Lista a biblioteca de games do usuário autenticado.")
+            .WithDescription("Retorna a lista paginada de games adquiridos pelo próprio usuário autenticado. O ID do usuário é obtido de forma segura diretamente a partir das claims do token JWT.")
+            .WithName("GetUserLibrary");
         }
     }
 }

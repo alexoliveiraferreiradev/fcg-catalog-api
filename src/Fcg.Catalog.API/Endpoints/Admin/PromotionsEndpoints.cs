@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivatePromotion;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
 using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames;
@@ -19,21 +19,33 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             group.MapGet("", GetPagedCatalogGamePromotion)
                 .Produces<GameResponse>()
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Lista promoções de games de forma paginada.")
+                .WithDescription("Retorna a lista de promoções de games de forma paginada contendo informações sobre percentual de desconto e validade.")
+                .WithName("AdminGetPagedCatalogGamePromotion");
 
             group.MapGet("/{PromotionId:guid}", GetPromotionById)
                 .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Obtém uma promoção por ID.")
+                .WithDescription("Busca os detalhes de uma promoção específica a partir do seu identificador único (GUID).")
+                .WithName("AdminGetPromotionById");
 
             group.MapPost("", CreatePromotion)
                 .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status201Created)
-                .Produces(StatusCodes.Status400BadRequest);
+                .Produces(StatusCodes.Status400BadRequest)
+                .WithSummary("Cria uma nova promoção para um game.")
+                .WithDescription("Cadastra uma nova promoção associada a um game, aplicando um percentual de desconto com datas de início e término.")
+                .WithName("AdminCreatePromotion");
 
             group.MapPut("/{PromotionId:guid}/deactivate", DeactivatePromotion)
                 .Produces(StatusCodes.Status204NoContent)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Desativa uma promoção existente.")
+                .WithDescription("Desativa uma promoção de forma lógica antes do seu prazo de expiração.")
+                .WithName("AdminDeactivatePromotion");
 
         }
 

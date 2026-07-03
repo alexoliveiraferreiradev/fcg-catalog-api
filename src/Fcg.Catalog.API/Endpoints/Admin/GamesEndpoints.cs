@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
@@ -20,34 +20,52 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             group.MapGet("/{GameId:guid}", GetGameById)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
-             .Produces(StatusCodes.Status404NotFound);
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Obtém um game por ID para o administrador.")
+             .WithDescription("Busca um game específico pelo seu identificador único (GUID) e retorna seus detalhes cadastrais completos.")
+             .WithName("AdminGetGameById");
 
             group.MapGet("", GetAllGames)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
-             .Produces(StatusCodes.Status404NotFound);
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Lista todos os games cadastrados.")
+             .WithDescription("Retorna a lista completa de todos os games cadastrados no catálogo, incluindo os ativos e inativos.")
+             .WithName("AdminGetAllGames");
 
             group.MapPost("", AddGame)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status201Created)
-             .Produces(StatusCodes.Status400BadRequest);
+             .Produces(StatusCodes.Status400BadRequest)
+             .WithSummary("Cadastra um novo game.")
+             .WithDescription("Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status.")
+             .WithName("AdminAddGame");
 
             group.MapPut("/{GameId:guid}/deactivate", DeactiveGame)
              .Produces(StatusCodes.Status204NoContent)
              .Produces(StatusCodes.Status400BadRequest)
-             .Produces(StatusCodes.Status404NotFound); 
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Desativa um game no catálogo.")
+             .WithDescription("Realiza a desativação lógica de um game pelo seu ID, impedindo novas compras e sua exibição no catálogo público.")
+             .WithName("AdminDeactivateGame"); 
 
             group.MapPut("/{GameId:guid}", UpdateGame)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
-             .Produces(StatusCodes.Status404NotFound);
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Atualiza os dados de um game.")
+             .WithDescription("Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição).")
+             .WithName("AdminUpdateGame");
 
             group.MapPut("/{GameId:guid}/activate", ReactiveGame)
-            .Produces<GameResponse>()
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status200OK)
+             .Produces(StatusCodes.Status400BadRequest)
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Reativa um game desativado.")
+             .WithDescription("Restaura o status ativo de um game desativado anteriormente, tornando-o novamente disponível no catálogo público.")
+             .WithName("AdminReactivateGame");
         }
 
 

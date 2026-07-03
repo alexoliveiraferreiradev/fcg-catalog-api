@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
 using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog;
 using Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames;
 using Fcg.Catalog.Domain.Enum;
@@ -15,11 +15,17 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
 
             group.MapGet("", GetAllGames)
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);         
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Lista os games ativos do catálogo.")
+                .WithDescription("Retorna uma lista paginada de todos os games ativos no catálogo, contendo título, gênero e preço original ou promocional. Permite filtro por gênero.")
+                .WithName("GetCatalogGames");         
 
             group.MapGet("/promoted", GetGamesByPromotion)
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound);
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Lista os games em promoção ativa.")
+                .WithDescription("Retorna uma lista paginada de todos os games ativos que possuem uma promoção em vigência no momento, permitindo filtro opcional por gênero.")
+                .WithName("GetPromotedCatalogGames");
 
         }
 
