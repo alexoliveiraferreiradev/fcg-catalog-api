@@ -1,8 +1,7 @@
 ﻿using Dapper;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Repositories;
-using Fcg.Catalog.Infrastructure.Persistence;
-using Fcg.Core.Abstractions.Common;
+using Fcg.Catalog.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalog.Infrastructure.Repository

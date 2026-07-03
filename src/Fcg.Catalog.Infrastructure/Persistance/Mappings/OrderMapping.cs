@@ -1,13 +1,8 @@
 using Fcg.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
+namespace Fcg.Catalog.Infrastructure.Persistance.Mappings
 {
     public class PedidoMapping : IEntityTypeConfiguration<Order>
     {

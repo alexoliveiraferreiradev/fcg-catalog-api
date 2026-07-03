@@ -1,6 +1,6 @@
 ﻿using Fcg.Core.Abstractions.Interfaces;
 
-namespace Fcg.Catalog.Infrastructure.Persistence
+namespace Fcg.Catalog.Infrastructure.Persistance
 {
     public class UnitOfWork : IUnitOfWork
     {

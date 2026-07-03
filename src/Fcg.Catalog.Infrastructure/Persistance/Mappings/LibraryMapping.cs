@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
+namespace Fcg.Catalog.Infrastructure.Persistance.Mappings
 {
     public class BibliotecaMapping : IEntityTypeConfiguration<UserLibrary>
     {

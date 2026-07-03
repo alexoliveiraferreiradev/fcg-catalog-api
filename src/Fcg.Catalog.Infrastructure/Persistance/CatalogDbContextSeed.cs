@@ -3,7 +3,7 @@ using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fcg.Catalog.Infrastructure.Persistence
+namespace Fcg.Catalog.Infrastructure.Persistance
 {
     public static class CatalogDbContextSeed
     {        
