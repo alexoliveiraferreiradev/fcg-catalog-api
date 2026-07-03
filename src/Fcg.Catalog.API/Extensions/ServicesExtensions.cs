@@ -5,7 +5,7 @@ using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
 using Fcg.Catalog.Infrastructure.DapperHandlers;
-using Fcg.Catalog.Infrastructure.Persistance;
+using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Catalog.Infrastructure.Repository;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;

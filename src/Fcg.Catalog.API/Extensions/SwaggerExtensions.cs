@@ -38,6 +38,7 @@ namespace Fcg.Catalog.API.Extensions
                 }
 
                 options.SchemaFilter<EnumSchemaFilter>();
+                options.DocumentFilter<OrderTagsDocumentFilter>();
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

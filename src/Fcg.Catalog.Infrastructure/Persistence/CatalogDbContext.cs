@@ -2,7 +2,7 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fcg.Catalog.Infrastructure.Persistance
+namespace Fcg.Catalog.Infrastructure.Persistence
 {
     public class CatalogDbContext : DbContext
     {

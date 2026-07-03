@@ -29,7 +29,6 @@ namespace Fcg.Catalog.API.Extensions
             app.UseSerilogRequestLogging();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
-            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHttpsRedirection();

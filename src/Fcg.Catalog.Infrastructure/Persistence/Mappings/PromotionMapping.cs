@@ -3,7 +3,7 @@ using Fcg.Catalog.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Fcg.Catalog.Infrastructure.Persistance.Mappings
+namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
     public class PromocaoMapping : IEntityTypeConfiguration<Promotion>
     {

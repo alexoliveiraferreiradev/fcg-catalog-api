@@ -2,7 +2,7 @@ using Fcg.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Fcg.Catalog.Infrastructure.Persistance.Mappings
+namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
     public class JogoMapping : IEntityTypeConfiguration<Game>
     {
