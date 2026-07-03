@@ -1,12 +1,11 @@
-﻿using Dapper;
+using Dapper;
 using Fcg.Catalog.API.Consumers;
 using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
-using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
 using Fcg.Catalog.Infrastructure.DapperHandlers;
-using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Catalog.Infrastructure.Persistance;
 using Fcg.Catalog.Infrastructure.Repository;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;
@@ -15,6 +14,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using StackExchange.Redis;
 using System.Data;
 using System.Text;
@@ -26,9 +26,15 @@ namespace Fcg.Catalog.API.Extensions
 
         public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
         {
-            builder.AddDbContextExtension().AddMassTransitExtension()
-                .AddCQRSExtension().AddRedisExtension()
+            builder.JsonExtensions()
+                .AddSerilogExtension()
+                .AddDbContextExtension()
+                .AddMassTransitExtension()
+                .AddCQRSExtension()
+                .AddRedisExtension()
                 .AddJwtBearerExtension();                                 
+
+           
 
             builder.Services.AddAuthorization(options =>
             {
@@ -45,7 +51,31 @@ namespace Fcg.Catalog.API.Extensions
 
             return builder;
         }
-        
+
+        private static WebApplicationBuilder JsonExtensions(this WebApplicationBuilder builder)
+        {
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
+
+            builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
+            return builder;
+        }
+        private static WebApplicationBuilder AddSerilogExtension(this WebApplicationBuilder builder)
+        {            
+            builder.Logging.ClearProviders();
+            builder.Host.UseSerilog((context, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(context.Configuration);
+            });
+
+            return builder;
+        }
+
         private static WebApplicationBuilder AddDbContextExtension(this WebApplicationBuilder builder)
         {
             var connectionString = builder.Configuration.GetConnectionString("CatalogConnection");

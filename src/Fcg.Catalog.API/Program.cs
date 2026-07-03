@@ -1,4 +1,5 @@
 ﻿using Fcg.Catalog.API.Extensions;
+using Fcg.Core.WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
