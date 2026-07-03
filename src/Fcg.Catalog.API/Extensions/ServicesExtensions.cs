@@ -1,10 +1,14 @@
 ﻿using Dapper;
 using Fcg.Catalog.API.Consumers;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Events;
+using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
 using Fcg.Catalog.Infrastructure.DapperHandlers;
 using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Catalog.Infrastructure.Repository;
+using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;
 using FluentValidation;
 using MassTransit;
@@ -12,20 +16,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using System.Data;
 using System.Text;
 
 namespace Fcg.Catalog.API.Extensions
 {
     public static class ServicesExtensions
     {
+
         public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
         {
             builder.AddDbContextExtension().AddMassTransitExtension()
                 .AddCQRSExtension().AddRedisExtension();
                         
-            SqlMapper.AddTypeHandler(new NameTypeHandler());
-            SqlMapper.AddTypeHandler(new DescriptionTypeHandler());
-            SqlMapper.AddTypeHandler(new PriceTypeHandler());
+           
 
             builder.AddJwtBearerExtension();
 
@@ -33,13 +37,19 @@ namespace Fcg.Catalog.API.Extensions
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("AdminRole"));
 
-                options.AddPolicy("AcessoGeral", policy => policy.RequireRole("AdminRole", "JogadorRole"));
+                options.AddPolicy("GeneralAccess", policy => policy.RequireRole("AdminRole", "PlayerRole"));
             });
+
+            builder.AddDependencyInjection();
+
+            SqlMapper.AddTypeHandler(new NameTypeHandler());
+            SqlMapper.AddTypeHandler(new DescriptionTypeHandler());
+            SqlMapper.AddTypeHandler(new PriceTypeHandler());
 
             return builder;
         }
         
-        public static WebApplicationBuilder AddDbContextExtension(this WebApplicationBuilder builder)
+        private static WebApplicationBuilder AddDbContextExtension(this WebApplicationBuilder builder)
         {
             var connectionString = builder.Configuration.GetConnectionString("CatalogConnection");
             builder.Services.AddDbContext<CatalogDbContext>(options =>
@@ -49,7 +59,7 @@ namespace Fcg.Catalog.API.Extensions
             return builder;
         }
 
-        public static WebApplicationBuilder AddRedisExtension(this WebApplicationBuilder builder)
+        private static WebApplicationBuilder AddRedisExtension(this WebApplicationBuilder builder)
         {
             var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisOptions>();
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -65,7 +75,7 @@ namespace Fcg.Catalog.API.Extensions
 
             return builder;
         }
-        public static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
+        private static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
         {
             builder.Services.AddMassTransit(x =>
             {
@@ -88,7 +98,7 @@ namespace Fcg.Catalog.API.Extensions
 
             return builder;
         }
-        public static WebApplicationBuilder AddCQRSExtension(this WebApplicationBuilder builder)
+        private static WebApplicationBuilder AddCQRSExtension(this WebApplicationBuilder builder)
         {
             builder.Services.AddMediatR(cfg =>
             {
@@ -97,7 +107,7 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddValidatorsFromAssembly(typeof(AddGameCommand).Assembly);
             return builder;
         }
-        public static WebApplicationBuilder AddJwtBearerExtension(this WebApplicationBuilder builder)
+        private static WebApplicationBuilder AddJwtBearerExtension(this WebApplicationBuilder builder)
         {
             var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
             builder.Services.Configure<JwtSettings>(jwtSettingsSection);
@@ -121,6 +131,23 @@ namespace Fcg.Catalog.API.Extensions
                     ValidAudience = jwtSettings.Audience
                 };
             });
+            return builder;
+        }
+
+        private static WebApplicationBuilder AddDependencyInjection(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = builder.Configuration.GetSection("Redis:Configuration").Value;
+                options.InstanceName = builder.Configuration.GetSection("Redis:InstanceName").Value;
+            });
+
+            builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());
+            builder.Services.AddScoped<CatalogDbContext>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<ICacheService, RedisCacheService>();
+            builder.Services.AddScoped<IGameRepository, GameRepository>();
+            builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
             return builder;
         }
     }

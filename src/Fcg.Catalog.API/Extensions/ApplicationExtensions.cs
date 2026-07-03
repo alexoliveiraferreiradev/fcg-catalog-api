@@ -1,8 +1,10 @@
-﻿using Fcg.Catalog.Infrastructure.Persistence;
+﻿using Fcg.Catalog.API.Middleware;
+using Fcg.Catalog.Infrastructure.Persistence;
+using Serilog;
 
 namespace Fcg.Catalog.API.Extensions
 {
-    public static class SeedDataExtensions
+    public static class ApplicationExtensions
     {
         public async static Task<WebApplication> SeedData(this WebApplication app)
         {
@@ -20,6 +22,17 @@ namespace Fcg.Catalog.API.Extensions
                     logger.LogError(ex, "Ocorreu um erro ao alimentar o banco de dados inicial.");
                 }
             }
+            return app;
+        }
+        public static WebApplication AddAppConfiguration(this WebApplication app)
+        {
+            app.UseSerilogRequestLogging();
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseRouting();
+            app.UseCors();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseHttpsRedirection();
             return app;
         }
     }
