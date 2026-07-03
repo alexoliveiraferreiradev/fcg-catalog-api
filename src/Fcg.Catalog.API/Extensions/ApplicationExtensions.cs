@@ -1,5 +1,5 @@
-﻿using Fcg.Catalog.API.Middleware;
 using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Core.WebApi.Middleware;
 using Serilog;
 
 namespace Fcg.Catalog.API.Extensions
