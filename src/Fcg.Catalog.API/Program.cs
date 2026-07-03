@@ -3,13 +3,12 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddOpenApiExtension()
-    .AddServicesExtensions()
-    .AddDependencyInjection();
+    .AddServicesExtensions();
 
 var app = builder.Build();
 await app.SeedData();
 
-app.UseSecurityMiddlewares()
+app.AddAppConfiguration()
     .UseSwaggerDocumentation()
     .MapEndpoints();
 
