@@ -112,7 +112,10 @@ namespace Fcg.Catalog.API.Extensions
                     o.UseSqlServer();
                     o.UseBusOutbox();
                 });
-
+                x.AddConfigureEndpointsCallback((context, name, cfg) =>
+                {
+                    cfg.UseEntityFrameworkOutbox<CatalogDbContext>(context);
+                });
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
