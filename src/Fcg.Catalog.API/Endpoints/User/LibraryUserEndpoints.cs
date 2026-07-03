@@ -10,7 +10,7 @@ namespace Fcg.Catalog.API.Endpoints.User
     {
         public static void MapLibraryUserEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/library").RequireAuthorization("AcessoGeral").WithTags("Biblioteca do Usuário");
+            var group = app.MapGroup("/api/library").RequireAuthorization("GeneralAccess").WithTags("Biblioteca do Usuário");
 
             group.MapGet("",
                 async ([FromServices] ISender mediator,
