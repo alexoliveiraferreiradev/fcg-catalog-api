@@ -25,7 +25,7 @@ namespace Fcg.Catalog.API.Endpoints.User
 
         private static async Task<IResult> PlaceOrder(
             [FromServices] ISender sender,
-            [FromBody] PlaceOrderCommand PlaceOrderCommand,
+            [FromBody] IEnumerable<Guid> JogosIds,
             CancellationToken cancellationToken,
             ClaimsPrincipal user)
         {
@@ -36,16 +36,11 @@ namespace Fcg.Catalog.API.Endpoints.User
                 return Results.Unauthorized();
             }
 
-            var UserId = Guid.Parse(currentUserIdClaim);
+            var userId = Guid.Parse(currentUserIdClaim);
 
-            var pedidoJogoCommand = PlaceOrderCommand with
-            {
-                UserId = UserId,
-                NomeUsuario = user.FindFirstValue(ClaimTypes.Name),
-                EmailUsuario = user.FindFirstValue(ClaimTypes.Email),
-            };
+            var orderCommand = new PlaceOrderCommand(userId, user.FindFirstValue(ClaimTypes.Name), user.FindFirstValue(ClaimTypes.Email), JogosIds);
 
-            var response = await sender.Send(pedidoJogoCommand);
+            var response = await sender.Send(orderCommand);
 
             if(!response)
                 return Results.BadRequest();
