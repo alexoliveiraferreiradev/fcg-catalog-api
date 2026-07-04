@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
 using Fcg.Core.Abstractions.Common;
@@ -34,7 +34,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             }
 
             var offset = (request.Page - 1) * request.PageSize;
-            var OnlyPromoted = request.OnlyPromoted ?? false;
+            var onlyPromoted = request.OnlyPromoted ?? false;
             
             const string sql = @"            
             SELECT COUNT(1) 
@@ -77,7 +77,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             using var multi = await _dbConnection.QueryMultipleAsync(sql, new
             {                
                 Genre = request.Genre.HasValue ? (int?)request.Genre.Value : null,
-                OnlyPromoted = OnlyPromoted ? 1 : 0,
+                OnlyPromoted = onlyPromoted ? 1 : 0,
                 Offset = offset,
                 PageSize = request.PageSize
             });
@@ -87,11 +87,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             var items = await multi.ReadAsync<GameResponse>();
 
 
-            var pagedCatalog = new PagedResult<GameResponse>(
-                items,
-                totalItems,
-                request.Page,
-                request.PageSize);
+            var pagedCatalog = new PagedResult<GameResponse>(items,request.Page, request.PageSize,totalItems);
 
             if(pagedCatalog.Items.Any())
             {
