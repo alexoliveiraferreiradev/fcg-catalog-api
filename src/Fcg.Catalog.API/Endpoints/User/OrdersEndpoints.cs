@@ -25,7 +25,7 @@ namespace Fcg.Catalog.API.Endpoints.User
 
         private static async Task<IResult> PlaceOrder(
             [FromServices] ISender sender,
-            [FromBody] IEnumerable<Guid> JogosIds,
+            [FromBody] IEnumerable<Guid> jogosIds,
             CancellationToken cancellationToken,
             ClaimsPrincipal user)
         {
@@ -38,7 +38,7 @@ namespace Fcg.Catalog.API.Endpoints.User
 
             var userId = Guid.Parse(currentUserIdClaim);
 
-            var orderCommand = new PlaceOrderCommand(userId, user.FindFirstValue(ClaimTypes.Name), user.FindFirstValue(ClaimTypes.Email), JogosIds);
+            var orderCommand = new PlaceOrderCommand(userId, user.FindFirstValue(ClaimTypes.Name), user.FindFirstValue(ClaimTypes.Email), jogosIds);
 
             var response = await sender.Send(orderCommand);
 
