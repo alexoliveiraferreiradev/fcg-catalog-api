@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Repositories;
+using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.MessageContracts;
@@ -6,6 +6,7 @@ using MassTransit;
 using MediatR;
 using System.IO.Pipes;
 using Microsoft.Extensions.Logging;
+using Fcg.Catalog.Domain.Entities;
 
 namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
 {
@@ -16,17 +17,20 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
         private readonly ILibraryRepository _bibliotecaRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PlaceOrderCommandHandler> _logger;
+        private readonly IOrderRepository _orderRepository;
 
         public PlaceOrderCommandHandler(
-            IGameRepository GameRepository, 
+            IGameRepository gameRepository, 
             IPublishEndpoint publishEndpoint, 
-            ILibraryRepository LibraryRepository,
+            ILibraryRepository libraryRepository,
             IUnitOfWork unitOfWork,
+            IOrderRepository orderRepository,
             ILogger<PlaceOrderCommandHandler> logger)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _publishEndpoint = publishEndpoint;
-            _bibliotecaRepository = LibraryRepository;   
+            _bibliotecaRepository = libraryRepository;
+            _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
@@ -34,9 +38,9 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
         public async Task<bool> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[CatalogAPI]  Iniciando processamento do pedido para o usuário: {UsuarioId}", request.UserId);
-
-            var Games = await _jogoRepository.GetGamesByIds(request.JogosIds);
-            var idsEncontrados = Games.Select(j => j.Id);
+            var orderUser = new Order(request.UserId);
+            var games = await _jogoRepository.GetGamesByIds(request.JogosIds);
+            var idsEncontrados = games.Select(j => j.Id);
             var idsInexistentes = request.JogosIds.Except(idsEncontrados);
             var jogosJaPossuidos = await _bibliotecaRepository.GetPurchasedGamesByUser(request.UserId);
 
@@ -48,28 +52,32 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             }
 
             decimal precoTotal = 0;
-            foreach (var Game in Games)
+            foreach (var game in games)
             {
-                if (jogosJaPossuidos.Contains(Game.Id))
+                if (jogosJaPossuidos.Contains(game.Id))
                 {
-                    _logger.LogWarning("[CatalogAPI]  pedido negado. Usuário {UsuarioId} já possui o Jogo {JogoId}", request.UserId, Game.Id);
-                    throw new DomainException($"O usuário já possui o Game {Game.Name.Value} em sua Library.");
+                    _logger.LogWarning("[CatalogAPI]  pedido negado. Usuário {UsuarioId} já possui o Jogo {JogoId}", request.UserId, game.Id);
+                    throw new DomainException($"O usuário já possui o Game {game.Name.Value} em sua Library.");
                 }
 
-                if (!Game.IsActive)
+                if (!game.IsActive)
                 {
-                    _logger.LogWarning("[CatalogAPI]  pedido negado. Jogo {JogoId} inativo", Game.Id);
-                    throw new DomainException($"O Game {Game.Name.Value} não está mais disponível para aquisição.");
+                    _logger.LogWarning("[CatalogAPI]  pedido negado. Jogo {JogoId} inativo", game.Id);
+                    throw new DomainException($"O Game {game.Name.Value} não está mais disponível para aquisição.");
                 }
 
-                precoTotal += Game.GetCurrentPrice().Amount;
+                precoTotal += game.GetCurrentPrice().Amount;
+                orderUser.AddItem(game.Id, game.Name.Value, game.BasePrice.Amount);
             }
 
-            var orderId = Guid.NewGuid();
-            _logger.LogInformation("[CatalogAPI]  Validações concluídas. Publicando OrderPlacedEvent (PedidoId: {PedidoId}, Total: {PrecoTotal})", orderId, precoTotal);
+            orderUser.MakeOrder();
+
+            _orderRepository.Add(orderUser);    
+            
+            _logger.LogInformation("[CatalogAPI]  Validações concluídas. Publicando OrderPlacedEvent (PedidoId: {PedidoId}, Total: {PrecoTotal})", orderUser.Id, precoTotal);
 
             await _publishEndpoint.Publish(new OrderPlacedEvent(
-                OrderId: orderId,
+                OrderId: orderUser.Id,
                 UserId: request.UserId,
                 EmailUsuario: request.EmailUsuario,
                 NomeUsuario: request.NomeUsuario,
@@ -78,7 +86,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("[Pedidos] Processamento do pedido {PedidoId} concluÃ­do com sucesso.", orderId);
+            _logger.LogInformation("[Pedidos] Processamento do pedido {PedidoId} concluÃ­do com sucesso.", orderUser.Id);
             
             return true;
         }
