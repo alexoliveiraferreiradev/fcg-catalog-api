@@ -76,12 +76,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
             var totalItens = await multi.ReadFirstAsync<int>();
             var itens = await multi.ReadAsync<GameResponse>();
 
-            var pagedCatalog = new PagedResult<GameResponse>(
-                itens,
-                totalItens,
-                request.Page,
-                request.PageSize
-            );
+            var pagedCatalog = new PagedResult<GameResponse>(itens, request.Page, request.PageSize, totalItens);
 
 
             if (pagedCatalog.Items.Any())

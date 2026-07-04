@@ -34,12 +34,12 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromServices] ISender sender,
             CancellationToken cancellationToken,
             [FromQuery] GameGenre? genre,
-            [FromQuery] int Page = 1,
-            [FromQuery] int PageSize = 10)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
-            var query = new GetPagedCatalogQuery(Page, PageSize,genre);
+            var query = new GetPagedCatalogQuery(page, pageSize,genre);
             var response = await sender.Send(query,cancellationToken);
             if (response == null)
             {
@@ -52,15 +52,15 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             [FromServices] ISender sender,
             [FromQuery] GameGenre? genre,
             CancellationToken cancellationToken,
-            [FromQuery] int Page = 1,
-            [FromQuery] int PageSize = 10)
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
             var query = new GetPagedPromotedCatalogGamesQuery() with
             {
-                Page = Page,
-                PageSize = PageSize,
+                Page = page,
+                PageSize = pageSize,
                 Genre = genre,
                 OnlyPromoted = true
             };
