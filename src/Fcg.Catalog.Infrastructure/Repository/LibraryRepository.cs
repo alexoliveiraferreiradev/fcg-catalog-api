@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
@@ -14,21 +14,21 @@ namespace Fcg.Catalog.Infrastructure.Repository
         {
             _dbContext = dbContext;
         }
-        public void Add(UserLibrary Library)
+        public void Add(UserLibrary library)
         {            
-            _dbContext.Libraries.Add(Library);
+            _dbContext.Libraries.Add(library);
         }
 
-        public void Update(UserLibrary Library)
+        public void Update(UserLibrary library)
         {
-            _dbContext.Update(Library);
+            _dbContext.Update(library);
         }
 
-        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid UserId)
+        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId)
         {
             var connecetion = _dbContext.Database.GetDbConnection();
             const string sql = @"SELECT GameId FROM Libraries WHERE UserId = @UserId AND IsActive = 1";
-            return await connecetion.QueryAsync<Guid>(sql, new { UserId = UserId });
+            return await connecetion.QueryAsync<Guid>(sql, new { UserId = userId });
         }
 
         public async Task<UserLibrary?> GetById(Guid id)
@@ -36,9 +36,9 @@ namespace Fcg.Catalog.Infrastructure.Repository
            return await _dbContext.Libraries.Where(x=>x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<bool> CheckIfUserOwnsGame(Guid UserId, Guid GameId)
+        public async Task<bool> CheckIfUserOwnsGame(Guid userId, Guid gameId)
         {
-            return await _dbContext.Libraries.AnyAsync(x => x.UserId == UserId && x.GameId == GameId && x.IsActive);
+            return await _dbContext.Libraries.AnyAsync(x => x.UserId == userId && x.GameId == gameId && x.IsActive);
         }
 
 
