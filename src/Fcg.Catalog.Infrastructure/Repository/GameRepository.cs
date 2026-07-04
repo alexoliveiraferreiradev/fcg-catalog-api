@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
@@ -15,14 +15,14 @@ namespace Fcg.Catalog.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
-        public void Add(Game Game)
+        public void Add(Game game)
         {
-            _dbContext.Games.Add(Game);
+            _dbContext.Games.Add(game);
         }
 
-        public void Update(Game Game)
+        public void Update(Game game)
         {
-            _dbContext.Update(Game);
+            _dbContext.Update(game);
         }
 
         public async Task DeactivateInvalidPromotions()
@@ -34,9 +34,9 @@ namespace Fcg.Catalog.Infrastructure.Repository
                 .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, false).SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
         }
 
-        public async Task<bool> GameExistsWithName(string GameName)
+        public async Task<bool> GameExistsWithName(string gameName)
         {
-            return await _dbContext.Games.AnyAsync(x=>x.Name.Value.ToUpper().Equals(GameName.ToUpper()));   
+            return await _dbContext.Games.AnyAsync(x=>x.Name.Value.ToUpper().Equals(gameName.ToUpper()));   
         }
 
         public async Task<Game?> GetById(Guid id)
@@ -46,10 +46,10 @@ namespace Fcg.Catalog.Infrastructure.Repository
 
         public async Task<Promotion?> GetPromotionById(Guid id)
         {
-            var Game = await _dbContext.Games.Include(j => j.Promotions)
+            var game = await _dbContext.Games.Include(j => j.Promotions)
                 .FirstOrDefaultAsync(j => j.Promotions.Any(p => p.Id == id));
 
-            return Game?.Promotions.FirstOrDefault(p => p.Id == id);
+            return game?.Promotions.FirstOrDefault(p => p.Id == id);
         }
 
         public async Task<IEnumerable<Game>> GetGamesByIds(IEnumerable<Guid> jogosIds)
