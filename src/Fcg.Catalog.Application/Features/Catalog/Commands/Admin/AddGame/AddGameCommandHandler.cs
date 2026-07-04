@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Response;
+using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
@@ -16,10 +16,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         private readonly ILogger<AddGameCommandHandler> _logger;        
         private readonly IMediator _mediator;
 
-        public AddGameCommandHandler(IGameRepository GameRepository, ILogger<AddGameCommandHandler> logger,
+        public AddGameCommandHandler(IGameRepository gameRepository, ILogger<AddGameCommandHandler> logger,
              IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _logger = logger;            
             _mediator = mediator;
         }
@@ -33,29 +33,29 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
                 _logger.LogWarning("[CatalogAPI] Falha ao adicionar novo jogo. Já existe um jogo cadastrado com o Nome: {Nome}", request.Name);
                 throw new DomainException(DomainMessages.GameNameAlreadyExists);
             }
-            var Price = new Price(request.Price);
-            var GameName = new Name(request.Name);
-            var GameDescription = new Description(request.Description);
-            var Game = new Game(GameName, GameDescription, Price, request.Genre);
-            _jogoRepository.Add(Game);
+            var price = new Price(request.Price);
+            var gameName = new Name(request.Name);
+            var gameDescription = new Description(request.Description);
+            var game = new Game(gameName, gameDescription, price, request.Genre);
+            _jogoRepository.Add(game);
            
-            _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", Game.Id, request.Name);
+            _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", game.Id, request.Name);
 
-            await _mediator.Publish(new GameAddedEvent(Game.Id),cancellationToken);
+            await _mediator.Publish(new GameAddedEvent(game.Id),cancellationToken);
 
             return new GameResponse
             {
-                Id = Game.Id,
-                Name = Game.Name.Value,
-                Description = Game.Description.Value,
-                OriginalPrice = Game.BasePrice.Amount,
-                Genre = Game.Genre
+                Id = game.Id,
+                Name = game.Name.Value,
+                Description = game.Description.Value,
+                OriginalPrice = game.BasePrice.Amount,
+                Genre = game.Genre
             };
         }
 
-        public async Task<bool> CheckNameDuplicity(string GameName)
+        public async Task<bool> CheckNameDuplicity(string gameName)
         {
-            return await _jogoRepository.GameExistsWithName(GameName);
+            return await _jogoRepository.GameExistsWithName(gameName);
         }
     }
 }
