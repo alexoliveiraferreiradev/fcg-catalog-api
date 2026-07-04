@@ -6,7 +6,6 @@ namespace Fcg.Catalog.Domain.Repositories
     {
         void Add(Order order);
         void Update(Order order);
-
         Task<Order> GetOrderById(Guid orderId);
     }
 }

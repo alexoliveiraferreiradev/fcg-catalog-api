@@ -9,5 +9,5 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
         int Page = 1,
         int PageSize = 10,
         GameGenre? Genre = null,
-        bool? OnlyPromoted = null) : IRequest<PagedResult<GameResponse>>;
+        bool? OnlyPromoted = null) : IRequest<PagedResult<GameUserResponse>>;
 }

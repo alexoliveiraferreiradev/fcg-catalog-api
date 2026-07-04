@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
 {
-    public class GetPagedCatalogQueryHandler : IRequestHandler<GetPagedCatalogQuery, PagedResult<GameResponse>>
+    public class GetPagedCatalogQueryHandler : IRequestHandler<GetPagedCatalogQuery, PagedResult<GameUserResponse>>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -19,14 +19,14 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
             _cacheService = cacheService;
         }
 
-        public async Task<PagedResult<GameResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<GameUserResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
         {
             string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "genres";
             string p = request.OnlyPromoted.GetValueOrDefault() ? "yes" : "no";
 
             var cacheKey = $"catalog:pag:p{request.Page}:t{request.PageSize}:g_{g}:prom_{p}";
 
-            var cachedCatalog = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
+            var cachedCatalog = await _cacheService.GetAsync<PagedResult<GameUserResponse>>(cacheKey, cancellationToken);
 
             if (cachedCatalog != null)
             {
@@ -84,10 +84,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
 
 
             var totalItems = await multi.ReadFirstAsync<int>();
-            var items = await multi.ReadAsync<GameResponse>();
+            var items = await multi.ReadAsync<GameUserResponse>();
 
 
-            var pagedCatalog = new PagedResult<GameResponse>(items,request.Page, request.PageSize,totalItems);
+            var pagedCatalog = new PagedResult<GameUserResponse>(items,request.Page, request.PageSize,totalItems);
 
             if(pagedCatalog.Items.Any())
             {

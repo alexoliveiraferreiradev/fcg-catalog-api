@@ -107,6 +107,7 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddMassTransit(x =>
             {
                 x.AddConsumer<PaymentProcessedEventConsumer>();
+                x.AddConsumer<PaymentFailedEventConsumer>();
                 x.AddEntityFrameworkOutbox<CatalogDbContext>(o =>
                 {
                     o.UseSqlServer();
@@ -119,7 +120,11 @@ namespace Fcg.Catalog.API.Extensions
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));                    
+                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
+                    cfg.ReceiveEndpoint("catalog-payment-failed-queue", e =>
+                    {
+                        e.ConfigureConsumer<PaymentFailedEventConsumer>(context);
+                    });
                     cfg.ReceiveEndpoint("catalog-payment-processed-queue", e =>
                     {
                         e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);

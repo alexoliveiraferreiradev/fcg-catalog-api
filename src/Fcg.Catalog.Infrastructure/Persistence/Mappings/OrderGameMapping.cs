@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
-    public class PedidoJogoMapping : IEntityTypeConfiguration<OrderGame>
+    public class OrderGameMapping : IEntityTypeConfiguration<OrderGame>
     {
         public void Configure(EntityTypeBuilder<OrderGame> builder)
         {
-            builder.ToTable("PedidosJogo");
+            builder.ToTable("OrderGames");
 
             builder.HasKey(pj => pj.Id);
 

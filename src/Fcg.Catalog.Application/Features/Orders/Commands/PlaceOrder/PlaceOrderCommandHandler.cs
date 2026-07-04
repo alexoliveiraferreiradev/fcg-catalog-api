@@ -86,7 +86,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             
             await _unitOfWork.CommitAsync();
 
-            _logger.LogInformation("[Pedidos] Processamento do pedido {PedidoId} concluÃ­do com sucesso.", orderUser.Id);
+            _logger.LogInformation("[Pedidos] Processamento do pedido {PedidoId} concluído com sucesso.", orderUser.Id);
             
             return true;
         }

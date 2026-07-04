@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
-    public class PromocaoMapping : IEntityTypeConfiguration<Promotion>
+    public class PromotionMapping : IEntityTypeConfiguration<Promotion>
     {
         public void Configure(EntityTypeBuilder<Promotion> builder)
         {

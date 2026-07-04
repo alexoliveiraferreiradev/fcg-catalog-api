@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatalogGames
 {
-    public class GetPagedPromotedCatalogGamesQueryHandler : IRequestHandler<GetPagedPromotedCatalogGamesQuery, PagedResult<GameResponse>>
+    public class GetPagedPromotedCatalogGamesQueryHandler : IRequestHandler<GetPagedPromotedCatalogGamesQuery, PagedResult<GamePromotionResponse>>
     {
         private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
@@ -17,13 +17,13 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
             _dbConnection = dbConnection;
             _cacheService = cacheService;
         }
-        public async Task<PagedResult<GameResponse>> Handle(GetPagedPromotedCatalogGamesQuery request, CancellationToken cancellationToken)
+        public async Task<PagedResult<GamePromotionResponse>> Handle(GetPagedPromotedCatalogGamesQuery request, CancellationToken cancellationToken)
         {
             string g = request.Genre.HasValue ? request.Genre.Value.ToString() : "genres";
             string p = request.OnlyPromoted.GetValueOrDefault() ? "yes" : "no";
             var cacheKey = $"catalog:pag:p{request.Page}:t{request.PageSize}:prom_{p}:g_{g}";
 
-            var cachedGames = await _cacheService.GetAsync<PagedResult<GameResponse>>(cacheKey, cancellationToken);
+            var cachedGames = await _cacheService.GetAsync<PagedResult<GamePromotionResponse>>(cacheKey, cancellationToken);
 
             if(cachedGames != null)
             {
@@ -74,9 +74,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedPromotedCatal
             });
 
             var totalItens = await multi.ReadFirstAsync<int>();
-            var itens = await multi.ReadAsync<GameResponse>();
+            var itens = await multi.ReadAsync<GamePromotionResponse>();
 
-            var pagedCatalog = new PagedResult<GameResponse>(itens, request.Page, request.PageSize, totalItens);
+            var pagedCatalog = new PagedResult<GamePromotionResponse>(itens, request.Page, request.PageSize, totalItens);
 
 
             if (pagedCatalog.Items.Any())

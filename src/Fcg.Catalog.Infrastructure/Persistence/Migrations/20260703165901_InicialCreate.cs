@@ -132,7 +132,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PedidosJogo",
+                name: "OrderGames",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -143,9 +143,9 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PedidosJogo", x => x.Id);
+                    table.PrimaryKey("PK_OrderGames", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PedidosJogo_Orders_OrderId",
+                        name: "FK_OrderGames_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
                         principalColumn: "Id",
@@ -255,8 +255,8 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 column: "Created");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PedidosJogo_OrderId",
-                table: "PedidosJogo",
+                name: "IX_OrderGames_OrderId",
+                table: "OrderGames",
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
@@ -280,7 +280,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 name: "OutboxMessage");
 
             migrationBuilder.DropTable(
-                name: "PedidosJogo");
+                name: "OrderGames");
 
             migrationBuilder.DropTable(
                 name: "Promotions");

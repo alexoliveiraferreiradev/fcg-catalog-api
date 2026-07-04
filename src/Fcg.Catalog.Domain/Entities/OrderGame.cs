@@ -26,12 +26,12 @@ namespace Fcg.Catalog.Domain.Entities
 
         protected override void ValidateEntity()
         {
-            AssertionConcern.AssertArgumentNotEmpty(OrderId, DomainMessages.OrderWithoutUser); // Using an existing message or default
+            AssertionConcern.AssertArgumentNotEmpty(OrderId, DomainMessages.OrderWithoutUser); 
             AssertionConcern.AssertArgumentNotEmpty(GameId, DomainMessages.GameNotFound);
             AssertionConcern.AssertArgumentNotNull(GameName, DomainMessages.GameNameRequired);
 
             if (GameAmount < 0)
-                throw new DomainException("O Amount do item nÃ£o pode ser negativo");
+                throw new DomainException("O Valor do item não pode ser negativo");
         }
     }
 }

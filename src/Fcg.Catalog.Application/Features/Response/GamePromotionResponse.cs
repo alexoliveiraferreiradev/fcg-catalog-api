@@ -1,17 +1,15 @@
 ﻿using Fcg.Catalog.Domain.Enum;
-using System.Text.Json.Serialization;
 
 namespace Fcg.Catalog.Application.Features.Response
 {
-    public record GameUserResponse
+    public class GamePromotionResponse
     {
         public Guid Id { get; init; }
         public string Name { get; init; }
         public string Description { get; init; }
-        [JsonIgnore]
-        public decimal OriginalPrice { get; set; }
+        public decimal OriginalPrice { get; init; }
         public decimal CurrentPrice { get; init; }
         public GameGenre Genre { get; init; }
-        public bool HasDiscount => CurrentPrice < OriginalPrice;        
+        public decimal DiscountPercentage => OriginalPrice > 0 ? Math.Round((OriginalPrice - CurrentPrice) / OriginalPrice * 100, 2) : 0;
     }
 }
