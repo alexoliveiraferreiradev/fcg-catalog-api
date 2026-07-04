@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Response;
+using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
@@ -15,10 +15,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         private readonly ILogger<AddPromotionGameCommandHandler> _logger;
         private readonly IMediator _mediator;
 
-        public AddPromotionGameCommandHandler(IGameRepository GameRepository, 
+        public AddPromotionGameCommandHandler(IGameRepository gameRepository, 
             ILogger<AddPromotionGameCommandHandler> logger, IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _logger = logger;
             _mediator = mediator;
         }
@@ -26,35 +26,35 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para adicionar promoção ao Jogo. JogoId: {JogoId}, Valor: {Valor}", request.GameId, request.PromotionValue);
 
-            var Period = new Period(request.StartDate, request.EndDate);
-            var Game = await _jogoRepository.GetById(request.GameId);
-            if (Game == null)
+            var period = new Period(request.StartDate, request.EndDate);
+            var game = await _jogoRepository.GetById(request.GameId);
+            if (game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao adicionar promoção. Jogo não encontrado. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
-            if (Game.Promotions.Any())
+            if (game.Promotions.Any())
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao adicionar promoção. O Jogo já possui promoções registradas. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameWithPromotions);
             }
 
             var valorPromocao = new Price(request.PromotionValue);   
-            Game.AddPromotion(valorPromocao, Period);
-            _jogoRepository.Update(Game);
+            game.AddPromotion(valorPromocao, period);
+            _jogoRepository.Update(game);
 
-            var novaPromocao = Game.Promotions.First();
+            var novaPromocao = game.Promotions.First();
 
-            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, PromocaoId: {PromocaoId}, Valor: {Valor}", Game.Id, novaPromocao.Id, request.PromotionValue);
+            _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, PromocaoId: {PromocaoId}, Valor: {Valor}", game.Id, novaPromocao.Id, request.PromotionValue);
 
             await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
 
             return new PromotionResponse
             {
-                GameId = Game.Id,
-                GameDescription = Game.Description.Value,
-                GameName = Game.Name.Value,
+                GameId = game.Id,
+                GameDescription = game.Description.Value,
+                GameName = game.Name.Value,
                 PromotionId = novaPromocao.Id,
                 ValorPromocao = novaPromocao.ValorPromocao.Amount,
                 EndDate = novaPromocao.Period.EndDate,
