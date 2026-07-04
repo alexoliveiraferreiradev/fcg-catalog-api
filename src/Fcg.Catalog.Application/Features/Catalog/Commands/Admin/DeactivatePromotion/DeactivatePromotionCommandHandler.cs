@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Events;
+using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -15,12 +15,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
         private readonly ILogger<DeactivatePromotionCommandHandler> _logger;
         private readonly IMediator _mediator;
         public DeactivatePromotionCommandHandler(
-            IGameRepository GameRepository, 
+            IGameRepository gameRepository, 
             IUnitOfWork unitOfWork, 
             ILogger<DeactivatePromotionCommandHandler> logger,
             IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mediator = mediator;   
@@ -30,27 +30,27 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateProm
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para desativar promoção. PromocaoId: {PromocaoId}", request.PromotionId);
 
-            var Promotion = await _jogoRepository.GetPromotionById(request.PromotionId);
-            if (Promotion == null)
+            var promotion = await _jogoRepository.GetPromotionById(request.PromotionId);
+            if (promotion == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao desativar promoção. Promoção não encontrada. PromocaoId: {PromocaoId}", request.PromotionId);
                 throw new DomainException(DomainMessages.PromotionNotFound);
             }
 
-            var Game = await _jogoRepository.GetById(Promotion.GameId);
-            if (Game == null)
+            var game = await _jogoRepository.GetById(promotion.GameId);
+            if (game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao desativar promoção. Jogo não encontrado. JogoId: {JogoId}", Promotion.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao desativar promoção. Jogo não encontrado. JogoId: {JogoId}", promotion.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
-            Game.DeactivatePromotion(request.PromotionId);
-            _jogoRepository.Update(Game);
+            game.DeactivatePromotion(request.PromotionId);
+            _jogoRepository.Update(game);
             await _unitOfWork.CommitAsync();
 
-            await _mediator.Publish(new PromotionDeactivatedEvent(Game.Id,request.PromotionId), cancellationToken);
+            await _mediator.Publish(new PromotionDeactivatedEvent(game.Id,request.PromotionId), cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Promoção desativada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, Promotion.GameId);
+            _logger.LogInformation("[CatalogAPI] Promoção desativada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, promotion.GameId);
         }
     }
 }
