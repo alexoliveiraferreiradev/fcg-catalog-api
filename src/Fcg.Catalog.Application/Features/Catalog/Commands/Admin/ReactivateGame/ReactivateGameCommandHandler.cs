@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Events;
+using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
@@ -15,12 +15,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame
         private readonly ILogger<ReactivateGameCommandHandler> _logger;
         private readonly IMediator _mediator;
         public ReactivateGameCommandHandler(
-            IGameRepository GameRepository, 
+            IGameRepository gameRepository, 
             IUnitOfWork unitOfWork, 
             ILogger<ReactivateGameCommandHandler> logger,
             IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mediator = mediator;   
@@ -30,20 +30,20 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame
         {
             _logger.LogInformation("[CatalogAPI] Iniciando reativação do Jogo. ID: {JogoId}", request.GameId);
 
-            var Game = await _jogoRepository.GetById(request.GameId);
-            if (Game == null)
+            var game = await _jogoRepository.GetById(request.GameId);
+            if (game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao reativar Jogo. Jogo não encontrado. ID: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
-            Game.Reactivate();
-            _jogoRepository.Update(Game);
+            game.Reactivate();
+            _jogoRepository.Update(game);
             await _unitOfWork.CommitAsync();
 
-            await _mediator.Publish(new GameReactivatedEvent(Game.Id), cancellationToken);   
+            await _mediator.Publish(new GameReactivatedEvent(game.Id), cancellationToken);   
 
-            _logger.LogInformation("[CatalogAPI] Jogo reativado com sucesso. ID: {JogoId}", Game.Id);
+            _logger.LogInformation("[CatalogAPI] Jogo reativado com sucesso. ID: {JogoId}", game.Id);
         }
     }
 }
