@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Enum;
+using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common;
 using Fcg.Core.Abstractions.Common.Exceptions;
@@ -114,9 +114,9 @@ namespace Fcg.Catalog.Domain.Entities
         }
         public void DeactivatePromotion(Guid promotionId)
         {
-            var Promotion = _promotions.FirstOrDefault(x => x.Id == promotionId);
-            if (Promotion == null) throw new DomainException(DomainMessages.PromotionNotFound);
-            Promotion.Deactivate();
+            var promotion = _promotions.FirstOrDefault(x => x.Id == promotionId);
+            if (promotion == null) throw new DomainException(DomainMessages.PromotionNotFound);
+            promotion.Deactivate();
             UpdatedAt = DateTime.UtcNow;
         }
     }
