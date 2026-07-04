@@ -15,8 +15,8 @@ namespace Fcg.Catalog.API.Endpoints.User
             group.MapGet("",
                 async ([FromServices] ISender mediator,
                        ClaimsPrincipal user,
-                       [FromQuery] int Page = 1,
-                       [FromQuery] int PageSize = 10) =>
+                       [FromQuery] int page = 1,
+                       [FromQuery] int pageSize = 10) =>
             {
                 var currentUserIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!Guid.TryParse(currentUserIdClaim, out var currentUserId))
@@ -24,7 +24,7 @@ namespace Fcg.Catalog.API.Endpoints.User
                     return Results.Unauthorized();
                 }
 
-                var query = new GetPagedLibraryQuery(currentUserId, Page, PageSize);
+                var query = new GetPagedLibraryQuery(currentUserId, page, pageSize);
 
                 var response = await mediator.Send(query);
 
