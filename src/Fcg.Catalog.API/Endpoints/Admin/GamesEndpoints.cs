@@ -18,7 +18,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         {
             var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Admin - Gerenciamento de Games");
 
-            group.MapGet("/{GameId:guid}", GetGameById)
+            group.MapGet("/{gameId:guid}", GetGameById)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status404NotFound)
@@ -43,7 +43,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithDescription("Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status.")
              .WithName("AdminAddGame");
 
-            group.MapPut("/{GameId:guid}/deactivate", DeactiveGame)
+            group.MapPut("/{gameId:guid}/deactivate", DeactiveGame)
              .Produces(StatusCodes.Status204NoContent)
              .Produces(StatusCodes.Status400BadRequest)
              .Produces(StatusCodes.Status404NotFound)
@@ -51,7 +51,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithDescription("Realiza a desativação lógica de um game pelo seu ID, impedindo novas compras e sua exibição no catálogo público.")
              .WithName("AdminDeactivateGame"); 
 
-            group.MapPut("/{GameId:guid}", UpdateGame)
+            group.MapPut("/{gameId:guid}", UpdateGame)
              .AddEndpointFilter<ValidationFilter<UpdateGameCommand>>()
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
@@ -61,7 +61,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithDescription("Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição).")
              .WithName("AdminUpdateGame");
 
-            group.MapPut("/{GameId:guid}/activate", ReactiveGame)
+            group.MapPut("/{gameId:guid}/activate", ReactiveGame)
              .Produces<GameResponse>()
              .Produces(StatusCodes.Status200OK)
              .Produces(StatusCodes.Status400BadRequest)
@@ -73,12 +73,12 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
 
         private static async Task<IResult> GetGameById(
-            [FromRoute] Guid GameId, [FromServices] ISender sender,
+            [FromRoute] Guid gameId, [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
 
-            var query = new GetGameByIdQuery(GameId);
+            var query = new GetGameByIdQuery(gameId);
             var response = await sender.Send(query, cancellationToken);
             if (response == null)
             {
@@ -102,21 +102,21 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
         private static async Task<IResult> AddGame(
             [FromServices] ISender sender,
-            [FromBody] AddGameCommand AddGameCommand,
+            [FromBody] AddGameCommand addGameCommand,
             CancellationToken cancellationToken)
         {
-            var response = await sender.Send(AddGameCommand, cancellationToken);
+            var response = await sender.Send(addGameCommand, cancellationToken);
             return Results.Created($"/api/admin/games/{response.Id}", response);
         }
 
         private static async Task<IResult> DeactiveGame(
-            [FromBody] DeactivateGameCommand DeactivateGame,
-            [FromRoute] Guid GameId,
+            [FromBody] DeactivateGameCommand deactivateGame,
+            [FromRoute] Guid gameId,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var command = new DeactivateGameCommand(GameId);
+            var command = new DeactivateGameCommand(gameId);
 
             await sender.Send(command, cancellationToken);
 
@@ -124,25 +124,25 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         }
 
         private static async Task<IResult> UpdateGame(
-            [FromRoute] Guid GameId,
-            [FromBody] UpdateGameCommand UpdateGameCommand,
+            [FromRoute] Guid gameId,
+            [FromBody] UpdateGameCommand updateGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
-            var command = UpdateGameCommand with { GameId = GameId };
+            var command = updateGameCommand with { GameId = gameId };
             var response = await sender.Send(command, cancellationToken);
             return Results.Ok(response);
         }
 
         private static async Task<IResult> ReactiveGame(
-            [FromRoute] Guid GameId,
-            [FromServices] ReactivateGameCommand ReactivateGameCommand,
+            [FromRoute] Guid gameId,
+            [FromServices] ReactivateGameCommand reactivateGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
-            var command =  ReactivateGameCommand with
+            var command =  reactivateGameCommand with
             {
-                GameId = GameId,    
+                GameId = gameId,    
             };
 
             await sender.Send(command, cancellationToken);
