@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
-    public class PedidoMapping : IEntityTypeConfiguration<Order>
+    public class OrderMapping : IEntityTypeConfiguration<Order>
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {

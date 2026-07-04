@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 {
-    public class BibliotecaMapping : IEntityTypeConfiguration<UserLibrary>
+    public class LibraryMapping : IEntityTypeConfiguration<UserLibrary>
     {
         public void Configure(EntityTypeBuilder<UserLibrary> builder)
         {

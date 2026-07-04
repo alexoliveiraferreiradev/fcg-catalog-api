@@ -5,7 +5,7 @@ using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalog.Domain.Tests.Entities
 {
-    public class PromocaoTests
+    public class PromotionTests
     {
         private Price ObterPrecoValido(decimal Amount = 50m) => new Price(Amount);
         private Period ObterPeriodoValido(int diasFim = 5) => new Period(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(diasFim));

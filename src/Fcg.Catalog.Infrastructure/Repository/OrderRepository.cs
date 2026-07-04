@@ -21,8 +21,8 @@ namespace Fcg.Catalog.Infrastructure.Repository
 
         public async Task<Order> GetOrderById(Guid orderId)
         {
-            return await _dbContext.Orders.Where(o => o.Id == orderId)
-                .FirstOrDefaultAsync();
+            return await _dbContext.Orders.Include(o=>o.Games)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public void Update(Order order)

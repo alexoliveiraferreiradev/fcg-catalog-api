@@ -93,7 +93,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("PedidosJogo", (string)null);
+                    b.ToTable("OrderGames", (string)null);
                 });
 
             modelBuilder.Entity("Fcg.Catalog.Domain.Entities.Promotion", b =>

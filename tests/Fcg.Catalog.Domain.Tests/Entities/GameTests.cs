@@ -6,7 +6,7 @@ using Fcg.Core.Abstractions.Resources;
 
 namespace Fcg.Catalog.Domain.Tests.Entities
 {
-    public class JogoTests
+    public class GameTests
     {
         private Name ObterNomeValido() => new Name("Super Mario");
         private Description ObterDescricaoValida() => new Description("Game clássico de Platformer de encanadores");
