@@ -9,6 +9,8 @@ using Fcg.Catalog.Application.Features.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Fcg.Catalog.API.Filters;
+using Fcg.Catalog.Domain.Enum;
+using System.Linq;
 
 namespace Fcg.Catalog.API.Endpoints.Admin
 {
@@ -17,6 +19,8 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         public static void MapGamesEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Admin - Gerenciamento de Games");
+
+            var genresList = string.Join(", ", Enum.GetValues<GameGenre>().Select(g => $"{g} ({(int)g})"));
 
             group.MapGet("/{gameId:guid}", GetGameById)
              .Produces<GameResponse>()
@@ -40,7 +44,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .Produces(StatusCodes.Status201Created)
              .ProducesValidationProblem()
              .WithSummary("Cadastra um novo game.")
-             .WithDescription("Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status.")
+             .WithDescription($"Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status. Gêneros disponíveis: {genresList}.")
              .WithName("AdminAddGame");
 
             group.MapPut("/{gameId:guid}/deactivate", DeactiveGame)
@@ -58,7 +62,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .ProducesValidationProblem()
              .Produces(StatusCodes.Status404NotFound)
              .WithSummary("Atualiza os dados de um game.")
-             .WithDescription("Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição).")
+             .WithDescription($"Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição). Gêneros disponíveis: {genresList}.")
              .WithName("AdminUpdateGame");
 
             group.MapPut("/{gameId:guid}/activate", ReactiveGame)
