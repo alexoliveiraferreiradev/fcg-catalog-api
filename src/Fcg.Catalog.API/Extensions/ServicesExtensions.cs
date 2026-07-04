@@ -177,6 +177,7 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddScoped<CatalogDbContext>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IGameRepository, GameRepository>();
             builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
             return builder;

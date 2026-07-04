@@ -10,7 +10,7 @@ namespace Fcg.Catalog.Domain.Entities
     {
         public Guid UserId { get; private set; }
         public OrderStatus Status { get; private set; }
-        public Price TotalAmount { get; private set; }
+        public Price TotalAmount { get; private set; }= new Price(0);
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         private List<OrderGame> _games;
@@ -40,8 +40,21 @@ namespace Fcg.Catalog.Domain.Entities
             if (Status != OrderStatus.Draft) throw new DomainException(DomainMessages.OrderGameNotDraft);
             if (gameId == Guid.Empty) throw new DomainException(DomainMessages.GameNotFound);
             if (_games.Any(j => j.GameId == gameId)) throw new DomainException(DomainMessages.OrderGameAlreadyAdded);
-
+        
             _games.Add(new OrderGame(Id, gameId, gameName, gameAmount));
+        }
+
+        public void MakeOrder()
+        {
+            CalculateTotalAmount();
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void CancelOrder()
+        {
+            if (Status != OrderStatus.Draft) throw new DomainException(DomainMessages.OrderNotDraft);
+            Status = OrderStatus.Cancelled;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void FinalizeOrder()
