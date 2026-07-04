@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Events;
+using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Interfaces;
 using MediatR;
@@ -13,12 +13,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInva
         private readonly ILogger<DeactivatePromotionInvalidaCommandHandler> _logger;
         private readonly IMediator _mediator;
         public DeactivatePromotionInvalidaCommandHandler(
-            IGameRepository GameRepository,
+            IGameRepository gameRepository,
             IUnitOfWork unitOfWork,
             ILogger<DeactivatePromotionInvalidaCommandHandler> logger,
             IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mediator = mediator;
