@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Repositories;
+using Fcg.Catalog.Domain.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,8 +17,8 @@ namespace Fcg.Catalog.Infrastructure.Worker
             {
                 using (var scope = _scopeFactory.CreateScope())
                 {
-                    var GameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
-                    await GameRepository.DeactivateInvalidPromotions();
+                    var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+                    await gameRepository.DeactivateInvalidPromotions();
                 }
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
             }
