@@ -58,10 +58,10 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
             var command = new UpdateGameCommand
             {
                 GameId = Game.Id,
-                NovoNome = "Game Novo",
-                NovaDescricao = "Nova Description longa",
-                NovoPreco = 120.00m,
-                NovoGenero = GameGenre.Action
+                NewName = "Game Novo",
+                NewDescription = "Nova Description longa",
+                NewPrice = 120.00m,
+                NewGenre = GameGenre.Action
             };
 
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
@@ -71,8 +71,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
 
             // Assert
             result.Should().NotBeNull();
-            Game.Name.Value.Should().Be(command.NovoNome);
-            Game.BasePrice.Amount.Should().Be(command.NovoPreco);
+            Game.Name.Value.Should().Be(command.NewName);
+            Game.BasePrice.Amount.Should().Be(command.NewPrice);
 
             _jogoRepositoryMock.Verify(r => r.Update(Game), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);

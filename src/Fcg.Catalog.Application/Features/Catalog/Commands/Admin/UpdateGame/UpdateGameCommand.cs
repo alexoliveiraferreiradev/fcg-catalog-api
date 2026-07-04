@@ -1,7 +1,6 @@
 using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Enum;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
 {
@@ -17,19 +16,19 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
         /// <summary>
         /// Novo nome/título para o game.
         /// </summary>
-        public string NovoNome { get; init; }
+        public string NewName { get; init; }
         /// <summary>
         /// Nova descrição detalhada do game.
         /// </summary>
-        public string NovaDescricao { get; init; }
+        public string NewDescription { get; init; }
         /// <summary>
         /// Novo preço base do game.
         /// </summary>
-        public decimal NovoPreco { get; init; }
+        public decimal NewPrice { get; init; }
         /// <summary>
         /// Novo gênero principal do game.
         /// </summary>
-        public GameGenre NovoGenero { get; init; }
+        public GameGenre NewGenre { get; init; }
 
         /// <summary>
         /// Construtor padrão.
@@ -47,7 +46,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
         /// <param name="novoGenero">Novo gênero do game.</param>
         public UpdateGameCommand(string novoNome, string novaDescricao, decimal novoPreco, GameGenre novoGenero)
         {
-            NovoNome = novoNome; NovaDescricao = novaDescricao; NovoPreco = novoPreco; NovoGenero = novoGenero;
+            NewName = novoNome; NewDescription = novaDescricao; NewPrice = novoPreco; NewGenre = novoGenero;
         }
     }
 }
