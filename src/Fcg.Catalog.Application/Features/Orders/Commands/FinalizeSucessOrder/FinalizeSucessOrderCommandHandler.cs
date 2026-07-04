@@ -1,7 +1,6 @@
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
-using Fcg.Core.Abstractions.Enum;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.MessageContracts;
 using MassTransit;
@@ -10,17 +9,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder
 {
-    public class FinalizeSucessOrderHandler : IRequestHandler<FinalizeSucessOrderCommand>
+    public class FinalizeSucessOrderCommandHandler : IRequestHandler<FinalizeSucessOrderCommand>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<FinalizeSucessOrderHandler> _logger;
+        private readonly ILogger<FinalizeSucessOrderCommandHandler> _logger;
         private readonly ILibraryRepository _libraryRepository;
         private readonly IMediator _mediator;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public FinalizeSucessOrderHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork,
-            ILogger<FinalizeSucessOrderHandler> logger, ILibraryRepository libraryRepository, IMediator mediator, IPublishEndpoint publishEndpoint)
+        public FinalizeSucessOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork,
+            ILogger<FinalizeSucessOrderCommandHandler> logger, ILibraryRepository libraryRepository, IMediator mediator, IPublishEndpoint publishEndpoint)
         {
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
