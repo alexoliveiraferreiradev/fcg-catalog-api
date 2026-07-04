@@ -1,4 +1,4 @@
-﻿using Bogus;
+using Bogus;
 using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
@@ -26,6 +26,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
         private readonly Mock<ILibraryRepository> _bibliotecaRepositoryMock;
         private readonly Mock<IPublishEndpoint> _publishEndpointMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IOrderRepository> _orderRepositoryMock;
         private readonly Mock<ILogger<PlaceOrderCommandHandler>> _loggerMock;
         private readonly PlaceOrderCommandHandler _handler;
 
@@ -35,6 +36,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
             _bibliotecaRepositoryMock = new Mock<ILibraryRepository>();
             _publishEndpointMock = new Mock<IPublishEndpoint>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _orderRepositoryMock = new Mock<IOrderRepository>();
             _loggerMock = new Mock<ILogger<PlaceOrderCommandHandler>>();
 
             _handler = new PlaceOrderCommandHandler(
@@ -42,6 +44,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
                 _publishEndpointMock.Object,
                 _bibliotecaRepositoryMock.Object,
                 _unitOfWorkMock.Object,
+                _orderRepositoryMock.Object,
                 _loggerMock.Object
             );
         }
