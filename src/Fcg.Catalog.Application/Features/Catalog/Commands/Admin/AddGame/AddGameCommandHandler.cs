@@ -4,6 +4,7 @@ using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
+using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.Resources;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,13 +16,15 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         private readonly IGameRepository _jogoRepository;
         private readonly ILogger<AddGameCommandHandler> _logger;        
         private readonly IMediator _mediator;
+        private readonly IUnitOfWork _unitOfWork;
 
         public AddGameCommandHandler(IGameRepository gameRepository, ILogger<AddGameCommandHandler> logger,
-             IMediator mediator)
+             IMediator mediator, IUnitOfWork unitOfWork)
         {
             _jogoRepository = gameRepository;
-            _logger = logger;            
+            _logger = logger;
             _mediator = mediator;
+            _unitOfWork = unitOfWork;
         }
         public async Task<GameResponse> Handle(AddGameCommand request, CancellationToken cancellationToken)
         {
@@ -42,6 +45,8 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
             _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", game.Id, request.Name);
 
             await _mediator.Publish(new GameAddedEvent(game.Id),cancellationToken);
+
+            await _unitOfWork.CommitAsync();
 
             return new GameResponse
             {

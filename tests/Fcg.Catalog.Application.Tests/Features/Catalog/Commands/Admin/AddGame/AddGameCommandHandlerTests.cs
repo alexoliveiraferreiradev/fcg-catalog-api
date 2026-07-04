@@ -1,9 +1,10 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
+using Fcg.Core.Abstractions.Interfaces;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
         private readonly Mock<IGameRepository> _jogoRepositoryMock;
         private readonly Mock<ILogger<AddGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly AddGameCommandHandler _handler;
 
         public AddGameCommandHandlerTests()
@@ -27,11 +29,13 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
             _jogoRepositoryMock = new Mock<IGameRepository>();
             _loggerMock = new Mock<ILogger<AddGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
 
             _handler = new AddGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _loggerMock.Object,
-                _mediatorMock.Object
+                _mediatorMock.Object,
+                _unitOfWorkMock.Object
             );
         }
 
@@ -61,6 +65,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
 
             _jogoRepositoryMock.Verify(r => r.Add(It.Is<Game>(j => j.Name.Value == command.Name)), Times.Once);
             _mediatorMock.Verify(m => m.Publish(It.IsAny<GameAddedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
         }
 
         [Fact]
