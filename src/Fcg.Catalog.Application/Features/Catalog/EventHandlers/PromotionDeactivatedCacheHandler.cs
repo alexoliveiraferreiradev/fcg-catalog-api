@@ -18,7 +18,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async Task Handle(PromotionDeactivatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando limpeza de cache apÃ³s a desativaÃ§Ã£o de promoÃ§Ã£o. PromocaoId: {PromocaoId}, JogoId: {JogoId}", notification.PromotionId, notification.GameId);
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando limpeza de cache após a desativação de promoção. PromocaoId: {PromocaoId}, JogoId: {JogoId}", notification.PromotionId, notification.GameId);
             await _cacheService.RemoveAsync("catalog:games");
             await _cacheService.RemoveAsync($"catalog:promotion:{notification.PromotionId}");
             await _cacheService.RemoveAsync($"catalog:game:{notification.GameId}");

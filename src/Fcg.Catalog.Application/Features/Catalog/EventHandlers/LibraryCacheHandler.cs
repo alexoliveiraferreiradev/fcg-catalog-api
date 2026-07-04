@@ -18,7 +18,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async  Task Handle(LibraryEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando invalidaÃ§Ã£o de cache da biblioteca do UsuarioId: {UsuarioId}", notification.UserId);
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando invalidação de cache da biblioteca do UsuarioId: {UsuarioId}", notification.UserId);
             await _cacheService.RemoveByPrefixAsync($"library:u_{notification.UserId}");
             _logger.LogInformation("[CatalogAPI] [Cache] Cache da biblioteca invalidado com sucesso para UsuarioId: {UsuarioId}", notification.UserId);
         }

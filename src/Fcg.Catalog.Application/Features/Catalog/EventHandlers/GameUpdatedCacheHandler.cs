@@ -19,7 +19,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.EventHandlers
 
         public async Task Handle(GameUpdatedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando limpeza de cache apÃ³s a atualizaÃ§Ã£o do JogoId: {JogoId}", notification.GameId);
+            _logger.LogInformation("[CatalogAPI] [Cache] Iniciando limpeza de cache após a atualização do JogoId: {JogoId}", notification.GameId);
             await _cacheService.RemoveAsync("catalog:games");
             await _cacheService.RemoveAsync($"catalog:game:{notification.GameId}");
             await _cacheService.RemoveByPrefixAsync("catalog:pag:");
