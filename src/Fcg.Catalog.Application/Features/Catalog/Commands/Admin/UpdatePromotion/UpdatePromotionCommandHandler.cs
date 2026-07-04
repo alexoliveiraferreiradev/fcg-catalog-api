@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
@@ -18,12 +18,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         private readonly IMediator _mediator;   
 
         public UpdatePromotionCommandHandler(
-            IGameRepository GameRepository, 
+            IGameRepository gameRepository, 
             IUnitOfWork unitOfWork, 
             ILogger<UpdatePromotionCommandHandler> logger,
             IMediator mediator)
         {
-            _jogoRepository = GameRepository;
+            _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mediator = mediator;   
@@ -33,8 +33,8 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         {
             _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. PromocaoId: {PromocaoId}, JogoId: {JogoId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
 
-            var Game = await _jogoRepository.GetById(request.GameId);
-            if (Game == null)
+            var game = await _jogoRepository.GetById(request.GameId);
+            if (game == null)
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao atualizar promoção. Jogo não encontrado. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
@@ -42,13 +42,13 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
 
             var novoPreco = new Price(request.NovoValorPromocao);
 
-            Game.UpdatePromotion(request.PromotionId, novoPreco, request.NovaDataFim);
-            _jogoRepository.Update(Game);
+            game.UpdatePromotion(request.PromotionId, novoPreco, request.NovaDataFim);
+            _jogoRepository.Update(game);
             await _unitOfWork.CommitAsync();
 
-            var novaPromocao = Game.Promotions.First();
+            var novaPromocao = game.Promotions.First();
                         
-            await _mediator.Publish(new PromotionUpdatedEvent(Game.Id, novaPromocao.Id),cancellationToken);
+            await _mediator.Publish(new PromotionUpdatedEvent(game.Id, novaPromocao.Id),cancellationToken);
 
             _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, request.GameId);
         }
