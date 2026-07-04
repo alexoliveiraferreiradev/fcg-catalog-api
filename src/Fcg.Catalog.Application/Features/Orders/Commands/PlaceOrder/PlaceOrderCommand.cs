@@ -1,5 +1,6 @@
 using Fcg.Catalog.Application.Features.Response;
 using MediatR;
+using System.ComponentModel;
 
 namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
 {
@@ -10,5 +11,10 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
     /// <param name="NomeUsuario">Nome do usuário comprador.</param>
     /// <param name="EmailUsuario">Endereço de e-mail do usuário comprador.</param>
     /// <param name="JogosIds">Lista de identificadores únicos (GUIDs) dos jogos a serem comprados.</param>
-    public record PlaceOrderCommand(Guid UserId, string NomeUsuario, string EmailUsuario, IEnumerable<Guid> JogosIds) : IRequest<bool>;
+    public record PlaceOrderCommand(
+        [property: DefaultValue("00000000-0000-0000-0000-000000000000")] Guid UserId,
+        [property: DefaultValue("nome do usuário")] string NomeUsuario,
+        [property: DefaultValue("email do usuário")] string EmailUsuario,
+        IEnumerable<Guid> JogosIds
+    ) : IRequest<bool>;
 }
