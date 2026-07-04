@@ -25,7 +25,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
                 .WithDescription("Retorna a lista de promoções de games de forma paginada contendo informações sobre percentual de desconto e validade.")
                 .WithName("AdminGetPagedCatalogGamePromotion");
 
-            group.MapGet("/{PromotionId:guid}", GetPromotionById)
+            group.MapGet("/{promotionId:guid}", GetPromotionById)
                 .Produces<PromotionResponse>()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound)
@@ -42,7 +42,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
                 .WithDescription("Cadastra uma nova promoção associada a um game, aplicando um percentual de desconto com datas de início e término.")
                 .WithName("AdminCreatePromotion");
 
-            group.MapPut("/{PromotionId:guid}/deactivate", DeactivatePromotion)
+            group.MapPut("/{promotionId:guid}/deactivate", DeactivatePromotion)
                 .Produces(StatusCodes.Status204NoContent)
                 .Produces(StatusCodes.Status404NotFound)
                 .WithSummary("Desativa uma promoção existente.")
@@ -55,11 +55,11 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         private static async Task<IResult> GetPagedCatalogGamePromotion(
             [FromServices] ISender sender,
             CancellationToken cancellation,
-            [FromQuery] int Page = 1,
-            [FromQuery] int PageSize = 10
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10
             )
         {
-            var query = new GetPagedPromotedCatalogGamesQuery(Page, PageSize);
+            var query = new GetPagedPromotedCatalogGamesQuery(page, pageSize);
             var response = await sender.Send(query, cancellation);
 
             if (response == null || !response.Items.Any())
@@ -71,14 +71,14 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         }
 
         private static async Task<IResult> GetPromotionById(
-            [FromRoute] Guid PromotionId,
+            [FromRoute] Guid promotionId,
             [FromServices] ISender sender,
             CancellationToken cancellation
             )
         {
             await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellation);
 
-            var query = new GetPromotionByGameIdQuery(PromotionId);
+            var query = new GetPromotionByGameIdQuery(promotionId);
 
             var response = await sender.Send(query, cancellation);
 
@@ -92,24 +92,24 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
 
         private static async Task<IResult> CreatePromotion(
-            [FromBody] AddPromotionGameCommand AddPromotionGameCommand,
+            [FromBody] AddPromotionGameCommand addPromotionGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var response = await sender.Send(AddPromotionGameCommand, cancellationToken);
+            var response = await sender.Send(addPromotionGameCommand, cancellationToken);
             return Results.Created($"/api/admin/promocao/obtem-por-id/{response.PromotionId}", response);
         }
 
 
         private static async Task<IResult> DeactivatePromotion(
-            [FromRoute] Guid PromotionId,
-            [FromServices] DeactivatePromotionCommand DeactivatePromotionCommand, 
+            [FromRoute] Guid promotionId,
+            [FromServices] DeactivatePromotionCommand deactivatePromotionCommand, 
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
         {
-            var command = DeactivatePromotionCommand with { PromotionId = PromotionId };
+            var command = deactivatePromotionCommand with { PromotionId = promotionId };
             await sender.Send(command, cancellationToken);
             return Results.NoContent();
         }
