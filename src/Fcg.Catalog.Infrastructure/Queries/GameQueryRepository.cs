@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
+using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Core.Abstractions.Common;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Fcg.Catalog.Infrastructure.Queries
 {
@@ -59,6 +61,30 @@ namespace Fcg.Catalog.Infrastructure.Queries
             WHERE j.Id = @GameId;";
 
             return await _dbConnection.QueryFirstOrDefaultAsync<GameResponse>(sql, new { GameId = gameId });
+        }
+
+        public async Task<IEnumerable<GameResponse>> GetGamesByIdsAsync(IEnumerable<Guid> jogosIds, CancellationToken cancellationToken)
+        {
+            const string sql = @"SELECT  
+                                j.Id, 
+                                j.Name, 
+                                j.Description, 
+                                j.BasePrice as OriginalPrice,
+                                COALESCE(
+                                     (SELECT TOP 1 p.ValorPromocao 
+                                      FROM Promotions p 
+                                      WHERE p.GameId = j.Id 
+                                        AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
+                                     j.BasePrice
+                                 ) AS CurrentPrice,
+                                j.IsActive,
+                                j.CreatedAt,
+                                j.UpdatedAt,
+                                j.Genre
+                                FROM Games j where j.Id IN @jogosIds ";
+
+            
+            return await _dbConnection.QueryAsync<GameResponse>(sql, new { jogosIds });
         }
 
         public async Task<PagedResult<GameUserResponse>> GetPagedCatalogAsync(GameGenre? gameGenre, bool? promoted, int pageNumber, int pageSize, CancellationToken cancellationToken)
