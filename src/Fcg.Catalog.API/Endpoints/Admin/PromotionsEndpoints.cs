@@ -7,6 +7,7 @@ using Fcg.Catalog.Application.Features.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Fcg.Catalog.API.Filters;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion;
 
 
 namespace Fcg.Catalog.API.Endpoints.Admin
@@ -15,7 +16,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapPromotionsEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization().WithTags("Admin - Gerenciamento de Promoções");
+            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization("AdminOnly").WithTags("Admin - Gerenciamento de Promoções");
 
             group.MapGet("", GetPagedCatalogGamePromotion)
                 .Produces<GameResponse>()
@@ -49,6 +50,15 @@ namespace Fcg.Catalog.API.Endpoints.Admin
                 .WithDescription("Desativa uma promoção de forma lógica antes do seu prazo de expiração.")
                 .WithName("AdminDeactivatePromotion");
 
+            group.MapPut("/{promotionId:guid}/update", UpdatePromotion)
+                .AddEndpointFilter<ValidationFilter<UpdatePromotionCommand>>()
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces(StatusCodes.Status404NotFound)
+                .ProducesValidationProblem()
+                .WithSummary("Atualiza os detalhes de uma promoção existente.")
+                .WithDescription("Permite atualizar informações de uma promoção, como valor de desconto e datas de validade.")
+                .WithName("AdminUpdatePromotion");
+
         }
 
 
@@ -64,7 +74,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
             if (response == null || !response.Items.Any())
             {
-                return Results.NotFound(new { Message = "Nenhum Game promovido encontrado." });
+                return Results.NotFound(new { Message = "Nenhum jogo promovido encontrado." });
             }
 
             return Results.Ok(response);
@@ -104,7 +114,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
         private static async Task<IResult> DeactivatePromotion(
             [FromRoute] Guid promotionId,
-            [FromServices] DeactivatePromotionCommand deactivatePromotionCommand, 
+            [FromServices] DeactivatePromotionCommand deactivatePromotionCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
             )
@@ -113,6 +123,24 @@ namespace Fcg.Catalog.API.Endpoints.Admin
             await sender.Send(command, cancellationToken);
             return Results.NoContent();
         }
+
+        private static async Task<IResult> UpdatePromotion(
+            [FromRoute] Guid promotionId,
+            [FromBody] UpdatePromotionCommand updatePromotionCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken
+            )
+        {
+            if (promotionId == Guid.Empty)
+            {
+                return Results.BadRequest(new { Message = "O ID da promoção não pode ser vazio." });
+            }
+
+            var command = updatePromotionCommand with { PromotionId = promotionId };
+            await sender.Send(command, cancellationToken);
+            return Results.NoContent();
+        }
+
     }
 }
 

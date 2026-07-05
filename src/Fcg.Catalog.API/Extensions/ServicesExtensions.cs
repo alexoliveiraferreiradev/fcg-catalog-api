@@ -4,9 +4,10 @@ using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
-using Fcg.Catalog.Infrastructure.DapperHandlers;
+using Fcg.Catalog.Infrastructure.Queries.DapperHandlers;
 using Fcg.Catalog.Infrastructure.Persistence;
-using Fcg.Catalog.Infrastructure.Repository;
+using Fcg.Catalog.Infrastructure.Repositories;
+using Fcg.Catalog.Infrastructure.Queries;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;
 using FluentValidation;
@@ -185,6 +186,9 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IGameRepository, GameRepository>();
             builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+            builder.Services.AddScoped<IGameQueryRepository, GameQueryRepository>();
+            builder.Services.AddScoped<IPromotionQueryRepository, PromotionQueryRepository>();
+            builder.Services.AddScoped<IOrderQueryRepository, OrderQueryRepository>();
             return builder;
         }
     }

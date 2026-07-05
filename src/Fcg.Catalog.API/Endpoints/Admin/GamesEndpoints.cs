@@ -18,7 +18,7 @@ namespace Fcg.Catalog.API.Endpoints.Admin
     {
         public static void MapGamesEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/admin/games").RequireAuthorization().WithTags("Admin - Gerenciamento de Games");
+            var group = app.MapGroup("/api/admin/games").RequireAuthorization("AdminOnly").WithTags("Admin - Gerenciamento de Games");
 
             var genresList = string.Join(", ", Enum.GetValues<GameGenre>().Select(g => $"{g} ({(int)g})"));
 
@@ -114,7 +114,6 @@ namespace Fcg.Catalog.API.Endpoints.Admin
         }
 
         private static async Task<IResult> DeactiveGame(
-            [FromBody] DeactivateGameCommand deactivateGame,
             [FromRoute] Guid gameId,
             [FromServices] ISender sender,
             CancellationToken cancellationToken
@@ -140,15 +139,10 @@ namespace Fcg.Catalog.API.Endpoints.Admin
 
         private static async Task<IResult> ReactiveGame(
             [FromRoute] Guid gameId,
-            [FromServices] ReactivateGameCommand reactivateGameCommand,
             [FromServices] ISender sender,
             CancellationToken cancellationToken)
         {
-            var command =  reactivateGameCommand with
-            {
-                GameId = gameId,    
-            };
-
+            var command =  new ReactivateGameCommand { GameId = gameId };
             await sender.Send(command, cancellationToken);
             return Results.NoContent();
         }

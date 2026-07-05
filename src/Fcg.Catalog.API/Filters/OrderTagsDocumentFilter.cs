@@ -11,7 +11,7 @@ namespace Fcg.Catalog.API.Filters
             {
                 new OpenApiTag { Name = "Catálogo de Games", Description = "Endpoints públicos para consulta de catálogo e promoções de jogos." },
                 new OpenApiTag { Name = "Biblioteca do Usuário", Description = "Endpoints para consulta de jogos adquiridos pelo próprio usuário." },
-                new OpenApiTag { Name = "Compras", Description = "Endpoints para realização e processamento de compras de jogos." },
+                new OpenApiTag { Name = "Compras e Pedidos", Description = "Endpoints para realização,processamento de compras de jogos e histórico de pedidos." },
                 new OpenApiTag { Name = "Admin - Gerenciamento de Games", Description = "Endpoints administrativos para cadastro, edição e ativação/desativação de jogos." },
                 new OpenApiTag { Name = "Admin - Gerenciamento de Promoções", Description = "Endpoints administrativos para criação, controle e desativação de promoções." }
             };
