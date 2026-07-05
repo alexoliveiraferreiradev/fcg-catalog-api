@@ -7,14 +7,14 @@ using System.Data;
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
 {
     public class GetAllGamesQueryHandler : IRequestHandler<GetAllGamesQuery, IEnumerable<GameResponse>>
-    {
-        private readonly IDbConnection _dbConnection;
+    {        
+        private readonly IGameQueryRepository _gameQueryRepository;
         private readonly ICacheService _cacheService;
 
-        public GetAllGamesQueryHandler(IDbConnection dbConnection, ICacheService cacheService)
-        {
-            _dbConnection = dbConnection;
+        public GetAllGamesQueryHandler(ICacheService cacheService, IGameQueryRepository gameQueryRepository)
+        {            
             _cacheService = cacheService;
+            _gameQueryRepository = gameQueryRepository;
         }
 
         public async Task<IEnumerable<GameResponse>> Handle(GetAllGamesQuery request, CancellationToken cancellationToken)
@@ -27,31 +27,14 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetAllGames
                 return cachedCatalog;
             }
 
-            const string sql = @"
-            SELECT 
-                j.Id, 
-                j.Name, 
-                j.Description, 
-                j.BasePrice as OriginalPrice,             
-                    COALESCE(
-                        (SELECT TOP 1 p.ValorPromocao 
-                        FROM Promotions p 
-                        WHERE p.GameId = j.Id 
-                        AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
-                        j.BasePrice
-                    ) as CurrentPrice,
-                j.IsActive,
-                j.Genre
-            FROM Games j ";
+            var pagedCatalog = await _gameQueryRepository.GetAllGamesAsync(cancellationToken);
 
-            var catalog = await _dbConnection.QueryAsync<GameResponse>(sql);
-
-            if (catalog != null)
+            if (pagedCatalog != null)
             {
-                await _cacheService.SetAsync(cacheKey, catalog, TimeSpan.FromMinutes(5), cancellationToken);
+                await _cacheService.SetAsync(cacheKey, pagedCatalog, TimeSpan.FromMinutes(5), cancellationToken);
             }
 
-            return catalog;
+            return pagedCatalog;
         }
     }
 }
