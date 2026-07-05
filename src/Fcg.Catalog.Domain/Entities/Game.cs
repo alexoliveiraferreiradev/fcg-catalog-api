@@ -119,5 +119,6 @@ namespace Fcg.Catalog.Domain.Entities
             promotion.Deactivate();
             UpdatedAt = DateTime.UtcNow;
         }
+
     }
 }

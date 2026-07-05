@@ -8,7 +8,6 @@ namespace Fcg.Catalog.Domain.Repositories
         void Update(UserLibrary library);
         Task<UserLibrary?> GetById(Guid id);
         Task<bool> CheckIfUserOwnsGame(Guid userId, Guid gameId);
-        Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId);
 
     }
 }

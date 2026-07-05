@@ -24,13 +24,6 @@ namespace Fcg.Catalog.Infrastructure.Repositories
             _dbContext.Update(library);
         }
 
-        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId)
-        {
-            var connecetion = _dbContext.Database.GetDbConnection();
-            const string sql = @"SELECT GameId FROM Libraries WHERE UserId = @UserId AND IsActive = 1";
-            return await connecetion.QueryAsync<Guid>(sql, new { UserId = userId });
-        }
-
         public async Task<UserLibrary?> GetById(Guid id)
         {
            return await _dbContext.Libraries.Where(x=>x.Id == id).FirstOrDefaultAsync();
