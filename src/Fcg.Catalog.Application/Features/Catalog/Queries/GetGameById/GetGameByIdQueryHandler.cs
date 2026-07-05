@@ -22,21 +22,21 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetGameById
         {
             var cacheKey = $"catalog:game:{request.GameId}";
 
-            var cachedJogo = await _cacheService.GetAsync<GameResponse>(cacheKey,cancellationToken);
+            var cachedGame = await _cacheService.GetAsync<GameResponse>(cacheKey,cancellationToken);
 
-            if(cachedJogo != null)
+            if(cachedGame != null)
             {
-                return cachedJogo;
+                return cachedGame;
             }
 
-            var jogoDetalhe = await _gameQueryRepository.GetGameByIdAsync(request.GameId, cancellationToken);
+            var gameDetail = await _gameQueryRepository.GetGameByIdAsync(request.GameId, cancellationToken);
 
-            if (jogoDetalhe != null)
+            if (gameDetail != null)
             {
-                await _cacheService.SetAsync(cacheKey, jogoDetalhe, TimeSpan.FromMinutes(5), cancellationToken);
+                await _cacheService.SetAsync(cacheKey, gameDetail, TimeSpan.FromMinutes(5), cancellationToken);
             }
 
-            return jogoDetalhe;
+            return gameDetail;
         }
     }
 }
