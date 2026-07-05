@@ -189,6 +189,7 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddScoped<IGameQueryRepository, GameQueryRepository>();
             builder.Services.AddScoped<IPromotionQueryRepository, PromotionQueryRepository>();
             builder.Services.AddScoped<IOrderQueryRepository, OrderQueryRepository>();
+            builder.Services.AddScoped<ILibraryQueryRepository, LibraryQueryRepository>();
             return builder;
         }
     }
