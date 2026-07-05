@@ -2,16 +2,19 @@
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
-namespace Fcg.Catalog.Infrastructure.Repository
+namespace Fcg.Catalog.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
         private readonly CatalogDbContext _dbContext;
+        private readonly IDbConnection _dbConnection;
 
-        public OrderRepository(CatalogDbContext dbContext)
+        public OrderRepository(CatalogDbContext dbContext, IDbConnection dbConnection)
         {
             _dbContext = dbContext;
+            _dbConnection = dbConnection;
         }
 
         public void Add(Order order)

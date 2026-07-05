@@ -4,7 +4,7 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fcg.Catalog.Infrastructure.Repository
+namespace Fcg.Catalog.Infrastructure.Repositories
 {
     public class GameRepository : IGameRepository
     {

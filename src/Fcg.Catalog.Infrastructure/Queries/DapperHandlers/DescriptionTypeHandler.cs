@@ -1,14 +1,8 @@
 using Dapper;
 using Fcg.Catalog.Domain.ValueObject;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Fcg.Catalog.Infrastructure.DapperHandlers
+namespace Fcg.Catalog.Infrastructure.Queries.DapperHandlers
 {
     public class DescriptionTypeHandler : SqlMapper.TypeHandler<Description>
     {
