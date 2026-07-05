@@ -17,17 +17,17 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         /// <summary>
         /// Preço promocional do game (deve ser menor que o preço original).
         /// </summary>
-        [DefaultValue(29.99)]
+        [DefaultValue(0.00)]
         public decimal PromotionValue { get; init; }
         /// <summary>
         /// Data e hora de início da vigência da promoção.
         /// </summary>
-        [DefaultValue("2026-07-04T17:40:00Z")]
+        
         public DateTime StartDate { get; init; }
         /// <summary>
         /// Data e hora de término da vigência da promoção.
         /// </summary>
-        [DefaultValue("2026-07-14T17:40:00Z")]
+        
         public DateTime EndDate { get; init; }
 
         /// <summary>

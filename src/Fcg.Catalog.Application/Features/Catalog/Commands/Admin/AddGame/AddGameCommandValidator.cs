@@ -9,18 +9,19 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage(DomainMessages.GameNameRequired)
-                .Length(3, 20).WithMessage(DomainMessages.GameNameLengthInvalid)
-                .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ]+$")
-                .NotEqual("Nome do Jogo").WithMessage(DomainMessages.GameNameNotReal);
+                .Length(3, 100).WithMessage(DomainMessages.GameNameLengthInvalid)
+                .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ0-9\s:\-]+$")
+                .NotEqual("nome do jogo").WithMessage(DomainMessages.GameNameNotReal);
+            
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage(DomainMessages.GameDescriptionRequired)
-                .Length(5, 100).WithMessage(DomainMessages.GameDescriptionLengthInvalid)
-                .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ]+$")
-                .NotEqual("Descrição do Jogo").WithMessage(DomainMessages.GameDescriptionNotReal);
+                .Length(5, 500).WithMessage(DomainMessages.GameDescriptionLengthInvalid)
+                .Matches(@"^[a-zA-ZáéíóúÁÉÍÓÚâêîôûÂÊÎÔÛãõÃÕçÇ0-9\s.,!?'""\-]+$")
+                .NotEqual("descrição do jogo").WithMessage(DomainMessages.GameDescriptionNotReal);
 
             RuleFor(x => x.Price)
-                .GreaterThan(0).WithMessage(DomainMessages.InvalidValue);
+                .GreaterThanOrEqualTo(0).WithMessage(DomainMessages.InvalidValue);
 
             RuleFor(x => x.Genre)
                 .Must(x => (int)x >= 1 && (int)x <= 20).WithMessage(DomainMessages.GameGenreInvalid);

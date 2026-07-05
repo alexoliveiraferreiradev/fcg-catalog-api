@@ -28,7 +28,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
         /// <summary>
         /// Novo preço base do game.
         /// </summary>
-        [DefaultValue(59.99)]
+        [DefaultValue(0.00)]
         public decimal NewPrice { get; init; }
         /// <summary>
         /// Novo gênero principal do game.
