@@ -24,7 +24,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
     public class PlaceOrderCommandHandlerTests
     {
         private readonly Mock<IGameRepository> _gameRepositoryMock;
-        private readonly Mock<ILibraryQueryRepository> _libraryQueryRepositoryMock;
+        private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
         private readonly Mock<IPublishEndpoint> _publishEndpointMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IOrderRepository> _orderRepositoryMock;
@@ -34,7 +34,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
         public PlaceOrderCommandHandlerTests()
         {
             _gameRepositoryMock = new Mock<IGameRepository>();
-            _libraryQueryRepositoryMock = new Mock<ILibraryQueryRepository>();
+            _libraryRepositoryMock = new Mock<ILibraryRepository>();
             _publishEndpointMock = new Mock<IPublishEndpoint>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
@@ -42,7 +42,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 
             _handler = new PlaceOrderCommandHandler(
                 _publishEndpointMock.Object,
-                _libraryQueryRepositoryMock.Object,
+                _libraryRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _orderRepositoryMock.Object,
                 _gameRepositoryMock.Object,
@@ -74,8 +74,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
                 .ReturnsAsync(new List<Game> { game });
 
-            _libraryQueryRepositoryMock
-                .Setup(r => r.GetPurchasedGamesByUser(UserId, It.IsAny<CancellationToken>()))
+            _libraryRepositoryMock
+                .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid>()); // UserLibrary vazia
 
             // Act
@@ -127,8 +127,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
                 .ReturnsAsync(new List<Game> { game });
 
-            _libraryQueryRepositoryMock
-                .Setup(r => r.GetPurchasedGamesByUser(UserId, It.IsAny<CancellationToken>()))
+            _libraryRepositoryMock
+                .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid> { GameId }); // Usuário já possui este Game
 
             // Act
@@ -154,8 +154,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
                 .ReturnsAsync(new List<Game> { game });
 
-            _libraryQueryRepositoryMock
-                .Setup(r => r.GetPurchasedGamesByUser(UserId, It.IsAny<CancellationToken>()))
+            _libraryRepositoryMock
+                .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid>()); 
 
             // Act
