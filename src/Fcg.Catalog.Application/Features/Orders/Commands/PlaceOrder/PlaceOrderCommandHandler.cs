@@ -16,21 +16,21 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
         
         private readonly IGameRepository _gameRepository;
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ILibraryQueryRepository _libraryQueryRepository;
+        private readonly ILibraryRepository _libraryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<PlaceOrderCommandHandler> _logger;
         private readonly IOrderRepository _orderRepository;
 
         public PlaceOrderCommandHandler(
             IPublishEndpoint publishEndpoint,
-            ILibraryQueryRepository libraryQueryRepository,
+            ILibraryRepository libraryRepository,
             IUnitOfWork unitOfWork,
             IOrderRepository orderRepository,
             IGameRepository gameRepository,
             ILogger<PlaceOrderCommandHandler> logger)
         {
             _publishEndpoint = publishEndpoint;
-            _libraryQueryRepository = libraryQueryRepository;
+            _libraryRepository = libraryRepository;
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -44,7 +44,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             var games = await _gameRepository.GetGamesByIds(request.JogosIds);
             var idsEncontrados = games.Select(j => j.Id);
             var idsInexistentes = request.JogosIds.Except(idsEncontrados);
-            var jogosJaPossuidos = await _libraryQueryRepository.GetPurchasedGamesByUser(request.UserId, cancellationToken);
+            var jogosJaPossuidos = await _libraryRepository.GetPurchasedGamesByUser(request.UserId);
 
             if (idsInexistentes.Any())
             {
