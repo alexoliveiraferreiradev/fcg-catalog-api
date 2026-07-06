@@ -81,7 +81,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                 p.EndDate
             FROM Promotions p
             INNER JOIN Games j ON p.GameId = j.Id
-            WHERE p.Id = @PromotionId;";
+            WHERE p.Id = @PromotionId and p.IsActive = 1 Order by p.CreatedAt DESC;";
 
             return await _dbConnection.QueryFirstOrDefaultAsync<PromotionResponse>(sql, new { PromotionId = promotionId });
         }
