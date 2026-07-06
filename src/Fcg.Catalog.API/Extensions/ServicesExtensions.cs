@@ -19,6 +19,7 @@ using Serilog;
 using StackExchange.Redis;
 using System.Data;
 using System.Text;
+using Fcg.Catalog.Infrastructure.Worker;
 
 namespace Fcg.Catalog.API.Extensions
 {
@@ -181,6 +182,7 @@ namespace Fcg.Catalog.API.Extensions
 
             builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());
             builder.Services.AddScoped<CatalogDbContext>();
+            builder.Services.AddHostedService<DeactivateInvalidPromotionWorker>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
