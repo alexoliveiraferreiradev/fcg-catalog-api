@@ -9,12 +9,10 @@ namespace Fcg.Catalog.Infrastructure.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly CatalogDbContext _dbContext;
-        private readonly IDbConnection _dbConnection;
 
-        public OrderRepository(CatalogDbContext dbContext, IDbConnection dbConnection)
+        public OrderRepository(CatalogDbContext dbContext)
         {
             _dbContext = dbContext;
-            _dbConnection = dbConnection;
         }
 
         public void Add(Order order)
