@@ -38,7 +38,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
-            if (game.Promotions.Any())
+            if (game.Promotions.Where(x=>x.IsActive).Any())
             {
                 _logger.LogWarning("[CatalogAPI] Falha ao adicionar promoção. O Jogo já possui promoções registradas. JogoId: {JogoId}", request.GameId);
                 throw new DomainException(DomainMessages.GameWithPromotions);
