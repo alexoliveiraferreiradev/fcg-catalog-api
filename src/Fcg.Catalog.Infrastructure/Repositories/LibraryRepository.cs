@@ -31,11 +31,16 @@ namespace Fcg.Catalog.Infrastructure.Repositories
 
         public async Task<bool> CheckIfUserOwnsGame(Guid userId, Guid gameId)
         {
-            return await _dbContext.Libraries.AnyAsync(x => x.UserId == userId && x.GameId == gameId && x.IsActive);
+            return await _dbContext.Libraries.AsNoTracking().AnyAsync(x => x.UserId == userId && x.GameId == gameId && x.IsActive);
         }
 
-
-        
+        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId)
+        {
+            return await _dbContext.Libraries.AsNoTracking()
+                .Where(x => x.UserId == userId && x.IsActive)
+                .Select(x => x.GameId)
+                .ToListAsync();
+        }
 
     }
 }
