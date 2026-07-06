@@ -64,11 +64,5 @@ namespace Fcg.Catalog.Infrastructure.Queries
 
             return bibliotecaPaginada;
         }
-
-        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId, CancellationToken cancellationToken)
-        {
-            const string sql = @"SELECT GameId FROM Libraries WHERE UserId = @UserId AND IsActive = 1";
-            return await _dbConnection.QueryAsync<Guid>(sql, new { UserId = userId });
-        }
     }
 }
