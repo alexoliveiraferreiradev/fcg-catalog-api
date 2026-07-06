@@ -8,15 +8,16 @@ using System.Data;
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
 {
     public class GetPagedCatalogQueryHandler : IRequestHandler<GetPagedCatalogQuery, PagedResult<GameUserResponse>>
-    {
-        private readonly IDbConnection _dbConnection;
+    {        
         private readonly ICacheService _cacheService;
+        private readonly IGameQueryRepository _gameQueryRepository;
 
-        public GetPagedCatalogQueryHandler(IDbConnection dbConnection,
-            ICacheService cacheService)
-        {
-            _dbConnection = dbConnection;
+        public GetPagedCatalogQueryHandler(
+            ICacheService cacheService,
+            IGameQueryRepository gameQueryRepository)
+        {        
             _cacheService = cacheService;
+            _gameQueryRepository = gameQueryRepository;
         }
 
         public async Task<PagedResult<GameUserResponse>> Handle(GetPagedCatalogQuery request, CancellationToken cancellationToken)
@@ -33,63 +34,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPagedCatalog
                 return cachedCatalog;
             }
 
-            var offset = (request.Page - 1) * request.PageSize;
-            var onlyPromoted = request.OnlyPromoted ?? false;
-            
-            const string sql = @"            
-            SELECT COUNT(1) 
-            FROM Games j
-            WHERE (@Genre IS NULL OR j.Genre = @Genre)
-              AND (j.IsActive = 1)
-              AND (@OnlyPromoted = 0 OR EXISTS (
-                  SELECT 1 FROM Promotions p 
-                  WHERE p.GameId = j.Id 
-                    AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
-              ));
-
-            SELECT 
-                j.Id,
-                j.Name,    
-                j.Description,
-                j.BasePrice AS OriginalPrice,
-                COALESCE(
-                    (SELECT TOP 1 p.ValorPromocao 
-                     FROM Promotions p 
-                     WHERE p.GameId = j.Id 
-                       AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
-                    j.BasePrice
-                ) AS CurrentPrice,
-                j.Genre,
-                j.IsActive
-            FROM Games j
-            WHERE (@Genre IS NULL OR j.Genre = @Genre)
-              AND (j.IsActive = 1)
-              AND (@OnlyPromoted = 0 OR EXISTS (
-                  SELECT 1 FROM Promotions p 
-                  WHERE p.GameId = j.Id 
-                    AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
-              ))
-            ORDER BY j.CreatedAt DESC
-            OFFSET @Offset ROWS 
-            FETCH NEXT @PageSize ROWS ONLY;";
+            var pagedCatalog = await _gameQueryRepository.GetPagedCatalogAsync(request.Genre, request.OnlyPromoted,request.Page,request.PageSize, cancellationToken);
 
 
-            using var multi = await _dbConnection.QueryMultipleAsync(sql, new
-            {                
-                Genre = request.Genre.HasValue ? (int?)request.Genre.Value : null,
-                OnlyPromoted = onlyPromoted ? 1 : 0,
-                Offset = offset,
-                PageSize = request.PageSize
-            });
-
-
-            var totalItems = await multi.ReadFirstAsync<int>();
-            var items = await multi.ReadAsync<GameUserResponse>();
-
-
-            var pagedCatalog = new PagedResult<GameUserResponse>(items,request.Page, request.PageSize,totalItems);
-
-            if(pagedCatalog.Items.Any())
+            if (pagedCatalog.Items.Any())
             {
                 await _cacheService.SetAsync(cacheKey, pagedCatalog, TimeSpan.FromMinutes(5), cancellationToken);
             }

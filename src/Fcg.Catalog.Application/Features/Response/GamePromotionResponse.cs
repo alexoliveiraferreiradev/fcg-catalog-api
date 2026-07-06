@@ -4,7 +4,7 @@ namespace Fcg.Catalog.Application.Features.Response
 {
     public class GamePromotionResponse
     {
-        public Guid Id { get; init; }
+        public Guid PromotionId { get; set; }
         public string Name { get; init; }
         public string Description { get; init; }
         public decimal OriginalPrice { get; init; }

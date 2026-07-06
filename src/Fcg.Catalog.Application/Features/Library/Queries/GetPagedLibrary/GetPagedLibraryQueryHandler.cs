@@ -8,11 +8,12 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
 {
     public class GetPagedLibraryQueryHandler : IRequestHandler<GetPagedLibraryQuery, PagedResult<BibliotecaItemResponse>>
     {
-        private readonly IDbConnection _dbConnection;
+        
         private readonly ICacheService _cacheService;
-        public GetPagedLibraryQueryHandler(IDbConnection dbConnection, ICacheService cacheService)
+        private readonly ILibraryQueryRepository _libraryQueryRepository;
+        public GetPagedLibraryQueryHandler(ILibraryQueryRepository libraryQueryRepository, ICacheService cacheService)
         {
-            _dbConnection = dbConnection;
+            _libraryQueryRepository = libraryQueryRepository;
             _cacheService = cacheService;
         }
         public async Task<PagedResult<BibliotecaItemResponse>> Handle(GetPagedLibraryQuery request, CancellationToken cancellationToken)
@@ -24,52 +25,9 @@ namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
                 return bibliotecaEmCache;
             }
 
-            var offset = (request.Page - 1) * request.PageSize;
+            var bibliotecaPaginada = await _libraryQueryRepository.GetPagedLibraryAsync(request.UserId, request.Page, request.PageSize, cancellationToken); 
 
-            if (_dbConnection.State != ConnectionState.Open)
-            {
-                _dbConnection.Open();
-            }
-
-            const string sql = @"            
-            SELECT COUNT(1) 
-            FROM Libraries 
-            WHERE UserId = @UserId;
-            
-            SELECT 
-                b.GameId AS GameId,
-                j.Name AS GameName,
-                j.Description as Description,    
-                j.Genre AS Genre,
-                b.CreatedAt AS DataAquisicao
-            FROM Libraries b
-            INNER JOIN Games j ON b.GameId = j.Id
-            WHERE b.UserId = @UserId AND b.IsActive = 1
-            ORDER BY b.CreatedAt DESC
-            OFFSET @Offset ROWS 
-            FETCH NEXT @PageSize ROWS ONLY;";
-
-            
-            using var multi = await _dbConnection.QueryMultipleAsync(sql, new
-            {
-                UserId = request.UserId,
-                Offset = offset,
-                PageSize = request.PageSize
-            });
-
-            
-            var totalItems = await multi.ReadFirstOrDefaultAsync<int>();
-
-            
-            var items = await multi.ReadAsync<BibliotecaItemResponse>();
-
-            var bibliotecaPaginada = new PagedResult<BibliotecaItemResponse>(
-                items,
-                request.Page,
-                request.PageSize,
-                totalItems);
-            
-            if(bibliotecaPaginada.Items.Any())
+            if (bibliotecaPaginada.Items.Any())
             {
                 await _cacheService.SetAsync(cachaKey, bibliotecaPaginada, TimeSpan.FromMinutes(5), cancellationToken);
             }

@@ -4,9 +4,10 @@ using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
-using Fcg.Catalog.Infrastructure.DapperHandlers;
+using Fcg.Catalog.Infrastructure.Queries.DapperHandlers;
 using Fcg.Catalog.Infrastructure.Persistence;
-using Fcg.Catalog.Infrastructure.Repository;
+using Fcg.Catalog.Infrastructure.Repositories;
+using Fcg.Catalog.Infrastructure.Queries;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;
 using FluentValidation;
@@ -18,6 +19,7 @@ using Serilog;
 using StackExchange.Redis;
 using System.Data;
 using System.Text;
+using Fcg.Catalog.Infrastructure.Worker;
 
 namespace Fcg.Catalog.API.Extensions
 {
@@ -180,11 +182,16 @@ namespace Fcg.Catalog.API.Extensions
 
             builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());
             builder.Services.AddScoped<CatalogDbContext>();
+            builder.Services.AddHostedService<DeactivateInvalidPromotionWorker>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IGameRepository, GameRepository>();
             builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+            builder.Services.AddScoped<IGameQueryRepository, GameQueryRepository>();
+            builder.Services.AddScoped<IPromotionQueryRepository, PromotionQueryRepository>();
+            builder.Services.AddScoped<IOrderQueryRepository, OrderQueryRepository>();
+            builder.Services.AddScoped<ILibraryQueryRepository, LibraryQueryRepository>();
             return builder;
         }
     }

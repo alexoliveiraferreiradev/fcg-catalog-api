@@ -15,28 +15,35 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         private readonly IGameRepository _jogoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdatePromotionCommandHandler> _logger;
-        private readonly IMediator _mediator;   
+        private readonly IMediator _mediator;
 
         public UpdatePromotionCommandHandler(
-            IGameRepository gameRepository, 
-            IUnitOfWork unitOfWork, 
+            IGameRepository gameRepository,
+            IUnitOfWork unitOfWork,
             ILogger<UpdatePromotionCommandHandler> logger,
             IMediator mediator)
         {
             _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _mediator = mediator;   
+            _mediator = mediator;
         }
 
         public async Task Handle(UpdatePromotionCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. PromocaoId: {PromocaoId}, JogoId: {JogoId}, NovoValor: {NovoValor}", request.PromotionId, request.GameId, request.NovoValorPromocao);
+            _logger.LogInformation("[CatalogAPI] Iniciando processo para atualizar promoção. PromocaoId: {PromocaoId}, NovoValor: {NovoValor}", request.PromotionId, request.NovoValorPromocao);
 
-            var game = await _jogoRepository.GetById(request.GameId);
+            var promotion = await _jogoRepository.GetPromotionById(request.PromotionId);
+            if (promotion == null)
+            {
+                _logger.LogWarning("[CatalogAPI] Falha ao atualizar promoção. Promoção não encontrada. PromocaoId: {PromocaoId}", request.PromotionId);
+                throw new DomainException(DomainMessages.PromotionNotFound);
+            }
+
+            var game = await _jogoRepository.GetById(promotion.GameId);
             if (game == null)
             {
-                _logger.LogWarning("[CatalogAPI] Falha ao atualizar promoção. Jogo não encontrado. JogoId: {JogoId}", request.GameId);
+                _logger.LogWarning("[CatalogAPI] Falha ao atualizar promoção. Jogo não encontrado. JogoId: {JogoId}", promotion.GameId);
                 throw new DomainException(DomainMessages.GameNotFound);
             }
 
@@ -47,10 +54,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
             await _unitOfWork.CommitAsync();
 
             var novaPromocao = game.Promotions.First();
-                        
-            await _mediator.Publish(new PromotionUpdatedEvent(game.Id, novaPromocao.Id),cancellationToken);
 
-            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, request.GameId);
+            await _mediator.Publish(new PromotionUpdatedEvent(game.Id, novaPromocao.Id), cancellationToken);
+
+            _logger.LogInformation("[CatalogAPI] Promoção atualizada com sucesso. PromocaoId: {PromocaoId}, JogoId: {JogoId}", request.PromotionId, game.Id);
         }
     }
 }

@@ -4,7 +4,7 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fcg.Catalog.Infrastructure.Repository
+namespace Fcg.Catalog.Infrastructure.Repositories
 {
     public class GameRepository : IGameRepository
     {
@@ -54,15 +54,10 @@ namespace Fcg.Catalog.Infrastructure.Repository
 
         public async Task<IEnumerable<Game>> GetGamesByIds(IEnumerable<Guid> jogosIds)
         {
-            var connection = _dbContext.Database.GetDbConnection();
-            const string sql = @"SELECT  
-                                j.Id, 
-                                j.Name, 
-                                j.Description, 
-                                j.BasePrice, 
-                                j.IsActive,j.CreatedAt, j.UpdatedAt, j.Genre
-                                FROM Games j where j.Id IN @jogosIds ";
-            return await connection.QueryAsync<Game>(sql, new { jogosIds });
+            var games = await _dbContext.Games.Include(p=>p.Promotions)
+                .Where(j => jogosIds.Contains(j.Id)).ToListAsync();
+
+            return games;
         }
     }
 }

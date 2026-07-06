@@ -8,53 +8,35 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetGameById
 {
     public class GetGameByIdQueryHandler : IRequestHandler<GetGameByIdQuery, GameResponse>
     {
-        private readonly IDbConnection _dbConnection;
         private readonly ICacheService _cacheService;
+        private readonly IGameQueryRepository _gameQueryRepository;
 
-        public GetGameByIdQueryHandler(IDbConnection dbConnection,
-            ICacheService cacheService)
+        public GetGameByIdQueryHandler(ICacheService cacheService,
+            IGameQueryRepository gameQueryRepository)
         {
-            _dbConnection = dbConnection;
             _cacheService = cacheService;
+            _gameQueryRepository = gameQueryRepository;
         }
 
         public async Task<GameResponse> Handle(GetGameByIdQuery request, CancellationToken cancellationToken)
         {
             var cacheKey = $"catalog:game:{request.GameId}";
 
-            var cachedJogo = await _cacheService.GetAsync<GameResponse>(cacheKey,cancellationToken);
+            var cachedGame = await _cacheService.GetAsync<GameResponse>(cacheKey,cancellationToken);
 
-            if(cachedJogo != null)
+            if(cachedGame != null)
             {
-                return cachedJogo;
-            }
-            
-            const string sql = @"
-                SELECT 
-                     j.Id,
-                     j.Name,    
-                     j.Description,
-                     j.BasePrice AS OriginalPrice,
-                     COALESCE(
-                         (SELECT TOP 1 p.ValorPromocao 
-                          FROM Promotions p 
-                          WHERE p.GameId = j.Id 
-                            AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate), 
-                         j.BasePrice
-                     ) AS CurrentPrice,
-                     j.Genre,
-                     j.IsActive
-            FROM Games j
-            WHERE j.Id = @GameId;";
-
-            var jogoDetalhe = await _dbConnection.QueryFirstOrDefaultAsync<GameResponse>(sql, new { GameId = request.GameId });
-
-            if (jogoDetalhe != null)
-            {
-                await _cacheService.SetAsync(cacheKey, jogoDetalhe, TimeSpan.FromMinutes(5), cancellationToken);
+                return cachedGame;
             }
 
-            return jogoDetalhe;
+            var gameDetail = await _gameQueryRepository.GetGameByIdAsync(request.GameId, cancellationToken);
+
+            if (gameDetail != null)
+            {
+                await _cacheService.SetAsync(cacheKey, gameDetail, TimeSpan.FromMinutes(5), cancellationToken);
+            }
+
+            return gameDetail;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -59,15 +59,13 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdatePr
             Game.AddPromotion(new Price(80.0m), new Period(DateTime.UtcNow.AddDays(5)));
             var Promotion = Game.Promotions.First();
 
-            var command = new UpdatePromotionCommand
+            var command = new UpdatePromotionCommand(60.0m, DateTime.UtcNow.AddDays(10))
             {
-                PromotionId = Promotion.Id,
-                GameId = Game.Id,
-                NovoValorPromocao = 60.0m,
-                NovaDataFim = DateTime.UtcNow.AddDays(10)
+                PromotionId = Promotion.Id
             };
 
-            _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
+            _jogoRepositoryMock.Setup(r => r.GetPromotionById(command.PromotionId)).ReturnsAsync(Promotion);
+            _jogoRepositoryMock.Setup(r => r.GetById(Promotion.GameId)).ReturnsAsync(Game);
 
             // Act
             await _handler.Handle(command, CancellationToken.None);
@@ -80,11 +78,36 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdatePr
         }
 
         [Fact]
+        public async Task Handle_DeveLancarDomainException_QuandoPromocaoNaoEncontrada()
+        {
+            // Arrange
+            var command = new UpdatePromotionCommand(60.0m, DateTime.UtcNow.AddDays(10))
+            {
+                PromotionId = Guid.NewGuid()
+            };
+            _jogoRepositoryMock.Setup(r => r.GetPromotionById(command.PromotionId)).ReturnsAsync((Promotion)null);
+
+            // Act
+            Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            await act.Should().ThrowAsync<DomainException>();
+        }
+
+        [Fact]
         public async Task Handle_DeveLancarDomainException_QuandoJogoNaoEncontrado()
         {
             // Arrange
-            var command = new UpdatePromotionCommand { GameId = Guid.NewGuid() };
-            _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync((Game)null);
+            var Game = CriarJogoValido();
+            Game.AddPromotion(new Price(80.0m), new Period(DateTime.UtcNow.AddDays(5)));
+            var Promotion = Game.Promotions.First();
+
+            var command = new UpdatePromotionCommand(60.0m, DateTime.UtcNow.AddDays(10))
+            {
+                PromotionId = Promotion.Id
+            };
+            _jogoRepositoryMock.Setup(r => r.GetPromotionById(command.PromotionId)).ReturnsAsync(Promotion);
+            _jogoRepositoryMock.Setup(r => r.GetById(Promotion.GameId)).ReturnsAsync((Game)null);
 
             // Act
             Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);

@@ -2,8 +2,9 @@
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
-namespace Fcg.Catalog.Infrastructure.Repository
+namespace Fcg.Catalog.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {

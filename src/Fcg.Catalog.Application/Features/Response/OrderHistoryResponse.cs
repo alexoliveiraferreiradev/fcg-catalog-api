@@ -5,7 +5,6 @@ namespace Fcg.Catalog.Application.Features.Response
     public class OrderHistoryResponse
     {
         public Guid OrderId { get; set; }
-        public Guid UserId { get; set; }
         public DateTime OrderDate { get; set; }
         public OrderStatus Status { get; set; }
         public decimal TotalAmount { get; set; }

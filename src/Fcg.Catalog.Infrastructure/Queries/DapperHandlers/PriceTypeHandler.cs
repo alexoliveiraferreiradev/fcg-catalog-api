@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fcg.Catalog.Infrastructure.DapperHandlers
+namespace Fcg.Catalog.Infrastructure.Queries.DapperHandlers
 {
     public class PriceTypeHandler : SqlMapper.TypeHandler<Price>
     {

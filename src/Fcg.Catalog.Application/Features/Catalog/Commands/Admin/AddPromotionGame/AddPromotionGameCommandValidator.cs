@@ -10,7 +10,7 @@ public class AddPromotionGameCommandValidator : AbstractValidator<AddPromotionGa
             .NotEmpty().WithMessage(DomainMessages.GameNotFound);
 
         RuleFor(x => x.PromotionValue)
-            .GreaterThan(0).WithMessage(DomainMessages.InvalidValue);
+            .GreaterThanOrEqualTo(0).WithMessage(DomainMessages.InvalidValue);
 
         RuleFor(x => x.EndDate)
             .GreaterThan(x => x.StartDate).WithMessage(DomainMessages.EndDateInvalid)

@@ -1,4 +1,6 @@
-﻿namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
+﻿using System.Text.Json.Serialization;
+
+namespace Fcg.Catalog.Application.Features.Library.Queries.GetPagedLibrary
 {
     public class BibliotecaItemResponse
     {
@@ -12,10 +14,6 @@
         {
         }
 
-        public BibliotecaItemResponse(Guid GameId, string GameName, string GameDescription, string GameGenre, DateTime dataAquisicao)
-        {
-            GameId = GameId; GameName = GameName; Description = GameDescription; Genre = GameGenre; DataAquisicao = dataAquisicao;
-        }
     }
 
 }

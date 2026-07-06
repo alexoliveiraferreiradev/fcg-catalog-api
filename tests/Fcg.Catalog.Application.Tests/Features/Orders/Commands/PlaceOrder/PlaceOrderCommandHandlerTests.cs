@@ -1,4 +1,5 @@
 using Bogus;
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
@@ -22,8 +23,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 {
     public class PlaceOrderCommandHandlerTests
     {
-        private readonly Mock<IGameRepository> _jogoRepositoryMock;
-        private readonly Mock<ILibraryRepository> _bibliotecaRepositoryMock;
+        private readonly Mock<IGameRepository> _gameRepositoryMock;
+        private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
         private readonly Mock<IPublishEndpoint> _publishEndpointMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<IOrderRepository> _orderRepositoryMock;
@@ -32,19 +33,19 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 
         public PlaceOrderCommandHandlerTests()
         {
-            _jogoRepositoryMock = new Mock<IGameRepository>();
-            _bibliotecaRepositoryMock = new Mock<ILibraryRepository>();
+            _gameRepositoryMock = new Mock<IGameRepository>();
+            _libraryRepositoryMock = new Mock<ILibraryRepository>();
             _publishEndpointMock = new Mock<IPublishEndpoint>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _loggerMock = new Mock<ILogger<PlaceOrderCommandHandler>>();
 
             _handler = new PlaceOrderCommandHandler(
-                _jogoRepositoryMock.Object,
                 _publishEndpointMock.Object,
-                _bibliotecaRepositoryMock.Object,
+                _libraryRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _orderRepositoryMock.Object,
+                _gameRepositoryMock.Object,
                 _loggerMock.Object
             );
         }
@@ -63,21 +64,17 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
         public async Task Handle_DevePublicarEventoERetornarTrue_QuandoPedidoForValido()
         {
             // Arrange
-            var GameId = Guid.NewGuid();
             var UserId = Guid.NewGuid();
-            
-            var Game = CriarJogoValido();
-            // Para "setar" a propriedade Id que tem private set da AggregateRoot (caso precise do reflection ou mock). 
-            // Vamos assumir que na comparação vai pelo ID e o ID gerado pelo Construtor base AggregateRoot (que gera um novo Guid)
-            var jogoIdReal = Game.Id;
+            var game = CriarJogoValido();
+            var jogoIdReal = game.Id;
 
             var command = new PlaceOrderCommand(UserId, "User", "user@teste.com", new List<Guid> { jogoIdReal });
 
-            _jogoRepositoryMock
+            _gameRepositoryMock
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
-                .ReturnsAsync(new List<Game> { Game });
+                .ReturnsAsync(new List<Game> { game });
 
-            _bibliotecaRepositoryMock
+            _libraryRepositoryMock
                 .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid>()); // UserLibrary vazia
 
@@ -104,7 +101,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
             
             var command = new PlaceOrderCommand(UserId, "User", "user@teste.com", new List<Guid> { jogoInexistenteId });
 
-            _jogoRepositoryMock
+            _gameRepositoryMock
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
                 .ReturnsAsync(new List<Game>()); // Nenhum Game retornado
 
@@ -121,16 +118,16 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
         {
             // Arrange
             var UserId = Guid.NewGuid();
-            var Game = CriarJogoValido();
-            var GameId = Game.Id;
+            var game = CriarJogoValido();
+            var GameId = game.Id;
             
             var command = new PlaceOrderCommand(UserId, "User", "user@teste.com", new List<Guid> { GameId });
 
-            _jogoRepositoryMock
+            _gameRepositoryMock
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
-                .ReturnsAsync(new List<Game> { Game });
+                .ReturnsAsync(new List<Game> { game });
 
-            _bibliotecaRepositoryMock
+            _libraryRepositoryMock
                 .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid> { GameId }); // Usuário já possui este Game
 
@@ -147,17 +144,17 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
         {
             // Arrange
             var UserId = Guid.NewGuid();
-            var Game = CriarJogoValido();
-            Game.Deactivate();
-            var GameId = Game.Id;
+            var game = CriarJogoValido();
+            game.Deactivate();
+            var GameId = game.Id;
             
             var command = new PlaceOrderCommand(UserId, "User", "user@teste.com", new List<Guid> { GameId });
 
-            _jogoRepositoryMock
+            _gameRepositoryMock
                 .Setup(r => r.GetGamesByIds(command.JogosIds))
-                .ReturnsAsync(new List<Game> { Game });
+                .ReturnsAsync(new List<Game> { game });
 
-            _bibliotecaRepositoryMock
+            _libraryRepositoryMock
                 .Setup(r => r.GetPurchasedGamesByUser(UserId))
                 .ReturnsAsync(new List<Guid>()); 
 

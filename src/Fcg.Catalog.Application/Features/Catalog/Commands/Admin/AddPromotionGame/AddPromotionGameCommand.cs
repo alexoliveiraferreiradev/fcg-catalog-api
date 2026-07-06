@@ -1,5 +1,6 @@
 using Fcg.Catalog.Application.Features.Response;
 using MediatR;
+using System.ComponentModel;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame
 {
@@ -11,18 +12,22 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
         /// <summary>
         /// Identificador único (GUID) do game ao qual a promoção será associada.
         /// </summary>
+        [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid GameId { get; init; }
         /// <summary>
         /// Preço promocional do game (deve ser menor que o preço original).
         /// </summary>
+        [DefaultValue(0.00)]
         public decimal PromotionValue { get; init; }
         /// <summary>
         /// Data e hora de início da vigência da promoção.
         /// </summary>
+        
         public DateTime StartDate { get; init; }
         /// <summary>
         /// Data e hora de término da vigência da promoção.
         /// </summary>
+        
         public DateTime EndDate { get; init; }
 
         /// <summary>

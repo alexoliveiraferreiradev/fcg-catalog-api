@@ -4,7 +4,7 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fcg.Catalog.Infrastructure.Repository
+namespace Fcg.Catalog.Infrastructure.Repositories
 {
     public class LibraryRepository : ILibraryRepository
     {
@@ -24,13 +24,6 @@ namespace Fcg.Catalog.Infrastructure.Repository
             _dbContext.Update(library);
         }
 
-        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId)
-        {
-            var connecetion = _dbContext.Database.GetDbConnection();
-            const string sql = @"SELECT GameId FROM Libraries WHERE UserId = @UserId AND IsActive = 1";
-            return await connecetion.QueryAsync<Guid>(sql, new { UserId = userId });
-        }
-
         public async Task<UserLibrary?> GetById(Guid id)
         {
            return await _dbContext.Libraries.Where(x=>x.Id == id).FirstOrDefaultAsync();
@@ -38,11 +31,16 @@ namespace Fcg.Catalog.Infrastructure.Repository
 
         public async Task<bool> CheckIfUserOwnsGame(Guid userId, Guid gameId)
         {
-            return await _dbContext.Libraries.AnyAsync(x => x.UserId == userId && x.GameId == gameId && x.IsActive);
+            return await _dbContext.Libraries.AsNoTracking().AnyAsync(x => x.UserId == userId && x.GameId == gameId && x.IsActive);
         }
 
-
-        
+        public async Task<IEnumerable<Guid>> GetPurchasedGamesByUser(Guid userId)
+        {
+            return await _dbContext.Libraries.AsNoTracking()
+                .Where(x => x.UserId == userId && x.IsActive)
+                .Select(x => x.GameId)
+                .ToListAsync();
+        }
 
     }
 }

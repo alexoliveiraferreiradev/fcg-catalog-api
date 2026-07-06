@@ -1,20 +1,18 @@
-﻿using Dapper;
-using Fcg.Catalog.Application.Common.Interfaces;
+﻿using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
 using MediatR;
-using System.Data;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
 {
     public class GetPromotionByGameIdQueryHandler : IRequestHandler<GetPromotionByGameIdQuery, PromotionResponse>
-    {
-        private readonly IDbConnection _dbConnection;
+    {        
         private readonly ICacheService _cacheService;
+        private readonly IPromotionQueryRepository _promotionQueryRepository;
 
-        public GetPromotionByGameIdQueryHandler(IDbConnection dbConnection,
+        public GetPromotionByGameIdQueryHandler(IPromotionQueryRepository promotionQueryRepository,
             ICacheService cacheService)
         {
-            _dbConnection = dbConnection;
+            _promotionQueryRepository = promotionQueryRepository;
             _cacheService = cacheService;
         }
 
@@ -29,23 +27,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.Queries.GetPromotionByGameId
                 return cachedPromocao;
             }
 
+            var promocaoDetalhe = await _promotionQueryRepository.GetPromotionByIdAsync(request.PromotionId, cancellationToken);
 
-            const string sql = @"
-            SELECT 
-                p.Id AS PromotionId,
-                p.GameId,
-                p.ValorPromocao,
-                j.Name AS GameName,
-                j.Description AS GameDescription,
-                p.StartDate,
-                p.EndDate
-            FROM Promotions p
-            INNER JOIN Games j ON p.GameId = j.Id
-            WHERE p.Id = @PromotionId;";
-
-            var promocaoDetalhe = await _dbConnection.QueryFirstOrDefaultAsync<PromotionResponse>(sql, new { PromotionId = request.PromotionId });
-
-            if(promocaoDetalhe != null)
+            if (promocaoDetalhe != null)
             {
                 await _cacheService.SetAsync(cacheKey, promocaoDetalhe, TimeSpan.FromMinutes(5), cancellationToken);
             }

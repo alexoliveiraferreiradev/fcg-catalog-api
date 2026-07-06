@@ -1,5 +1,7 @@
 using MediatR;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion
 {
@@ -11,14 +13,12 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         /// <summary>
         /// Identificador único (GUID) da promoção a ser atualizada.
         /// </summary>
+        [JsonIgnore]
         public Guid PromotionId { get; init; }
-        /// <summary>
-        /// Identificador único (GUID) do game associado à promoção.
-        /// </summary>
-        public Guid GameId { get; init; }
         /// <summary>
         /// Novo preço promocional do game.
         /// </summary>
+        [DefaultValue(0.00)]
         public decimal NovoValorPromocao { get; init; }
         /// <summary>
         /// Nova data e hora de término da vigência da promoção.
@@ -35,12 +35,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotio
         /// <summary>
         /// Construtor parametrizado.
         /// </summary>
-        /// <param name="GameId">Identificador único do game.</param>
         /// <param name="valorPromocao">Novo valor promocional.</param>
         /// <param name="EndDate">Nova data de término.</param>
-        public UpdatePromotionCommand(Guid GameId, decimal valorPromocao, DateTime EndDate)
+        public UpdatePromotionCommand(decimal valorPromocao, DateTime EndDate)
         {
-            this.GameId = GameId; NovoValorPromocao = valorPromocao; NovaDataFim = EndDate;
+            NovoValorPromocao = valorPromocao; NovaDataFim = EndDate;
         }
     }
 }
