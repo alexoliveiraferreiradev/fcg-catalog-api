@@ -35,7 +35,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                     o.TotalAmount as TotalAmount
                 FROM Orders o
                 WHERE o.UserId = @UserId
-                ORDER BY o.CreatedAt DESC
+                ORDER BY o.CreatedAt,o.Status DESC
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";
 
             var orders = (await _dbConnection.QueryAsync<OrderHistoryResponse>(ordersSql, new { UserId = userId, Offset = offset, PageSize = pageSize })).ToList();
