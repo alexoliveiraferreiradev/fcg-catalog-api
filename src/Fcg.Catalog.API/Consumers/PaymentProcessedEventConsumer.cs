@@ -21,7 +21,7 @@ namespace Fcg.Catalog.API.Consumers
         {
             var order = context.Message;
             _logger.LogInformation("[CatalogAPI] PaymentProcessedEvent recebido para o Pedido {OrderId}", order.OrderId);
-            var finalizeCommand = new FinalizeSucessOrderCommand(order.OrderId, order.UserId, order.NomeUsuario, order.EmailUsuario, order.JogosIds, order.Status);
+            var finalizeCommand = new FinalizeSucessOrderCommand(order.OrderId, order.UserId, order.GameIds);
             await _mediator.Send(finalizeCommand);
         }
     }

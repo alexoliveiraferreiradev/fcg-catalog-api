@@ -1,13 +1,11 @@
+using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.MessageContracts;
 using MassTransit;
 using MediatR;
-using System.IO.Pipes;
 using Microsoft.Extensions.Logging;
-using Fcg.Catalog.Domain.Entities;
-using Fcg.Catalog.Application.Common.Interfaces;
 
 namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
 {
@@ -81,10 +79,8 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             await _publishEndpoint.Publish(new OrderPlacedEvent(
                 OrderId: orderUser.Id,
                 UserId: request.UserId,
-                EmailUsuario: request.EmailUsuario,
-                NomeUsuario: request.NomeUsuario,
-                JogosIds: request.JogosIds,
-                PrecoTotal: precoTotal), cancellationToken);
+                GameIds: request.JogosIds,
+                AmountPrice: precoTotal), cancellationToken);
             
             await _unitOfWork.CommitAsync();
 

@@ -37,7 +37,7 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder
                 var orderUser = await _orderRepository.GetOrderById(request.OrderId);
                 _logger.LogInformation("[CatalogAPI] Pagamento aprovado para o Pedido: {OrderId}. Adicionando Jogos à Biblioteca do Usuário: {UserId}", request.OrderId, request.UserId);
 
-                foreach (var guidJogo in request.JogosIds)
+                foreach (var guidJogo in request.GameIds)
                 {
                     var library = new UserLibrary(request.UserId, guidJogo);
 
@@ -57,8 +57,6 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder
                 await _publishEndpoint.Publish(new DeliveryFailedEvent(
                     request.OrderId,
                     request.UserId,
-                    request.NomeUsuario,
-                    request.EmailUsuario,
                     "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."
                     ));
             }
