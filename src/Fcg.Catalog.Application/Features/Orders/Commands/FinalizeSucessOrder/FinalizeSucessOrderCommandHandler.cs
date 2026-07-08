@@ -57,8 +57,6 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder
                 await _publishEndpoint.Publish(new DeliveryFailedEvent(
                     request.OrderId,
                     request.UserId,
-                    string.Empty,
-                    string.Empty,
                     "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."
                     ));
             }

@@ -86,8 +86,8 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
             
             _publishEndpointMock.Verify(p => p.Publish(It.Is<OrderPlacedEvent>(e => 
                 e.UserId == UserId && 
-                e.PrecoTotal == 100.00m && 
-                e.JogosIds.Contains(jogoIdReal)), It.IsAny<CancellationToken>()), Times.Once);
+                e.AmountPrice == 100.00m && 
+                e.GameIds.Contains(jogoIdReal)), It.IsAny<CancellationToken>()), Times.Once);
 
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
         }

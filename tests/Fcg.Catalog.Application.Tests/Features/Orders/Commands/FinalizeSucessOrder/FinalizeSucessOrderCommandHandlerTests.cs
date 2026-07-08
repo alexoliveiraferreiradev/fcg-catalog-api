@@ -64,10 +64,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessO
             var command = new FinalizeSucessOrderCommand(
                 orderId,
                 userId,
-                "User Test",
-                "user@test.com",
-                new List<Guid> { gameId1, gameId2 },
-                PaymentStatus.Approved
+                new List<Guid> { gameId1, gameId2 }
             );
 
             _orderRepositoryMock
@@ -98,10 +95,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessO
             var command = new FinalizeSucessOrderCommand(
                 orderId,
                 userId,
-                "User Test",
-                "user@test.com",
-                new List<Guid> { Guid.NewGuid() },
-                PaymentStatus.Approved
+                new List<Guid> { Guid.NewGuid() }
             );
 
             // Forçar falha jogando uma exceção ao buscar a order
@@ -116,8 +110,6 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessO
             _publishEndpointMock.Verify(p => p.Publish(It.Is<DeliveryFailedEvent>(e => 
                 e.OrderId == orderId && 
                 e.UserId == userId && 
-                e.NomeUsuario == "User Test" && 
-                e.EmailUsuario == "user@test.com" &&
                 e.Reason == "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."), 
                 It.IsAny<CancellationToken>()), Times.Once);
 
