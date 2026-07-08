@@ -6,11 +6,10 @@
 
   <ItemGroup>
 	<PackageReference Include="Fcg.Core.WebApi" Version="1.0.3" />
-	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
-	<PackageReference Include="MassTransit.RabbitMQ" Version="9.1.2" />
+	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.4.1" />
+	<PackageReference Include="MassTransit.RabbitMQ" Version="8.4.1" />
 	<PackageReference Include="FluentValidation" Version="12.1.1" />
 	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-	<PackageReference Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.15">
       <PrivateAssets>all</PrivateAssets>
