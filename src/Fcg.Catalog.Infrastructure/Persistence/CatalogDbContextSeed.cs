@@ -1,4 +1,4 @@
-﻿using Fcg.Catalog.Domain.Entities;
+using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +9,6 @@ namespace Fcg.Catalog.Infrastructure.Persistence
     {        
         public static async Task SeedDataAsync(CatalogDbContext context)
         {
-            if ((await context.Database.GetPendingMigrationsAsync()).Any())
-            {
-                await context.Database.MigrateAsync();
-            }
-
             if (!await context.Games.AnyAsync())
             {
                 context.Games.AddRange(
