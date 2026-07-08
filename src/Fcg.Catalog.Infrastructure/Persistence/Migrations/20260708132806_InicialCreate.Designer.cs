@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20260703165901_InicialCreate")]
+    [Migration("20260708132806_InicialCreate")]
     partial class InicialCreate
     {
         /// <inheritdoc />
@@ -303,10 +303,6 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BusName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -327,8 +323,6 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                     b.HasKey("OutboxId");
 
                     b.HasIndex("Created");
-
-                    b.HasIndex("BusName", "Created");
 
                     b.ToTable("OutboxState");
                 });

@@ -77,8 +77,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Delivered = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true),
-                    BusName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                    LastSequenceNumber = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,6 +220,11 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderGames_OrderId",
+                table: "OrderGames",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OutboxMessage_EnqueueTime",
                 table: "OutboxMessage",
                 column: "EnqueueTime");
@@ -245,19 +249,9 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 filter: "[OutboxId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OutboxState_BusName_Created",
-                table: "OutboxState",
-                columns: new[] { "BusName", "Created" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OutboxState_Created",
                 table: "OutboxState",
                 column: "Created");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderGames_OrderId",
-                table: "OrderGames",
-                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Promotions_GameId",
@@ -277,22 +271,22 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                 name: "Libraries");
 
             migrationBuilder.DropTable(
-                name: "OutboxMessage");
-
-            migrationBuilder.DropTable(
                 name: "OrderGames");
 
             migrationBuilder.DropTable(
+                name: "OutboxMessage");
+
+            migrationBuilder.DropTable(
                 name: "Promotions");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "InboxState");
 
             migrationBuilder.DropTable(
                 name: "OutboxState");
-
-            migrationBuilder.DropTable(
-                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Games");
