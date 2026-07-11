@@ -58,6 +58,8 @@ spec:
             valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_PORT }}
           - name: K8S_DB_TRUST_CERT
             valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_TRUST_CERT }}
+          - name: K8S_ENVIRONMENT
+            valueFrom: { configMapKeyRef: {name: catalog-config,key: ENVIRONMENT}}
           - name: K8S_CATALOG_PAYMENT_FAILED_QUEUE
             valueFrom: {configMapKeyRef: {name: catalog-config,key: CATALOG_PAYMENT_FAILED_QUEUE }}
           - name: K8S_CATALOG_PAYMENT_PROCESSED_QUEUE
@@ -84,6 +86,8 @@ spec:
             value: "$(K8S_JWT_SECRET)"
           - name: "RabbitMqQueues__CatalogPaymentFailedQueue"
             value: "$(K8S_CATALOG_PAYMENT_FAILED_QUEUE)"
+          - name: "ASPNETCORE_ENVIRONMENT"
+            value: "$(K8S_ENVIRONMENT)"
           - name: "RabbitMqQueues__CatalogPaymentProcessedQueue"
             value: "$(K8S_CATALOG_PAYMENT_PROCESSED_QUEUE)"
           - name: "Redis__Configuration"  

@@ -14,3 +14,4 @@ data:
   REDIS_SERVER: redis-service
   REDIS_PORT: "6379" 
   REDIS_NAME: "FiapCloudGames:" 
+  ENVIRONMENT: "Development"
