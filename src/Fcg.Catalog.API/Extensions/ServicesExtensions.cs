@@ -30,7 +30,9 @@ namespace Fcg.Catalog.API.Extensions
 
         public static WebApplicationBuilder AddServicesExtensions(this WebApplicationBuilder builder)
         {
-            builder.JsonExtensions()
+            builder
+                .HealthCheckExtension()
+                .JsonExtensions()
                 .AddSerilogExtension()
                 .AddDbContextExtension()
                 .AddMassTransitExtension()
@@ -69,6 +71,18 @@ namespace Fcg.Catalog.API.Extensions
             });
             return builder;
         }
+
+        private static WebApplicationBuilder HealthCheckExtension(this WebApplicationBuilder builder)
+        {
+            var sqlConnection = builder.Configuration.GetConnectionString("CatalogConnection");
+
+            builder.Services.AddHealthChecks()
+                .AddSqlServer(sqlConnection!);
+   
+
+            return builder;
+        }
+
         private static WebApplicationBuilder AddSerilogExtension(this WebApplicationBuilder builder)
         {            
             builder.Logging.ClearProviders();
