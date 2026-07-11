@@ -1,5 +1,5 @@
 ﻿using Fcg.Catalog.API.Extensions;
-using Fcg.Core.WebApi.Middleware;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,5 +12,7 @@ await app.SeedData();
 app.AddAppConfiguration()
     .UseSwaggerDocumentation()
     .MapEndpoints();
+app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = _ => false });
+app.MapHealthChecks("/health/readiness", new HealthCheckOptions { Predicate = _ => true });
 
 app.Run();

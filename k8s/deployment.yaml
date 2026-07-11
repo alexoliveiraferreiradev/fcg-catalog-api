@@ -1,0 +1,180 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcg-catalog-api-deployment
+  labels:
+    app: fcg-catalog-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fcg-catalog-api
+  template:
+    metadata:
+      labels: 
+        app: fcg-catalog-api
+      annotations:
+        autor: Alex O Ferreira
+        description: "Deployment do microsservico de Catalogo API do Fiap Cloud Games"
+    spec:
+      initContainers:
+      - name: c-catalog-db-migration
+        image: alexoliverdev/fcg-catalog-api:latest     
+        command: ["./efbundle", "--connection", "$(ConnectionStrings__CatalogConnection)"]   
+        env:
+          - name: K8S_DB_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_SERVER
+          - name: K8S_DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_PORT
+          - name: K8S_DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_NAME
+          - name: K8S_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_USER
+          - name: K8S_DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_PASS
+          - name: K8S_DB_TRUST_CERT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_TRUST_CERT
+          - name: "ConnectionStrings__CatalogConnection"
+            value: "Server=$(K8S_DB_SERVER),$(K8S_DB_PORT);Database=$(K8S_DB_NAME);User Id=$(K8S_DB_USER);Password=$(K8S_DB_PASS);TrustServerCertificate=$(K8S_DB_TRUST_CERT);"
+      containers:
+      - name: c-fcg-catalog-api
+        image: alexoliverdev/fcg-catalog-api:latest
+        ports:
+        - containerPort: 8080
+        env:
+          - name: K8S_RABBITMQ_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: RABBITMQ_SERVER
+          - name: K8S_RABBITMQ_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: RABBITMQ_PORT
+          - name: K8S_RABBITMQ_USER
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: RABBITMQ_USER
+          - name: K8S_RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: RABBITMQ_PASS
+          - name: K8S_DB_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_SERVER
+          - name: K8S_DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_NAME
+          - name: K8S_DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_PORT
+          - name: K8S_DB_TRUST_CERT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_TRUST_CERT
+          - name: K8S_ENVIRONMENT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: ENVIRONMENT
+          - name: K8S_CATALOG_PAYMENT_FAILED_QUEUE
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: CATALOG_PAYMENT_FAILED_QUEUE
+          - name: K8S_CATALOG_PAYMENT_PROCESSED_QUEUE
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: CATALOG_PAYMENT_PROCESSED_QUEUE
+          - name: K8S_REDIS_SERVER
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_SERVER
+          - name: K8S_REDIS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_PORT
+          - name: K8S_REDIS_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_NAME
+          - name: K8S_REDIS_PASS
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: REDIS_PASS
+          - name: K8S_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_USER
+          - name: K8S_DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_PASS
+          - name: K8S_JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: JWT_SECRET
+          - name: "ConnectionStrings__RabbitMq"
+            value: "amqp://$(K8S_RABBITMQ_USER):$(K8S_RABBITMQ_PASSWORD)@$(K8S_RABBITMQ_SERVER):$(K8S_RABBITMQ_PORT)"
+          - name: "ConnectionStrings__CatalogConnection"
+            value: "Server=$(K8S_DB_SERVER),$(K8S_DB_PORT);Database=$(K8S_DB_NAME);User Id=$(K8S_DB_USER);Password=$(K8S_DB_PASS);TrustServerCertificate=$(K8S_DB_TRUST_CERT);"
+          - name: "JwtSettings__Secret"
+            value: "$(K8S_JWT_SECRET)"
+          - name: "RabbitMqQueues__CatalogPaymentFailedQueue"
+            value: "$(K8S_CATALOG_PAYMENT_FAILED_QUEUE)"
+          - name: "ASPNETCORE_ENVIRONMENT"
+            value: "$(K8S_ENVIRONMENT)"
+          - name: "RabbitMqQueues__CatalogPaymentProcessedQueue"
+            value: "$(K8S_CATALOG_PAYMENT_PROCESSED_QUEUE)"
+          - name: "Redis__Configuration"  
+            value: "$(K8S_REDIS_SERVER):$(K8S_REDIS_PORT),password=$(K8S_REDIS_PASS),abortConnect=false"
+          - name: "Redis__InstanceName"  
+            value: "$(K8S_REDIS_NAME)"
+        livenessProbe:
+          httpGet:
+            path: /health/liveness
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5

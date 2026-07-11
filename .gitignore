@@ -195,6 +195,7 @@ publish/
 *.pubxml
 *.publishproj
 
+
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
 # in these scripts will be unencrypted
@@ -406,5 +407,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/csharp
 
 # Custom rules
-.agents/
 .env
