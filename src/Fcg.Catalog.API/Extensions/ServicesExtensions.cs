@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RabbitMQ.Client;
 using Serilog;
 using StackExchange.Redis;
 using System.Data;
@@ -75,10 +76,20 @@ namespace Fcg.Catalog.API.Extensions
         private static WebApplicationBuilder HealthCheckExtension(this WebApplicationBuilder builder)
         {
             var sqlConnection = builder.Configuration.GetConnectionString("CatalogConnection");
+            var rabbitMqConnectionString = builder.Configuration.GetConnectionString("RabbitMq")!;
+
+            builder.Services.AddSingleton<IConnectionFactory>(_ =>
+                new ConnectionFactory { Uri = new Uri(rabbitMqConnectionString) });
 
             builder.Services.AddHealthChecks()
-                .AddSqlServer(sqlConnection!);
-   
+                .AddSqlServer(sqlConnection!)
+                .AddRedis(
+                    builder.Configuration.GetConnectionString("Redis")!,
+                    name: "redis-healthcheck")
+                .AddRabbitMQ(
+                    sp => sp.GetRequiredService<IConnectionFactory>().CreateConnectionAsync(),
+                    name: "rabbitmq-healthcheck");
+
 
             return builder;
         }
