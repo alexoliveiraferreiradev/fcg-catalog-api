@@ -23,17 +23,35 @@ spec:
         command: ["./efbundle", "--connection", "$(ConnectionStrings__CatalogConnection)"]   
         env:
           - name: K8S_DB_SERVER
-            valueFrom: { configMapKeyRef: { name: catalog-config, key: DB_SERVER } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_SERVER
           - name: K8S_DB_PORT
-            valueFrom: { configMapKeyRef: { name: catalog-config, key: DB_PORT } }
-          - name: K8S_DB_NAME 
-            valueFrom: { configMapKeyRef: { name: catalog-config, key: DB_NAME } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_PORT
+          - name: K8S_DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_NAME
           - name: K8S_DB_USER
-            valueFrom: { secretKeyRef: { name: catalog-opaque, key: DB_USER } }
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_USER
           - name: K8S_DB_PASS
-            valueFrom: { secretKeyRef: { name: catalog-opaque, key: DB_PASS } }
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_PASS
           - name: K8S_DB_TRUST_CERT
-            valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_TRUST_CERT }}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_TRUST_CERT
           - name: "ConnectionStrings__CatalogConnection"
             value: "Server=$(K8S_DB_SERVER),$(K8S_DB_PORT);Database=$(K8S_DB_NAME);User Id=$(K8S_DB_USER);Password=$(K8S_DB_PASS);TrustServerCertificate=$(K8S_DB_TRUST_CERT);"
       containers:
@@ -43,41 +61,95 @@ spec:
         - containerPort: 8080
         env:
           - name: K8S_RABBITMQ_SERVER
-            valueFrom: { configMapKeyRef: {name: catalog-config, key: RABBITMQ_SERVER } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: RABBITMQ_SERVER
           - name: K8S_RABBITMQ_PORT
-            valueFrom: { configMapKeyRef: {name: catalog-config, key: RABBITMQ_PORT } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: RABBITMQ_PORT
           - name: K8S_RABBITMQ_USER
-            valueFrom: { secretKeyRef: { name: catalog-opaque, key: RABBITMQ_USER }}
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: RABBITMQ_USER
           - name: K8S_RABBITMQ_PASSWORD
-            valueFrom: { secretKeyRef: { name: catalog-opaque, key: RABBITMQ_PASS } }
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: RABBITMQ_PASS
           - name: K8S_DB_SERVER
-            valueFrom: { configMapKeyRef: { name: catalog-config,key: DB_SERVER } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_SERVER
           - name: K8S_DB_NAME
-            valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_NAME } }
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_NAME
           - name: K8S_DB_PORT
-            valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_PORT }}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_PORT
           - name: K8S_DB_TRUST_CERT
-            valueFrom: { configMapKeyRef: {name: catalog-config,key: DB_TRUST_CERT }}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: DB_TRUST_CERT
           - name: K8S_ENVIRONMENT
-            valueFrom: { configMapKeyRef: {name: catalog-config,key: ENVIRONMENT}}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: ENVIRONMENT
           - name: K8S_CATALOG_PAYMENT_FAILED_QUEUE
-            valueFrom: {configMapKeyRef: {name: catalog-config,key: CATALOG_PAYMENT_FAILED_QUEUE }}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: CATALOG_PAYMENT_FAILED_QUEUE
           - name: K8S_CATALOG_PAYMENT_PROCESSED_QUEUE
-            valueFrom: {configMapKeyRef: {name: catalog-config,key: CATALOG_PAYMENT_PROCESSED_QUEUE}}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: CATALOG_PAYMENT_PROCESSED_QUEUE
           - name: K8S_REDIS_SERVER
-            valueFrom: {configMapKeyRef: {name: catalog-config,key: REDIS_SERVER}}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_SERVER
           - name: K8S_REDIS_PORT
-            valueFrom: {configMapKeyRef: {name: catalog-config,key: REDIS_PORT}}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_PORT
           - name: K8S_REDIS_NAME
-            valueFrom: {configMapKeyRef: {name: catalog-config,key: REDIS_NAME}}
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: REDIS_NAME
           - name: K8S_REDIS_PASS
-            valueFrom: {secretKeyRef: {name: catalog-opaque, key: REDIS_PASS}}
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: REDIS_PASS
           - name: K8S_DB_USER
-            valueFrom: { secretKeyRef: {name: catalog-opaque,key: DB_USER }}
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_USER
           - name: K8S_DB_PASS
-            valueFrom: { secretKeyRef: {name: catalog-opaque,key: DB_PASS }}
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: DB_PASS
           - name: K8S_JWT_SECRET
-            valueFrom: { secretKeyRef: {name: catalog-opaque,key: JWT_SECRET }}
+            valueFrom:
+              secretKeyRef:
+                name: catalog-opaque
+                key: JWT_SECRET
           - name: "ConnectionStrings__RabbitMq"
             value: "amqp://$(K8S_RABBITMQ_USER):$(K8S_RABBITMQ_PASSWORD)@$(K8S_RABBITMQ_SERVER):$(K8S_RABBITMQ_PORT)"
           - name: "ConnectionStrings__CatalogConnection"
