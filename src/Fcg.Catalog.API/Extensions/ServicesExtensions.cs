@@ -4,22 +4,24 @@ using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Infrastructure.Caching;
-using Fcg.Catalog.Infrastructure.Queries.DapperHandlers;
+using Fcg.Catalog.Infrastructure.MessageBroker;
 using Fcg.Catalog.Infrastructure.Persistence;
-using Fcg.Catalog.Infrastructure.Repositories;
 using Fcg.Catalog.Infrastructure.Queries;
+using Fcg.Catalog.Infrastructure.Queries.DapperHandlers;
+using Fcg.Catalog.Infrastructure.Repositories;
+using Fcg.Catalog.Infrastructure.Worker;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.WebApi.Security;
 using FluentValidation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using StackExchange.Redis;
 using System.Data;
 using System.Text;
-using Fcg.Catalog.Infrastructure.Worker;
 
 namespace Fcg.Catalog.API.Extensions
 {
@@ -121,13 +123,21 @@ namespace Fcg.Catalog.API.Extensions
                 });
                 x.UsingRabbitMq((context, cfg) =>
                 {
+                    var rabbitSection = builder.Configuration.GetSection(RabbitMqQueueOptions.SectionName);
+                    var options = rabbitSection.Get<RabbitMqQueueOptions>();
+
+                    if (options == null || string.IsNullOrEmpty(options.CatalogPaymentProcessedQueue))
+                    {
+                        throw new Exception("Não foi configurado as queues para o rabbitmq");
+                    }
+
                     cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
                     cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
-                    cfg.ReceiveEndpoint("catalog-payment-failed-queue", e =>
+                    cfg.ReceiveEndpoint(options.CatalogPaymentFailedQueue, e =>
                     {
                         e.ConfigureConsumer<PaymentFailedEventConsumer>(context);
                     });
-                    cfg.ReceiveEndpoint("catalog-payment-processed-queue", e =>
+                    cfg.ReceiveEndpoint(options.CatalogPaymentProcessedQueue, e =>
                     {
                         e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);
                     });
