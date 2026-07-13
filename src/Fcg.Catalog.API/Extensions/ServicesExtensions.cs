@@ -132,9 +132,11 @@ namespace Fcg.Catalog.API.Extensions
             ArgumentNullException.ThrowIfNull(redisConfig, nameof(RedisSettings));
             builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection(RedisSettings.RedisSectionName));
 
+            var host = string.IsNullOrWhiteSpace(redisConfig.Host) ? "localhost" : redisConfig.Host;
+
             var configurationOptions = new ConfigurationOptions
             {
-                EndPoints = { { redisConfig.Host, redisConfig.Port } },
+                EndPoints = { { host, redisConfig.Port } },
                 Password = redisConfig.Password,
                 AbortOnConnectFail = false,
                 ConnectRetry = 5,
