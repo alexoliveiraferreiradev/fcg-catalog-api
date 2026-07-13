@@ -123,6 +123,8 @@ namespace Fcg.Catalog.API.Extensions
         }
         private static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
         {
+            builder.Services.AddOptions<RabbitMqQueuesOptions>().BindConfiguration(RabbitMqQueuesOptions.SectionName)
+            .ValidateDataAnnotations().ValidateOnStart();
             builder.Services.AddMassTransit(x =>
             {
                 x.AddConsumer<PaymentProcessedEventConsumer>();
@@ -138,8 +140,8 @@ namespace Fcg.Catalog.API.Extensions
                 });
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    var rabbitSection = builder.Configuration.GetSection(RabbitMqQueueOptions.SectionName);
-                    var options = rabbitSection.Get<RabbitMqQueueOptions>();
+                    var options = builder.Configuration.GetSection(RabbitMqQueuesOptions.SectionName)
+                    .Get<RabbitMqQueuesOptions>()!;
 
                     if (options == null || string.IsNullOrEmpty(options.CatalogPaymentProcessedQueue))
                     {
