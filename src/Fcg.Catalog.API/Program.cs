@@ -12,7 +12,7 @@ await app.SeedData();
 app.AddAppConfiguration()
     .UseSwaggerDocumentation()
     .MapEndpoints();
-app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = _ => false });
-app.MapHealthChecks("/health/readiness", new HealthCheckOptions { Predicate = _ => true });
+app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
+app.MapHealthChecks("/health/readiness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
 
 app.Run();

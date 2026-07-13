@@ -10,16 +10,14 @@ ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 
-COPY ["nuget.config", "."]
+
 
 COPY ["src/Fcg.Catalog.API/Fcg.Catalog.API.csproj", "Fcg.Catalog.API/"]
 COPY ["src/Fcg.Catalog.Application/Fcg.Catalog.Application.csproj", "Fcg.Catalog.Application/"]
 COPY ["src/Fcg.Catalog.Domain/Fcg.Catalog.Domain.csproj", "Fcg.Catalog.Domain/"]
 COPY ["src/Fcg.Catalog.Infrastructure/Fcg.Catalog.Infrastructure.csproj", "Fcg.Catalog.Infrastructure/"]
 
-RUN --mount=type=secret,id=github_token \
-    export GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
-    dotnet restore "./Fcg.Catalog.API/Fcg.Catalog.API.csproj"
+RUN dotnet restore "./Fcg.Catalog.API/Fcg.Catalog.API.csproj"
 
 
 COPY src/ .

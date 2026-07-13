@@ -16,9 +16,7 @@ using FluentValidation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RabbitMQ.Client;
 using Serilog;
 using StackExchange.Redis;
 using System.Data;
@@ -75,12 +73,14 @@ namespace Fcg.Catalog.API.Extensions
 
         private static WebApplicationBuilder HealthCheckExtension(this WebApplicationBuilder builder)
         {
-            var sqlConnection = builder.Configuration.GetConnectionString("CatalogConnection");
             builder.Services.AddHealthChecks()
-                .AddSqlServer(sqlConnection!)
+                .AddDbContextCheck<CatalogDbContext>(
+                name: "database-healthcheck",
+                tags: new[] {"ready"})
                 .AddRedis(
                     builder.Configuration.GetConnectionString("Redis")!,
-                    name: "redis-healthcheck");
+                    name: "redis-healthcheck",
+                    tags: new[] {"ready"});
             return builder;
         }
 
