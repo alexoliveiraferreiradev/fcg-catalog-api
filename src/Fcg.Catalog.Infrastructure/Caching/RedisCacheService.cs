@@ -1,12 +1,7 @@
 ﻿using Fcg.Catalog.Application.Common.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Fcg.Catalog.Infrastructure.Caching
 {
@@ -14,7 +9,6 @@ namespace Fcg.Catalog.Infrastructure.Caching
     {
         private readonly IDistributedCache _cache;
         private readonly IConnectionMultiplexer _redisConnection;
-        private readonly string _instanceName = "FiapCloudGames:";
 
         public RedisCacheService(IDistributedCache cache, IConnectionMultiplexer redisConnection)
         {
@@ -58,7 +52,7 @@ namespace Fcg.Catalog.Infrastructure.Caching
         {
             var endpoints = _redisConnection.GetEndPoints();
             var server = _redisConnection.GetServer(endpoints.First());
-            var chaves = server.Keys(pattern: $"{_instanceName}{prefixo}*").ToArray();
+            var chaves = server.Keys(pattern: $"{prefixo}*").ToArray();
 
             if (chaves.Any())
             {

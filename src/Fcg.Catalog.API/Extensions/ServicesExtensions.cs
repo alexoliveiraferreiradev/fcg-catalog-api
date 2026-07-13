@@ -15,7 +15,9 @@ using Fcg.Core.WebApi.Security;
 using FluentValidation;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using StackExchange.Redis;
@@ -97,25 +99,56 @@ namespace Fcg.Catalog.API.Extensions
 
         private static WebApplicationBuilder AddDbContextExtension(this WebApplicationBuilder builder)
         {
-            var connectionString = builder.Configuration.GetConnectionString("CatalogConnection");
+            var dbConfig = builder.Configuration.GetSection(DatabaseSettings.DatabaseSettingsSection).Get<DatabaseSettings>();
+            ArgumentNullException.ThrowIfNull(dbConfig, nameof(DatabaseSettings));
+
+            var connectionStringBuilder = new SqlConnectionStringBuilder
+            {
+                DataSource = $"{dbConfig.Host},{dbConfig.Port}",
+                InitialCatalog = dbConfig.DatabaseName,
+                UserID = dbConfig.Username,
+                Password = dbConfig.Password,
+                TrustServerCertificate = true,
+                Encrypt = false
+            };
+
+           
             builder.Services.AddDbContext<CatalogDbContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionStringBuilder.ConnectionString, sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 3,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null);
+                });
             });
             return builder;
         }
 
         private static WebApplicationBuilder AddRedisExtension(this WebApplicationBuilder builder)
         {
-            var redisConfig = builder.Configuration.GetSection("Redis").Get<RedisOptions>();
+            var redisConfig = builder.Configuration.GetSection(RedisSettings.RedisSectionName).Get<RedisSettings>();
+            ArgumentNullException.ThrowIfNull(redisConfig, nameof(RedisSettings));
+            builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection(RedisSettings.RedisSectionName));
+
+            var configurationOptions = new ConfigurationOptions
+            {
+                EndPoints = { { redisConfig.Host, redisConfig.Port } },
+                Password = redisConfig.Password,
+                AbortOnConnectFail = false,
+                ConnectRetry = 5,
+                ReconnectRetryPolicy = new ExponentialRetry(5000, 30000)
+            };
+
             builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
-                var configuration = ConfigurationOptions.Parse(redisConfig.Configuration, true);
-                return ConnectionMultiplexer.Connect(configuration);
+                return ConnectionMultiplexer.Connect(configurationOptions);
             });
+
             builder.Services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = redisConfig.Configuration;
+                options.ConfigurationOptions = configurationOptions;
                 options.InstanceName = redisConfig.InstanceName;
             });
 
@@ -123,12 +156,12 @@ namespace Fcg.Catalog.API.Extensions
         }
         private static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
         {
-            builder.Services.AddOptions<RabbitMqQueuesOptions>().BindConfiguration(RabbitMqQueuesOptions.SectionName)
-            .ValidateDataAnnotations().ValidateOnStart();
+            builder.Services.AddOptions<RabbitMqSettings>().BindConfiguration(RabbitMqSettings.SectionName)
+           .ValidateDataAnnotations().ValidateOnStart();
+
             builder.Services.AddMassTransit(x =>
             {
-                x.AddConsumer<PaymentProcessedEventConsumer>();
-                x.AddConsumer<PaymentFailedEventConsumer>();
+                x.AddConsumers(typeof(Program).Assembly);
                 x.AddEntityFrameworkOutbox<CatalogDbContext>(o =>
                 {
                     o.UseSqlServer();
@@ -140,22 +173,24 @@ namespace Fcg.Catalog.API.Extensions
                 });
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    var options = builder.Configuration.GetSection(RabbitMqQueuesOptions.SectionName)
-                    .Get<RabbitMqQueuesOptions>()!;
+                    var rabbitMqConfig = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
 
-                    if (options == null || string.IsNullOrEmpty(options.CatalogPaymentProcessedQueue))
+                    cfg.Host(rabbitMqConfig.Host, rabbitMqConfig.Port, "/", h =>
                     {
-                        throw new Exception("Não foi configurado as queues para o rabbitmq");
-                    }
+                        h.Username(rabbitMqConfig.Username);
+                        h.Password(rabbitMqConfig.Password);
+                    });
+                    
+                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));                                       
 
-                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-                    cfg.Host(builder.Configuration.GetConnectionString("RabbitMq"));
-                    cfg.ReceiveEndpoint(options.CatalogPaymentFailedQueue, e =>
+                    cfg.ReceiveEndpoint(rabbitMqConfig.CatalogPaymentFailedQueue, e =>
                     {
+                        e.UseEntityFrameworkOutbox<CatalogDbContext>(context);
                         e.ConfigureConsumer<PaymentFailedEventConsumer>(context);
                     });
-                    cfg.ReceiveEndpoint(options.CatalogPaymentProcessedQueue, e =>
+                    cfg.ReceiveEndpoint(rabbitMqConfig.CatalogPaymentProcessedQueue, e =>
                     {
+                        e.UseEntityFrameworkOutbox<CatalogDbContext>(context);
                         e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);
                     });
                 });
