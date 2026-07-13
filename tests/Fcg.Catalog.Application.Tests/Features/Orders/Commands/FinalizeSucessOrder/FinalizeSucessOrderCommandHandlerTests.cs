@@ -1,21 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
-using Fcg.Core.Abstractions.Enum;
 using Fcg.Core.Abstractions.Interfaces;
-using Fcg.Core.Abstractions.MessageContracts;
+using Fcg.Core.SharedContracts.MessageContracts;
 using FluentAssertions;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessOrder
 {

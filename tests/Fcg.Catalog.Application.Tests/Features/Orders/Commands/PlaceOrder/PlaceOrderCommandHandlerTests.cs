@@ -1,5 +1,3 @@
-using Bogus;
-using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
@@ -7,17 +5,11 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
-using Fcg.Core.Abstractions.MessageContracts;
+using Fcg.Core.SharedContracts.MessageContracts;
 using FluentAssertions;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
 {

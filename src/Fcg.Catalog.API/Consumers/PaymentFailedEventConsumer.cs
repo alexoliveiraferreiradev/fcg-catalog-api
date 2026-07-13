@@ -1,5 +1,5 @@
 using Fcg.Catalog.Application.Features.Orders.Commands.FinalizeFailedOrder;
-using Fcg.Core.Abstractions.MessageContracts;
+using Fcg.Core.SharedContracts.MessageContracts;
 using MassTransit;
 using MediatR;
 

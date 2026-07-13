@@ -2,7 +2,7 @@ using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Interfaces;
-using Fcg.Core.Abstractions.MessageContracts;
+using Fcg.Core.SharedContracts.MessageContracts;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
