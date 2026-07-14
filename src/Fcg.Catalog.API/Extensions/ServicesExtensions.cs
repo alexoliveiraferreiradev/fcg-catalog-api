@@ -39,9 +39,9 @@ namespace Fcg.Catalog.API.Extensions
                 .AddMassTransitExtension()
                 .AddCQRSExtension()
                 .AddRedisExtension()
-                .AddJwtBearerExtension();                                 
+                .AddJwtBearerExtension();
 
-           
+
 
             builder.Services.AddAuthorization(options =>
             {
@@ -78,16 +78,16 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddHealthChecks()
                 .AddDbContextCheck<CatalogDbContext>(
                 name: "database-healthcheck",
-                tags: new[] {"ready"})
+                tags: new[] { "ready" })
                 .AddRedis(
                     builder.Configuration.GetConnectionString("Redis")!,
                     name: "redis-healthcheck",
-                    tags: new[] {"ready"});
+                    tags: new[] { "ready" });
             return builder;
         }
 
         private static WebApplicationBuilder AddSerilogExtension(this WebApplicationBuilder builder)
-        {            
+        {
             builder.Logging.ClearProviders();
             builder.Host.UseSerilog((context, configuration) =>
             {
@@ -112,7 +112,7 @@ namespace Fcg.Catalog.API.Extensions
                 Encrypt = false
             };
 
-           
+
             builder.Services.AddDbContext<CatalogDbContext>(options =>
             {
                 options.UseSqlServer(connectionStringBuilder.ConnectionString, sqlOptions =>
@@ -132,11 +132,9 @@ namespace Fcg.Catalog.API.Extensions
             ArgumentNullException.ThrowIfNull(redisConfig, nameof(RedisSettings));
             builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection(RedisSettings.RedisSectionName));
 
-            var host = string.IsNullOrWhiteSpace(redisConfig.Host) ? "localhost" : redisConfig.Host;
-
             var configurationOptions = new ConfigurationOptions
             {
-                EndPoints = { { host, redisConfig.Port } },
+                EndPoints = { { redisConfig.Host, redisConfig.Port } },
                 Password = redisConfig.Password,
                 AbortOnConnectFail = false,
                 ConnectRetry = 5,
@@ -156,7 +154,7 @@ namespace Fcg.Catalog.API.Extensions
 
             return builder;
         }
-        private static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder) 
+        private static WebApplicationBuilder AddMassTransitExtension(this WebApplicationBuilder builder)
         {
             builder.Services.AddOptions<RabbitMqSettings>().BindConfiguration(RabbitMqSettings.SectionName)
            .ValidateDataAnnotations().ValidateOnStart();
@@ -182,8 +180,8 @@ namespace Fcg.Catalog.API.Extensions
                         h.Username(rabbitMqConfig.Username);
                         h.Password(rabbitMqConfig.Password);
                     });
-                    
-                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));                                       
+
+                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
 
                     cfg.ReceiveEndpoint(rabbitMqConfig.CatalogPaymentFailedQueue, e =>
                     {
