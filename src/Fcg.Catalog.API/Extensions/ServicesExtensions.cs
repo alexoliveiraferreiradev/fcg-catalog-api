@@ -102,6 +102,7 @@ namespace Fcg.Catalog.API.Extensions
             var dbConfig = builder.Configuration.GetSection(DatabaseSettings.DatabaseSettingsSection).Get<DatabaseSettings>();
             ArgumentNullException.ThrowIfNull(dbConfig, nameof(DatabaseSettings));
 
+
             var connectionStringBuilder = new SqlConnectionStringBuilder
             {
                 DataSource = $"{dbConfig.Host},{dbConfig.Port}",
@@ -132,9 +133,12 @@ namespace Fcg.Catalog.API.Extensions
             ArgumentNullException.ThrowIfNull(redisConfig, nameof(RedisSettings));
             builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection(RedisSettings.RedisSectionName));
 
+            var host = string.IsNullOrEmpty(redisConfig.Host) ? "localhost" : redisConfig.Host;
+            var port = redisConfig.Port == 0 ? 6379 : redisConfig.Port;
+
             var configurationOptions = new ConfigurationOptions
             {
-                EndPoints = { { redisConfig.Host, redisConfig.Port } },
+                EndPoints = { { host, port } },
                 Password = redisConfig.Password,
                 AbortOnConnectFail = false,
                 ConnectRetry = 5,
