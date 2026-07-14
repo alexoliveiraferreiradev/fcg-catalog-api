@@ -16,42 +16,19 @@ spec:
       annotations:
         autor: Alex O Ferreira
         description: "Deployment do microsservico de Catalogo API do Fiap Cloud Games"
-    spec:
-      initContainers:
-      - name: c-catalog-db-migration
-        image: alexoliverdev/fcg-catalog-api:latest     
-        command: ["./efbundle"]   
-        env:
-          - name: DatabaseSettings__Host
-            valueFrom:
-              configMapKeyRef:
-                name: catalog-config
-                key: DB_SERVER
-          - name: DatabaseSettings__Port
-            valueFrom:
-              configMapKeyRef:
-                name: catalog-config
-                key: DB_PORT
-          - name: DatabaseSettings__DatabaseName
-            valueFrom:
-              configMapKeyRef:
-                name: catalog-config
-                key: DB_NAME
-          - name: DatabaseSettings__Username
-            valueFrom:
-              secretKeyRef:
-                name: catalog-opaque
-                key: DB_USER
-          - name: DatabaseSettings__Password
-            valueFrom:
-              secretKeyRef:
-                name: catalog-opaque
-                key: DB_PASS                    
+    spec:                  
       containers:
       - name: c-fcg-catalog-api
         image: alexoliverdev/fcg-catalog-api:latest
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
         env:
           - name: DatabaseSettings__Host
             valueFrom:
@@ -113,22 +90,22 @@ spec:
               configMapKeyRef:
                 name: catalog-config
                 key: CATALOG_PAYMENT_PROCESSED_QUEUE
-          - name: Redis__Host
+          - name: RedisSettings__Host
             valueFrom:
               configMapKeyRef:
                 name: catalog-config
                 key: REDIS_SERVER
-          - name: Redis__Port
+          - name: RedisSettings__Port
             valueFrom:
               configMapKeyRef:
                 name: catalog-config
                 key: REDIS_PORT
-          - name: Redis__InstanceName
+          - name: RedisSettings__InstanceName
             valueFrom:
               configMapKeyRef:
                 name: catalog-config
                 key: REDIS_NAME
-          - name: Redis__Password
+          - name: RedisSettings__Password
             valueFrom:
               secretKeyRef:
                 name: catalog-opaque
