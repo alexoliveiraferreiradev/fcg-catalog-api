@@ -2,6 +2,26 @@
 
 Este microsserviço é o **núcleo de domínio do Catálogo de Jogos e Gestão de Biblioteca de Usuários** da plataforma **Fiap Cloud Games (FCG)**. Desenvolvido com **.NET 9** e baseado nos princípios de **Clean Architecture**, **Domain-Driven Design (DDD)** e **CQRS**, o projeto gerencia a criação, catalogação, desativação e promoções de jogos, além de controlar quais jogos pertencem à biblioteca individual de cada usuário.
 
+Além da gestão do catálogo, este serviço orquestra a etapa inicial das compras de jogos. Ele gera os pedidos e interage de forma assíncrona e resiliente com os demais serviços da plataforma.
+
+---
+
+## 🔄 Fluxos de Integração e Compras
+
+A **Catálogo API** é responsável por iniciar e validar o ciclo de compra de jogos:
+
+1. **Início do Pedido e Processamento**:
+   - Ao realizar um pedido de jogo, a aplicação salva a intenção de compra e **produz o evento `OrderPlacedEvent`**.
+   - Esse evento é consumido pelo microsserviço de *Payments*, que simulará o pagamento.
+
+2. **Conclusão (Aprovação ou Falha)**:
+   - A API possui **Consumers** aguardando a resposta financeira. Ao consumir um **`PaymentProcessedEvent`** (pagamentos aprovados), ela libera o jogo adicionando-o definitivamente à biblioteca do usuário.
+   - Caso consuma um **`PaymentFailedEvent`** (pagamentos rejeitados), o status do pedido é alterado para cancelado (`Cancelled`).
+
+3. **Garantia de Entrega e Reembolso**:
+   - Em caso de erros internos inesperados ao tentar liberar o jogo na biblioteca após um pagamento já aprovado, a aplicação **produz o evento `DeliveryFailedEvent`**.
+   - Esse evento alerta o ecossistema sobre a falha, sendo consumido pelo serviço de *Payments* para realizar o reembolso imediato ao usuário, protegendo as regras de negócio do sistema.
+
 ---
 
 ## 🛠️ Tecnologias e Bibliotecas
@@ -14,6 +34,12 @@ A API faz uso das seguintes tecnologias e pacotes:
 - **MassTransit & RabbitMQ**: Biblioteca/Framework de mensageria para integração orientada a eventos de forma assíncrona.
 - **xUnit**: Framework para execução de testes de unidade e integração.
 
+### 📦 Shared Kernels (Pacotes Compartilhados da FCG)
+Projetos criados internamente e utilizados para padronizar e compartilhar recursos base:
+- **Fcg.Core.Abstractions**: Biblioteca de blocos de construção para Domain-Driven Design (DDD) em projetos .NET.
+- **Fcg.Core.SharedContracts**: Contratos de eventos compartilhados para comunicação assíncrona entre os microsserviços da plataforma FCG (ex: RabbitMQ / MassTransit).
+- **Fcg.Core.WebApi**: Utilitários prontos para uso em ASP.NET Core Web APIs, incluindo autenticação JWT e tratamento global de exceções.
+
 ---
 
 ## 🏗️ Arquitetura da Solução
@@ -22,7 +48,7 @@ O projeto está estruturado em camadas para separar responsabilidades de forma c
 
 ```
 src/
-├── Fcg.Catalog.Domain         # Regras de Negócio, Entidades de Domínio, Invariantes e Value Objects
+├── Fcg.Catalog.Domain         # Regras de Negócio, Entidades de Domínio e Value Objects
 ├── Fcg.Catalog.Application    # Casos de Uso (Commands/Queries), DTOs, Event Handlers e MediatR Handlers
 ├── Fcg.Catalog.Infrastructure # Acesso a Dados (EF Core), Mapeamentos e Repositórios Concretos
 └── Fcg.Catalog.API            # Host da API HTTP, Middlewares e Ponto de Entrada (Program.cs)
@@ -38,7 +64,6 @@ Contém o núcleo das regras de negócio do catálogo:
   - `Biblioteca`: Agregado raiz que mapeia a associação de posse entre um usuário (`UsuarioId`) e um jogo (`JogoId`).
 - **Objetos de Valor (Value Objects)**: `Nome`, `Descricao`, `Preco` e `Periodo` (que valida as datas de início e fim de campanhas promocionais).
 - **Enums**: `GeneroJogo` (Ação, Aventura, RPG, Esporte, Estratégia, etc.).
-- **Regras e Validações**: `AssertionConcern` para assegurar a consistência dos dados de entrada.
 - **Contratos (Interfaces)**: Interfaces `IJogoRepository` e `IBibliotecaRepository` para desacoplamento do banco de dados.
 
 #### 2. `Fcg.Catalog.Application` (Aplicação)
@@ -81,67 +106,39 @@ O microsserviço provê operações completas divididas nos contextos de catálo
 
 ## ⚙️ Configuração e Variáveis de Ambiente
 
-Para o funcionamento correto do microsserviço de Catálogo, certas variáveis de ambiente de banco de dados, mensageria, cache e segurança devem ser fornecidas dependendo do ambiente de execução.
-
-### 1. Execução Local Standalone (Desenvolvimento)
-Quando executada diretamente pela IDE ou linha de comando `dotnet run`, a API consome as configurações definidas no arquivo [appsettings.json](src/Fcg.Catalog.API/appsettings.json) ou `appsettings.Development.json`:
+Para o funcionamento local stand-alone, configure o arquivo `appsettings.json`
 
 ```json
 {
-  "ConnectionStrings": {
-    "CatalogConnection": "Server=localhost;Database=Fcg_Catalogs;User Id=sa;Password=SuaSenhaSegura;TrustServerCertificate=True;",
-    "RabbitMq": "amqp://guest:guest@localhost:5672",
-    "Redis": "localhost:6379"
+  "DatabaseSettings": {
+    "Host": "localhost",
+    "Port": "1433",
+    "DatabaseName": "Fcg_Catalogs",
+    "Username": "sa",
+    "Password": "SuaSenhaSegura"
+  },
+  "RabbitMqSettings": {
+    "Host": "localhost",
+    "Port": "5672",
+    "Username": "guest",
+    "Password": "guest",
+    "CatalogPaymentFailedQueue": "catalog-payment-failed-queue",
+    "CatalogPaymentProcessedQueue": "catalog-payment-processed-queue"
   },
   "JwtSettings": {
     "Secret": "SUA_CHAVE_SUPER_SECRETA_E_LONGA_DE_EXEMPLO",
-    "Emissor": "Fcg.Users.API",
-    "ValidoEm": "FiapCloudGames",
-    "ExpiracaoHoras": 2
+    "ExpirationHours": 2,
+    "Issuer": "FiapCloudGames",
+    "Audience": "FiapCloudGamesAudience"
+  },
+  "RedisSettings": {
+    "Host": "localhost",
+    "Port": "6379",
+    "Password": "SuaSenhaSegura",
+    "InstanceName": "FiapCloudGames:"
   }
 }
 ```
-
----
-
-### 2. Execução via Docker Compose
-Ao rodar através do contêiner Docker configurado no repositório de orquestração (`fcg-infrastructure`), as seguintes variáveis de ambiente são injetadas no contêiner:
-
-| Variável | Valor Padrão/Exemplo | Descrição |
-| :--- | :--- | :--- |
-| `ASPNETCORE_ENVIRONMENT` | `Development` | Define o ambiente de execução da aplicação. |
-| `ConnectionStrings__CatalogConnection` | `Server=fcg-db-central;Database=Fcg_Catalogs;...` | String de conexão para o banco SQL Server centralizado. |
-| `ConnectionStrings__RabbitMq` | `rabbitmq` | Host do RabbitMQ para consumo e publicação de eventos. |
-| `JwtSettings__Secret` | `${JWT_SECRET}` | Chave de assinatura e validação dos tokens JWT injetada do `.env`. |
-
----
-
-### 3. Execução no Kubernetes (ConfigMaps e Secrets)
-No Kubernetes, as configurações são abstraídas em manifestos separados para dados não-sensíveis (ConfigMaps) e dados sensíveis (Secrets):
-
-#### **ConfigMap: `catalog-config`**
-Armazena dados não sensíveis configurados no arquivo [confimap.yaml](k8s/confimap.yaml):
-- `DB_SERVER`: Nome do serviço DNS do banco de dados no cluster (Ex: `sql-service`).
-- `DB_PORT`: Porta TCP do SQL Server (Ex: `"1433"`).
-- `DB_NAME`: Nome lógico do banco de dados (Ex: `"Fcg_Catalogs"`).
-- `DB_TRUST_CERT`: Permitir certificados autoassinados (Ex: `"True"`).
-- `RABBITMQ_SERVER`: Nome do serviço DNS do RabbitMQ no cluster (Ex: `rabbitmq-service`).
-- `RABBITMQ_PORT`: Porta TCP do RabbitMQ (Ex: `"5672"`).
-- `CATALOG_PAYMENT_FAILED_QUEUE`: Fila para falha de pagamento (Ex: `"catalog-payment-failed-queue"`).
-- `CATALOG_PAYMENT_PROCESSED_QUEUE`: Fila para pagamento concluído (Ex: `"catalog-payment-processed-queue"`).
-- `REDIS_SERVER`: Nome do serviço DNS do Redis (Ex: `redis-service`).
-- `REDIS_PORT`: Porta do cache Redis (Ex: `"6379"`).
-- `REDIS_NAME`: Prefixo/Name de identificador no Redis (Ex: `"FiapCloudGames:"`).
-- `ENVIRONMENT`: Variável `ASPNETCORE_ENVIRONMENT` (Ex: `"Development"`).
-
-#### **Secret: `catalog-opaque`**
-Armazena credenciais confidenciais codificadas em Base64 configuradas no arquivo [secrets.yaml](k8s/secrets.yaml):
-- `DB_USER`: Usuário de acesso ao banco (Ex: `sa` -> Base64 `c2E=`).
-- `DB_PASS`: Senha do banco (Ex: `TechChallenge@2026` -> Base64 `VGVjaENoYWxsZW5nZUAyMDI2`).
-- `JWT_SECRET`: Chave simétrica do token (Ex: Base64 `MDdhZmFmZmQtMDlmZS00OTBhLWFlMmYtM2RlOGZjYThiMzA2`).
-- `RABBITMQ_USER`: Usuário do RabbitMQ (Ex: `guest` -> Base64 `Z3Vlc3Q=`).
-- `RABBITMQ_PASS`: Senha do RabbitMQ (Ex: `guest` -> Base64 `Z3Vlc3Q=`).
-- `REDIS_PASS`: Senha do Redis (Ex: Base64 `VGVjaENoYWxsZW5nZUAyMDI2`).
 
 ---
 
