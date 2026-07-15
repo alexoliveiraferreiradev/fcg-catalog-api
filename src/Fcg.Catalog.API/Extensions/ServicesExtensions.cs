@@ -47,7 +47,7 @@ namespace Fcg.Catalog.API.Extensions
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole("AdminRole"));
 
-                options.AddPolicy("GeneralAccess", policy => policy.RequireRole("AdminRole", "PlayerRole"));
+                options.AddPolicy("PlayersOnly", policy => policy.RequireRole("PlayerRole"));
             });
 
             builder.AddDependencyInjection();
