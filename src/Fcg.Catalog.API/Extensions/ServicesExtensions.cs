@@ -75,12 +75,17 @@ namespace Fcg.Catalog.API.Extensions
 
         private static WebApplicationBuilder HealthCheckExtension(this WebApplicationBuilder builder)
         {
+            var redisConfig = builder.Configuration.GetSection(RedisSettings.RedisSectionName).Get<RedisSettings>();
+            var connectionString = redisConfig != null && !string.IsNullOrEmpty(redisConfig.Host)
+                ? $"{redisConfig.Host}:{redisConfig.Port},password={redisConfig.Password}"
+                : builder.Configuration.GetConnectionString("Redis")!;
+
             builder.Services.AddHealthChecks()
                 .AddDbContextCheck<CatalogDbContext>(
                 name: "database-healthcheck",
                 tags: new[] { "ready" })
                 .AddRedis(
-                    builder.Configuration.GetConnectionString("Redis")!,
+                    connectionString,
                     name: "redis-healthcheck",
                     tags: new[] { "ready" });
             return builder;
