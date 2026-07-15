@@ -11,7 +11,7 @@ namespace Fcg.Catalog.API.Endpoints.User
     {
         public static void MapOrderEndpoints(this IEndpointRouteBuilder app)
         {
-            var group = app.MapGroup("/api/orders").RequireAuthorization("GeneralAccess").WithTags("Compras e Pedidos");
+            var group = app.MapGroup("/api/orders").RequireAuthorization("PlayersOnly").WithTags("Compras e Pedidos");
 
             group.MapPost("", PlaceOrder)
                 .AddEndpointFilter<ValidationFilter<PlaceOrderCommand>>()
