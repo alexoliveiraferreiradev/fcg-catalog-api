@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Fcg.Catalog.API.Filters;
 using Fcg.Catalog.Domain.Enum;
 using System.Linq;
+using Fcg.Catalog.Application.IntegrationEvent;
 
 namespace Fcg.Catalog.API.Endpoints.Admin
 {
@@ -73,8 +74,20 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithSummary("Reativa um game desativado.")
              .WithDescription("Restaura o status ativo de um game desativado anteriormente, tornando-o novamente disponível no catálogo público.")
              .WithName("AdminReactivateGame");
+
+            group.MapPost("", RepublishAllGames)
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status400BadRequest)
+                .WithSummary("Publica os games no microsserviço de Orders API.")
+                .WithName("AdminRepublishGames");
         }
 
+        private static async Task<IResult> RepublishAllGames(
+            [FromServices] RepublishGamesEvent republishEvent)
+        {
+            await republishEvent.Handle();
+            return Results.Ok();
+        }
 
         private static async Task<IResult> GetGameById(
             [FromRoute] Guid gameId, [FromServices] ISender sender,

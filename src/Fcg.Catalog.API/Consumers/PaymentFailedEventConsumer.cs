@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Fcg.Catalog.API.Consumers
 {
-    public class PaymentFailedEventConsumer : IConsumer<PaymentFailedEvent>
+    public class PaymentFailedEventConsumer : IConsumer<IPaymentFailedEvent>
     {
         private readonly IMediator _mediator;
         private readonly ILogger<PaymentFailedEventConsumer> _logger;
@@ -17,7 +17,7 @@ namespace Fcg.Catalog.API.Consumers
             _logger = logger;
         }
 
-        public async Task Consume(ConsumeContext<PaymentFailedEvent> context)
+        public async Task Consume(ConsumeContext<IPaymentFailedEvent> context)
         {
             var order = context.Message;
             _logger.LogInformation("[CatalogAPI] PaymentFailedEvent recebido para o Pedido {OrderId}", order.OrderId);
