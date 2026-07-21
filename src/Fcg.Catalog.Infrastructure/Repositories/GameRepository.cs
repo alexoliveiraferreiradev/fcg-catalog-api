@@ -59,5 +59,11 @@ namespace Fcg.Catalog.Infrastructure.Repositories
 
             return games;
         }
+
+        public async Task<IEnumerable<Game>> GetAllGamesAsync()
+        {
+            return await _dbContext.Games.Include(p => p.Promotions)
+                .ToListAsync();
+        }
     }
 }
