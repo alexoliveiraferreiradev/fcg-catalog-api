@@ -54,11 +54,12 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.FinalizeSucessOrder
             }
             catch
             {
-                await _publishEndpoint.Publish(new DeliveryFailedEvent(
-                    request.OrderId,
-                    request.UserId,
-                    "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."
-                    ));
+                await _publishEndpoint.Publish<IDeliveryFailedEvent>(new
+                {
+                    OrderId = request.OrderId,
+                    UserId = request.UserId,
+                    Reason = "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."
+                });
             }
         }
     }

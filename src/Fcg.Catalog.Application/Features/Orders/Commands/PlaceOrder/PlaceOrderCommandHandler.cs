@@ -76,11 +76,13 @@ namespace Fcg.Catalog.Application.Features.Orders.Commands.PlaceOrder
             
             _logger.LogInformation("[CatalogAPI]  Validações concluídas. Publicando OrderPlacedEvent (PedidoId: {PedidoId}, Total: {PrecoTotal})", orderUser.Id, precoTotal);
 
-            await _publishEndpoint.Publish(new OrderPlacedEvent(
-                OrderId: orderUser.Id,
-                UserId: request.UserId,
-                GameIds: request.JogosIds,
-                AmountPrice: precoTotal), cancellationToken);
+            await _publishEndpoint.Publish<IOrderPlacedEvent>(new 
+            {
+                OrderId = orderUser.Id,
+                UserId = request.UserId,
+                GameIds = request.JogosIds,
+                AmountPrice = precoTotal 
+            },cancellationToken);
             
             await _unitOfWork.CommitAsync();
 

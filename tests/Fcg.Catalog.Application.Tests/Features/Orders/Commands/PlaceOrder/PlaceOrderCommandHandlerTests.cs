@@ -76,7 +76,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.PlaceOrder
             // Assert
             result.Should().BeTrue();
             
-            _publishEndpointMock.Verify(p => p.Publish(It.Is<OrderPlacedEvent>(e => 
+            _publishEndpointMock.Verify(p => p.Publish(It.Is<IOrderPlacedEvent>(e => 
                 e.UserId == UserId && 
                 e.AmountPrice == 100.00m && 
                 e.GameIds.Contains(jogoIdReal)), It.IsAny<CancellationToken>()), Times.Once);

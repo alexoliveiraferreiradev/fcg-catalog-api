@@ -77,7 +77,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessO
             
             _mediatorMock.Verify(m => m.Publish(It.Is<LibraryEvent>(e => e.UserId == userId), It.IsAny<CancellationToken>()), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
-            _publishEndpointMock.Verify(p => p.Publish(It.IsAny<DeliveryFailedEvent>(), It.IsAny<CancellationToken>()), Times.Never);
+            _publishEndpointMock.Verify(p => p.Publish(It.IsAny<IDeliveryFailedEvent>(), It.IsAny<CancellationToken>()), Times.Never);
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Orders.Commands.FinalizeSucessO
             await _handler.Handle(command, CancellationToken.None);
 
             // Assert
-            _publishEndpointMock.Verify(p => p.Publish(It.Is<DeliveryFailedEvent>(e => 
+            _publishEndpointMock.Verify(p => p.Publish(It.Is<IDeliveryFailedEvent>(e => 
                 e.OrderId == orderId && 
                 e.UserId == userId && 
                 e.Reason == "Falha ao finalizar a Order e adicionar os Games à Library do Usuário."), 
