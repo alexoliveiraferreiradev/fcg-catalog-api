@@ -78,7 +78,7 @@ namespace Fcg.Catalog.API.Extensions
             var redisConfig = builder.Configuration.GetSection(RedisSettings.RedisSectionName).Get<RedisSettings>();
             var connectionString = redisConfig != null && !string.IsNullOrEmpty(redisConfig.Host)
                 ? $"{redisConfig.Host}:{redisConfig.Port},password={redisConfig.Password}"
-                : builder.Configuration.GetConnectionString("Redis")!;
+                : "localhost:6379,password=secret_password";
 
             builder.Services.AddHealthChecks()
                 .AddDbContextCheck<CatalogDbContext>(
@@ -244,13 +244,7 @@ namespace Fcg.Catalog.API.Extensions
         }
 
         private static WebApplicationBuilder AddDependencyInjection(this WebApplicationBuilder builder)
-        {
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetSection("Redis:Configuration").Value;
-                options.InstanceName = builder.Configuration.GetSection("Redis:InstanceName").Value;
-            });
-
+        {            
             builder.Services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());
             builder.Services.AddScoped<CatalogDbContext>();
             builder.Services.AddHostedService<DeactivateInvalidPromotionWorker>();
