@@ -1,6 +1,5 @@
 using Fcg.Catalog.API.Endpoints.Admin;
 using Fcg.Catalog.API.Endpoints.Anonymous;
-using Fcg.Catalog.API.Endpoints.User;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Core.WebApi.Middleware;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -48,9 +47,6 @@ namespace Fcg.Catalog.API.Extensions
             app.MapPromotionsEndpoints();
             app.MapCatalogEndpoints();
             #endregion
-
-            app.MapLibraryUserEndpoints();
-            app.MapOrderEndpoints();
 
             #region Health Check
             app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });

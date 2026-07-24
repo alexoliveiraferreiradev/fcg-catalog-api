@@ -1,5 +1,4 @@
 using Dapper;
-using Fcg.Catalog.API.Consumers;
 using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Repositories;
@@ -191,17 +190,7 @@ namespace Fcg.Catalog.API.Extensions
                     });
 
                     cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
-
-                    cfg.ReceiveEndpoint(rabbitMqConfig.CatalogPaymentFailedQueue, e =>
-                    {
-                        e.UseEntityFrameworkOutbox<CatalogDbContext>(context);
-                        e.ConfigureConsumer<PaymentFailedEventConsumer>(context);
-                    });
-                    cfg.ReceiveEndpoint(rabbitMqConfig.CatalogPaymentProcessedQueue, e =>
-                    {
-                        e.UseEntityFrameworkOutbox<CatalogDbContext>(context);
-                        e.ConfigureConsumer<PaymentProcessedEventConsumer>(context);
-                    });
+                   
                 });
             });
 
@@ -250,13 +239,9 @@ namespace Fcg.Catalog.API.Extensions
             builder.Services.AddHostedService<DeactivateInvalidPromotionWorker>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<ICacheService, RedisCacheService>();
-            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IGameRepository, GameRepository>();
-            builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
             builder.Services.AddScoped<IGameQueryRepository, GameQueryRepository>();
             builder.Services.AddScoped<IPromotionQueryRepository, PromotionQueryRepository>();
-            builder.Services.AddScoped<IOrderQueryRepository, OrderQueryRepository>();
-            builder.Services.AddScoped<ILibraryQueryRepository, LibraryQueryRepository>();
             return builder;
         }
     }
