@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalog.Infrastructure.Repositories
 {
-    public class GameRepository : IGameRepository
+    internal class GameRepository : IGameRepository
     {
         private readonly CatalogDbContext _dbContext;
 

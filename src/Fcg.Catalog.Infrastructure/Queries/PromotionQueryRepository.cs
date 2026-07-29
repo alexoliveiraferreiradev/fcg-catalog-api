@@ -3,16 +3,11 @@ using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Core.Abstractions.Common;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fcg.Catalog.Infrastructure.Queries
 {
-    public class PromotionQueryRepository : IPromotionQueryRepository
+    internal class PromotionQueryRepository : IPromotionQueryRepository
     {
         private readonly IDbConnection _dbConnection;
 

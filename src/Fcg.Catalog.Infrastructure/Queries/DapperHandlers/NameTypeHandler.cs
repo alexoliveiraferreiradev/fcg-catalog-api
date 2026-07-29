@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Infrastructure.Queries.DapperHandlers
 {
-    public class NameTypeHandler: SqlMapper.TypeHandler<Name>
+    internal class NameTypeHandler: SqlMapper.TypeHandler<Name>
     {
         public override void SetValue(IDbDataParameter parameter, Name? value)
         {
