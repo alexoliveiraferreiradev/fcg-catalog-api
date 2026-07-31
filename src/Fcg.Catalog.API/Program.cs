@@ -2,10 +2,12 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddOpenApiExtension()
-    .AddServicesExtensions();
+builder.AddServicesExtensions();
 
 var app = builder.Build();
-await app.SeedData();
+if(app.Environment.IsDevelopment())
+{
+    await app.SeedData();   
+}
 app.AddAppConfiguration();
 app.Run();
