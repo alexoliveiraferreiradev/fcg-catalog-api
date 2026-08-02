@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Fcg.Catalog.Infrastructure.Queries.DapperHandlers
 {
-    public class DescriptionTypeHandler : SqlMapper.TypeHandler<Description>
+    internal class DescriptionTypeHandler : SqlMapper.TypeHandler<Description>
     {
         public override Description? Parse(object value)
         {

@@ -1,5 +1,8 @@
+using Fcg.Catalog.API.Endpoints.Admin;
+using Fcg.Catalog.API.Endpoints.Anonymous;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Core.WebApi.Middleware;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 namespace Fcg.Catalog.API.Extensions
@@ -26,12 +29,29 @@ namespace Fcg.Catalog.API.Extensions
         }
         public static WebApplication AddAppConfiguration(this WebApplication app)
         {
+            app.ConfigureEndpoints();
+            app.UseSwaggerDocumentation();
             app.UseSerilogRequestLogging();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHttpsRedirection();
+            return app;
+        }
+
+        private static WebApplication ConfigureEndpoints(this WebApplication app)
+        {
+            #region Game Endpoint
+            app.MapGamesEndpoints();
+            app.MapPromotionsEndpoints();
+            app.MapCatalogEndpoints();
+            #endregion
+
+            #region Health Check
+            app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
+            app.MapHealthChecks("/health/readiness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+            #endregion
             return app;
         }
     }

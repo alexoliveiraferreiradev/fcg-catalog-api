@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fcg.Catalog.Infrastructure.Repositories
 {
-    public class GameRepository : IGameRepository
+    internal class GameRepository : IGameRepository
     {
         private readonly CatalogDbContext _dbContext;
 
@@ -58,6 +58,12 @@ namespace Fcg.Catalog.Infrastructure.Repositories
                 .Where(j => jogosIds.Contains(j.Id)).ToListAsync();
 
             return games;
+        }
+
+        public async Task<IEnumerable<Game>> GetAllGamesAsync()
+        {
+            return await _dbContext.Games.Include(p => p.Promotions)
+                .ToListAsync();
         }
     }
 }

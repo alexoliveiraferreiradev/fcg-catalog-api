@@ -1,12 +1,32 @@
-using Fcg.Catalog.API.Filters;
+﻿using Fcg.Catalog.API.Filters;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace Fcg.Catalog.API.Extensions
 {
-    public static class SwaggerExtensions
+    public static class PresentationServiceExtensions
     {
-        public static WebApplicationBuilder AddOpenApiExtension(this WebApplicationBuilder builder)
+        public static WebApplicationBuilder AddPresentationExtension(this WebApplicationBuilder builder)
+        {
+            builder.AddJsonSerialization()
+                .AddSwaggerExtension();
+            return builder;
+        }
+        private static WebApplicationBuilder AddJsonSerialization(this WebApplicationBuilder builder)
+        {
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
+
+            builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+            });
+            return builder;
+        }
+
+        private static WebApplicationBuilder AddSwaggerExtension(this WebApplicationBuilder builder)
         {
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();

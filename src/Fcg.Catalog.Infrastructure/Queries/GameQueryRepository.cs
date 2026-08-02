@@ -1,15 +1,13 @@
 ﻿using Dapper;
 using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
-using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Core.Abstractions.Common;
 using System.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Fcg.Catalog.Infrastructure.Queries
 {
-    public class GameQueryRepository : IGameQueryRepository
+    internal class GameQueryRepository : IGameQueryRepository
     {
         private readonly IDbConnection _dbConnection;
 
