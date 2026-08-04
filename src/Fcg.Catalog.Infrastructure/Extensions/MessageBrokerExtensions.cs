@@ -1,4 +1,5 @@
-﻿using Fcg.Catalog.Infrastructure.MessageBroker;
+﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Infrastructure.MessageBroker;
 using Fcg.Catalog.Infrastructure.Persistence;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,8 @@ namespace Fcg.Catalog.Infrastructure.Extensions
     {
         public static IServiceCollection AddMassTransitExtension(this IServiceCollection services,IConfiguration configuration)
         {
+            services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
+
             services.AddOptions<RabbitMqSettings>().BindConfiguration(RabbitMqSettings.SectionName)
           .ValidateDataAnnotations().ValidateOnStart();
 

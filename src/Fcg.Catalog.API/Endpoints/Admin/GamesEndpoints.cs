@@ -75,10 +75,10 @@ namespace Fcg.Catalog.API.Endpoints.Admin
              .WithDescription("Restaura o status ativo de um game desativado anteriormente, tornando-o novamente disponível no catálogo público.")
              .WithName("AdminReactivateGame");
 
-            group.MapPost("", RepublishAllGames)
+            group.MapPost("/republish", RepublishAllGames)
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status400BadRequest)
-                .WithSummary("Publica os games no microsserviço de Orders API.")
+                .WithSummary("Republica todos os games no barramento de eventos para os demais microsserviços.")
                 .WithName("AdminRepublishGames");
         }
 

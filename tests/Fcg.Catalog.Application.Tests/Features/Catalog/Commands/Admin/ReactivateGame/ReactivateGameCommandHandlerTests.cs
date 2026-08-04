@@ -1,4 +1,5 @@
-﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame;
+﻿using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -23,7 +24,9 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Reactiva
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<ILogger<ReactivateGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
+        private readonly Mock<IIntegrationEventPublisher> _integrationEventPublisherMock;
         private readonly ReactivateGameCommandHandler _handler;
+
 
         public ReactivateGameCommandHandlerTests()
         {
@@ -31,12 +34,14 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Reactiva
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _loggerMock = new Mock<ILogger<ReactivateGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
+            _integrationEventPublisherMock = new Mock<IIntegrationEventPublisher>();
 
             _handler = new ReactivateGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _loggerMock.Object,
-                _mediatorMock.Object
+                _mediatorMock.Object,
+                _integrationEventPublisherMock.Object
             );
         }
 

@@ -1,3 +1,4 @@
+using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
@@ -22,6 +23,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
         private readonly Mock<ILogger<AddGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IIntegrationEventPublisher> _integrationEventPublisherMock;
         private readonly AddGameCommandHandler _handler;
 
         public AddGameCommandHandlerTests()
@@ -30,12 +32,14 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
             _loggerMock = new Mock<ILogger<AddGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _integrationEventPublisherMock = new Mock<IIntegrationEventPublisher>();
 
             _handler = new AddGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _loggerMock.Object,
                 _mediatorMock.Object,
-                _unitOfWorkMock.Object
+                _unitOfWorkMock.Object,
+                _integrationEventPublisherMock.Object
             );
         }
 
