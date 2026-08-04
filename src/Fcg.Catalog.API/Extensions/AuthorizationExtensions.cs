@@ -7,7 +7,6 @@ namespace Fcg.Catalog.API.Extensions
 {
     public static class AuthorizationExtensions
     {
-
         public static WebApplicationBuilder AddAuthorizationExtension(this WebApplicationBuilder builder)
         {
             builder.AddPolicyExtension().AddJwtBearerExtension();
