@@ -6,7 +6,8 @@ metadata:
     app: fcg-catalog-migration
 spec:
   ttlSecondsAfterFinished: 120
-  backoffLimit: 3 
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
   template:
     spec:
       restartPolicy: Never

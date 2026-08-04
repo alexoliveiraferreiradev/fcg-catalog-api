@@ -16,7 +16,19 @@ spec:
       annotations:
         autor: Alex O Ferreira
         description: "Deployment do microsservico de Catalogo API do Fiap Cloud Games"
-    spec:                  
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - fcg-catalog-api
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: c-fcg-catalog-api
         image: alexoliverdev/fcg-catalog-api:1.0
