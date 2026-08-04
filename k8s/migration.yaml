@@ -12,7 +12,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: migration-catalog-runner
-        image: alexoliverdev/fcg-catalog-api:latest
+        image: alexoliverdev/fcg-catalog-api:1.0
         command: ["./efbundle"]
         resources:
           requests:
