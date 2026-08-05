@@ -5,7 +5,6 @@ using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.Resources;
 using Fcg.Core.SharedContracts.MessageContracts;
-using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
