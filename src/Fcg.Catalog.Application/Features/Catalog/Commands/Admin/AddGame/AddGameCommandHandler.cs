@@ -1,4 +1,3 @@
-using Fcg.Catalog.Application.Common.Interfaces;
 using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Events;
@@ -7,6 +6,7 @@ using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.Resources;
+using Fcg.Core.SharedContracts.Interfaces;
 using Fcg.Core.SharedContracts.MessageContracts;
 using MediatR;
 using Microsoft.Extensions.Logging;

@@ -1,7 +1,6 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
-using Fcg.Catalog.Domain.Repositories;
-using Fcg.Catalog.Domain.ValueObject;
+﻿using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using Fcg.Core.SharedContracts.MessageContracts;
 
 namespace Fcg.Catalog.Application.IntegrationEvent

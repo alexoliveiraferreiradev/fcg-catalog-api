@@ -1,5 +1,4 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
-using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame;
+﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame;
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.Enum;
 using Fcg.Catalog.Domain.Events;
@@ -7,14 +6,11 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.ReactivateGame
 {

@@ -1,6 +1,6 @@
-﻿using Fcg.Catalog.Application.Common.Interfaces;
-using Fcg.Catalog.Infrastructure.MessageBroker;
+﻿using Fcg.Catalog.Infrastructure.MessageBroker;
 using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Core.SharedContracts.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

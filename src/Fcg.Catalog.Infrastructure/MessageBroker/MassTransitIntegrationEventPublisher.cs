@@ -1,4 +1,4 @@
-using Fcg.Catalog.Application.Common.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using MassTransit;
 
 namespace Fcg.Catalog.Infrastructure.MessageBroker
