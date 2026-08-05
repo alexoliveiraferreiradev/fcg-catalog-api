@@ -3,6 +3,8 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.Resources;
+using Fcg.Core.SharedContracts.Interfaces;
+using Fcg.Core.SharedContracts.MessageContracts;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -14,17 +16,19 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DeactivateGameCommandHandler> _logger;
         private readonly IMediator _mediator;
-
+        private readonly IIntegrationEventPublisher _integrationEventPublisher;
         public DeactivateGameCommandHandler(
-            IGameRepository gameRepository, 
-            IUnitOfWork unitOfWork, 
+            IGameRepository gameRepository,
+            IUnitOfWork unitOfWork,
             ILogger<DeactivateGameCommandHandler> logger,
-            IMediator mediator)
+            IMediator mediator,
+            IIntegrationEventPublisher integrationEventPublisher)
         {
             _jogoRepository = gameRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _mediator = mediator;   
+            _mediator = mediator;
+            _integrationEventPublisher = integrationEventPublisher;
         }
 
         public async Task Handle(DeactivateGameCommand request, CancellationToken cancellationToken)
@@ -40,6 +44,14 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame
 
             game.Deactivate();
             _jogoRepository.Update(game);
+
+
+            await _integrationEventPublisher.PublishAsync<IGameDeactiveIntegrationEvent>(new
+            {
+                GameId = game.Id,
+                OccurredAt = DateTime.UtcNow
+            });
+
             await _unitOfWork.CommitAsync();
 
             await _mediator.Publish(new GameDeactivatedEvent(game.Id), cancellationToken);

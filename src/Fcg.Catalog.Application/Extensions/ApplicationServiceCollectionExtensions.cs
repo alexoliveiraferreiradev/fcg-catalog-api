@@ -1,11 +1,12 @@
 ﻿using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
+using Fcg.Catalog.Application.IntegrationEvent;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Fcg.Catalog.Application.Extensions
 {
     public static class ApplicationServiceCollectionExtensions
-    {     
+    {
         public static IServiceCollection AddAplicationServices(this IServiceCollection services)
         {
             services.AddMediatR(cfg =>
@@ -13,6 +14,7 @@ namespace Fcg.Catalog.Application.Extensions
                 cfg.RegisterServicesFromAssembly(typeof(AddGameCommand).Assembly);
             });
             services.AddValidatorsFromAssembly(typeof(AddGameCommand).Assembly);
+            services.AddScoped<RepublishGamesEvent>();
             return services;
         }
     }

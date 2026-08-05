@@ -6,6 +6,8 @@ using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
 using Fcg.Core.Abstractions.Resources;
+using Fcg.Core.SharedContracts.Interfaces;
+using Fcg.Core.SharedContracts.MessageContracts;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,15 +18,17 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         private readonly IGameRepository _jogoRepository;
         private readonly ILogger<AddGameCommandHandler> _logger;        
         private readonly IMediator _mediator;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;        
+        private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
         public AddGameCommandHandler(IGameRepository gameRepository, ILogger<AddGameCommandHandler> logger,
-             IMediator mediator, IUnitOfWork unitOfWork)
+             IMediator mediator, IUnitOfWork unitOfWork, IIntegrationEventPublisher integrationEventPublisher)
         {
             _jogoRepository = gameRepository;
             _logger = logger;
             _mediator = mediator;
             _unitOfWork = unitOfWork;
+            _integrationEventPublisher = integrationEventPublisher;
         }
         public async Task<GameResponse> Handle(AddGameCommand request, CancellationToken cancellationToken)
         {
@@ -43,6 +47,17 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
             _jogoRepository.Add(game);
            
             _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", game.Id, request.Name);
+
+            await _integrationEventPublisher.PublishAsync<IGameCreatedIntegrationEvent>(new
+            {
+                GameId = game.Id,
+                Name = game.Name.Value,
+                Price = game.BasePrice.Amount,
+                IsAvaiable = true,
+                Description = game.Description.Value,
+                Genre = game.Genre.ToString(),
+                OccurredAt = DateTime.UtcNow
+            });
 
             await _mediator.Publish(new GameAddedEvent(game.Id),cancellationToken);
 

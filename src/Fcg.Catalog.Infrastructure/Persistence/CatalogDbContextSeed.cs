@@ -7,7 +7,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence
 {
     public static class CatalogDbContextSeed
     {        
-        public static async Task SeedDataAsync(CatalogDbContext context)
+        public static async Task<bool> SeedDataAsync(CatalogDbContext context)
         {
             if (!await context.Games.AnyAsync())
             {
@@ -45,7 +45,9 @@ namespace Fcg.Catalog.Infrastructure.Persistence
                     );
 
                 await context.SaveChangesAsync();
+                return true;
             }
+            return false;
         }
     }
 }

@@ -6,14 +6,11 @@ using Fcg.Catalog.Domain.Repositories;
 using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.DeactivateGame
 {
@@ -23,6 +20,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Deactiva
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private readonly Mock<ILogger<DeactivateGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
+        private readonly Mock<IIntegrationEventPublisher> _integrationEventPublisherMock;
         private readonly DeactivateGameCommandHandler _handler;
 
         public DeactivateGameCommandHandlerTests()
@@ -31,12 +29,14 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.Deactiva
             _unitOfWorkMock = new Mock<IUnitOfWork>();
             _loggerMock = new Mock<ILogger<DeactivateGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
+            _integrationEventPublisherMock = new Mock<IIntegrationEventPublisher>();
 
             _handler = new DeactivateGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _unitOfWorkMock.Object,
                 _loggerMock.Object,
-                _mediatorMock.Object
+                _mediatorMock.Object,
+                _integrationEventPublisherMock.Object
             );
         }
 

@@ -1,7 +1,5 @@
 using Fcg.Catalog.Application.Extensions;
-using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
 using Fcg.Catalog.Infrastructure.Extensions;
-using FluentValidation;
 
 namespace Fcg.Catalog.API.Extensions
 {

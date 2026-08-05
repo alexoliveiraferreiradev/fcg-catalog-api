@@ -22,6 +22,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
             services.AddDbContextExtension(configuration);
             services.AddCacheExtension(configuration);
             services.AddMassTransitExtension(configuration);
+            services.AddHealthCheckExtension(configuration);    
             services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());
             SqlMapper.AddTypeHandler(new NameTypeHandler());
             SqlMapper.AddTypeHandler(new DescriptionTypeHandler());

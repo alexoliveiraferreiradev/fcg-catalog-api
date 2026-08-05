@@ -1,8 +1,7 @@
 ﻿using Fcg.Catalog.Domain.Repositories;
-using Fcg.Catalog.Domain.ValueObject;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using Fcg.Core.SharedContracts.MessageContracts;
-using MassTransit;
 
 namespace Fcg.Catalog.Application.IntegrationEvent
 {
@@ -10,14 +9,14 @@ namespace Fcg.Catalog.Application.IntegrationEvent
     {
         private readonly IGameRepository _gameRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
         public RepublishGamesEvent(IGameRepository gameRepository, IUnitOfWork unitOfWork,
-            IPublishEndpoint publishEndpoint)
+            IIntegrationEventPublisher integrationEventPublisher)
         {
             _gameRepository = gameRepository;
             _unitOfWork = unitOfWork;
-            _publishEndpoint = publishEndpoint;
+            _integrationEventPublisher = integrationEventPublisher;
         }
 
         public async Task Handle()
@@ -27,14 +26,15 @@ namespace Fcg.Catalog.Application.IntegrationEvent
             foreach (var game in games)
             {
                 var gamePrice = game.Promotions.Any() ? game.Promotions.First().ValorPromocao.Amount : game.BasePrice.Amount;
-                await _publishEndpoint.Publish<IGameCreatedIntegrationEvent>(new
+                await _integrationEventPublisher.PublishAsync<IGameCreatedIntegrationEvent>(new
                 {
                     GameId = game.Id,
                     Name = game.Name.Value,
                     Price = gamePrice,
                     IsAvaiable = game.IsActive,
                     Description = game.Description.Value,
-                    OccuredAt = now
+                    Genre = game.Genre.ToString(),
+                    OccurredAt = now
                 });
 
             }

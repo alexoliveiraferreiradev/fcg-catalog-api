@@ -1,5 +1,6 @@
 using Fcg.Catalog.API.Endpoints.Admin;
 using Fcg.Catalog.API.Endpoints.Anonymous;
+using Fcg.Catalog.Application.IntegrationEvent;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Core.WebApi.Middleware;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -17,7 +18,13 @@ namespace Fcg.Catalog.API.Extensions
                 try
                 {
                     var context = services.GetRequiredService<CatalogDbContext>();
-                    await CatalogDbContextSeed.SeedDataAsync(context);
+                    var seeded = await CatalogDbContextSeed.SeedDataAsync(context);
+
+                    if (seeded)
+                    {
+                        var republishEvent = services.GetRequiredService<RepublishGamesEvent>();
+                        await republishEvent.Handle();
+                    }
                 }
                 catch (Exception ex)
                 {

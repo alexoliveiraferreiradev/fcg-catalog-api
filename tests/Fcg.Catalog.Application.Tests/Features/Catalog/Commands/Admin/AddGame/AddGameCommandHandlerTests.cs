@@ -5,14 +5,11 @@ using Fcg.Catalog.Domain.Events;
 using Fcg.Catalog.Domain.Repositories;
 using Fcg.Core.Abstractions.Common.Exceptions;
 using Fcg.Core.Abstractions.Interfaces;
+using Fcg.Core.SharedContracts.Interfaces;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
 {
@@ -22,6 +19,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
         private readonly Mock<ILogger<AddGameCommandHandler>> _loggerMock;
         private readonly Mock<IMediator> _mediatorMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IIntegrationEventPublisher> _integrationEventPublisherMock;
         private readonly AddGameCommandHandler _handler;
 
         public AddGameCommandHandlerTests()
@@ -30,12 +28,14 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
             _loggerMock = new Mock<ILogger<AddGameCommandHandler>>();
             _mediatorMock = new Mock<IMediator>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _integrationEventPublisherMock = new Mock<IIntegrationEventPublisher>();
 
             _handler = new AddGameCommandHandler(
                 _jogoRepositoryMock.Object,
                 _loggerMock.Object,
                 _mediatorMock.Object,
-                _unitOfWorkMock.Object
+                _unitOfWorkMock.Object,
+                _integrationEventPublisherMock.Object
             );
         }
 

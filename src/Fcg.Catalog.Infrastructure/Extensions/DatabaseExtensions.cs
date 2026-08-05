@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Fcg.Catalog.Infrastructure.Extensions
 {
-    internal static class DbContextExtensions
+    internal static class DatabaseExtensions
     {
         public static IServiceCollection AddDbContextExtension(this IServiceCollection services,IConfiguration configuration) {
             

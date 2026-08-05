@@ -6,13 +6,14 @@ metadata:
     app: fcg-catalog-migration
 spec:
   ttlSecondsAfterFinished: 120
-  backoffLimit: 3 
+  backoffLimit: 3
+  activeDeadlineSeconds: 300
   template:
     spec:
       restartPolicy: Never
       containers:
       - name: migration-catalog-runner
-        image: alexoliverdev/fcg-catalog-api:latest
+        image: alexoliverdev/fcg-catalog-api:1.0
         command: ["./efbundle"]
         resources:
           requests:
