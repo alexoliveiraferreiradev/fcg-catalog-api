@@ -2,6 +2,7 @@
 using Fcg.Catalog.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Fcg.Catalog.Infrastructure.Extensions
 {
@@ -16,6 +17,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
                 : "localhost:6379,password=secret_password";
 
             services.AddHealthChecks()
+                 .AddCheck("live", () => HealthCheckResult.Healthy(), tags: new[] { "live" })
                 .AddDbContextCheck<CatalogDbContext>(
                 name: "database-healthcheck",
                 tags: new[] { "ready" })
