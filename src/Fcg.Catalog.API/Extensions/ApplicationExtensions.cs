@@ -2,8 +2,10 @@ using Fcg.Catalog.API.Endpoints.Admin;
 using Fcg.Catalog.API.Endpoints.Anonymous;
 using Fcg.Catalog.Application.IntegrationEvent;
 using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Core.Abstractions.Common;
 using Fcg.Core.WebApi.Middleware;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 
 namespace Fcg.Catalog.API.Extensions
@@ -56,8 +58,17 @@ namespace Fcg.Catalog.API.Extensions
             #endregion
 
             #region Health Check
-            app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("live") });
-            app.MapHealthChecks("/health/readiness", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
+            app.MapHealthChecks("/health/liveness", new HealthCheckOptions { Predicate = check => check.Tags.Contains(HealthCheckTags.Live) });
+            app.MapHealthChecks("/health/readiness", new HealthCheckOptions
+            {
+                Predicate = check => check.Tags.Contains(HealthCheckTags.Ready),
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+                }
+            });
             #endregion
             return app;
         }

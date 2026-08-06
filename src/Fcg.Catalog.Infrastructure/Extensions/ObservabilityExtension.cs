@@ -1,7 +1,9 @@
 ﻿using Fcg.Catalog.Infrastructure.Caching;
 using Fcg.Catalog.Infrastructure.Persistence;
+using Fcg.Core.Abstractions.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Fcg.Catalog.Infrastructure.Extensions
 {
@@ -16,13 +18,14 @@ namespace Fcg.Catalog.Infrastructure.Extensions
                 : "localhost:6379,password=secret_password";
 
             services.AddHealthChecks()
+                 .AddCheck("live", () => HealthCheckResult.Healthy(), tags: new[] { HealthCheckTags.Live })
                 .AddDbContextCheck<CatalogDbContext>(
                 name: "database-healthcheck",
-                tags: new[] { "ready" })
+                tags: new[] { HealthCheckTags.Ready })
                 .AddRedis(
                     connectionString,
                     name: "redis-healthcheck",
-                    tags: new[] { "ready" });
+                    tags: new[] { HealthCheckTags.Ready });
 
             return services;
         }
