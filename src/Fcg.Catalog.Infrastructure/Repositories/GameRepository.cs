@@ -1,0 +1,69 @@
+using Dapper;
+using Fcg.Catalog.Domain.Entities;
+using Fcg.Catalog.Domain.Repositories;
+using Fcg.Catalog.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+namespace Fcg.Catalog.Infrastructure.Repositories
+{
+    internal class GameRepository : IGameRepository
+    {
+        private readonly CatalogDbContext _dbContext;
+
+        public GameRepository(CatalogDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public void Add(Game game)
+        {
+            _dbContext.Games.Add(game);
+        }
+
+        public void Update(Game game)
+        {
+            _dbContext.Update(game);
+        }
+
+        public async Task DeactivateInvalidPromotions()
+        {
+            var agora = DateTime.UtcNow;
+            await _dbContext.Games
+                .SelectMany(j => j.Promotions)
+                .Where(p => p.IsActive && p.Period.EndDate <= agora)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, false).SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
+        }
+
+        public async Task<bool> GameExistsWithName(string gameName)
+        {
+            return await _dbContext.Games.AnyAsync(x=>x.Name.Value.ToUpper().Equals(gameName.ToUpper()));   
+        }
+
+        public async Task<Game?> GetById(Guid id)
+        {
+            return await _dbContext.Games.Include(x => x.Promotions).Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Promotion?> GetPromotionById(Guid id)
+        {
+            var game = await _dbContext.Games.Include(j => j.Promotions)
+                .FirstOrDefaultAsync(j => j.Promotions.Any(p => p.Id == id));
+
+            return game?.Promotions.FirstOrDefault(p => p.Id == id);
+        }
+
+        public async Task<IEnumerable<Game>> GetGamesByIds(IEnumerable<Guid> jogosIds)
+        {
+            var games = await _dbContext.Games.Include(p=>p.Promotions)
+                .Where(j => jogosIds.Contains(j.Id)).ToListAsync();
+
+            return games;
+        }
+
+        public async Task<IEnumerable<Game>> GetAllGamesAsync()
+        {
+            return await _dbContext.Games.Include(p => p.Promotions)
+                .ToListAsync();
+        }
+    }
+}
