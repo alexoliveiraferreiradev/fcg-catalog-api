@@ -1,0 +1,144 @@
+using Fcg.Catalog.API.Filters;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivatePromotion;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdatePromotion;
+using Fcg.Catalog.Application.Features.Catalog.Queries.Admin.GetAllPromotedGamesAdmin;
+using Fcg.Catalog.Application.Features.Catalog.Queries.Admin.GetPromotionByGameId;
+using Fcg.Catalog.Application.Features.Response;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace Fcg.Catalog.API.Endpoints.Admin
+{
+    public static class PromotionsEndpoints
+    {
+        public static void MapPromotionsEndpoints(this WebApplication app)
+        {
+            var group = app.MapGroup("/api/admin/promotions").RequireAuthorization("AdminOnly").WithTags("Admin - Gerenciamento de Promoções");
+
+            group.MapGet("", GetAllPromotedGames)
+                .Produces<GameResponse>()
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Lista promoções de games.")
+                .WithDescription("Retorna a lista de promoções de games.")
+                .WithName("AdminGetAllPromotedGames");
+
+            group.MapGet("/{promotionId:guid}", GetPromotionById)
+                .Produces<PromotionResponse>()
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Obtém uma promoção por ID.")
+                .WithDescription("Busca os detalhes de uma promoção específica a partir do seu identificador único (GUID).")
+                .WithName("AdminGetPromotionById");
+
+            group.MapPost("", CreatePromotion)
+                .AddEndpointFilter<ValidationFilter<AddPromotionGameCommand>>()
+                .Produces<PromotionResponse>()
+                .Produces(StatusCodes.Status201Created)
+                .ProducesValidationProblem()
+                .WithSummary("Cria uma nova promoção para um game.")
+                .WithDescription("Cadastra uma nova promoção associada a um game, aplicando um percentual de desconto com datas de início e término.")
+                .WithName("AdminCreatePromotion");
+
+            group.MapPut("/{promotionId:guid}/deactivate", DeactivatePromotion)
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces(StatusCodes.Status404NotFound)
+                .WithSummary("Desativa uma promoção existente.")
+                .WithDescription("Desativa uma promoção de forma lógica antes do seu prazo de expiração.")
+                .WithName("AdminDeactivatePromotion");
+
+            group.MapPut("/{promotionId:guid}/update", UpdatePromotion)
+                .AddEndpointFilter<ValidationFilter<UpdatePromotionCommand>>()
+                .Produces(StatusCodes.Status204NoContent)
+                .Produces(StatusCodes.Status404NotFound)
+                .ProducesValidationProblem()
+                .WithSummary("Atualiza os detalhes de uma promoção existente.")
+                .WithDescription("Permite atualizar informações de uma promoção, como valor de desconto e datas de validade.")
+                .WithName("AdminUpdatePromotion");
+
+        }
+
+
+        private static async Task<IResult> GetAllPromotedGames(
+            [FromServices] ISender sender,
+            CancellationToken cancellation
+            )
+        {
+            var query = new GetAllPromotedGamesAdminQuery();
+            var response = await sender.Send(query, cancellation);
+
+            if (response == null || !response.Any())
+            {
+                return Results.NotFound(new { Message = "Nenhum jogo promovido encontrado." });
+            }
+
+            return Results.Ok(response);
+        }
+
+        private static async Task<IResult> GetPromotionById(
+            [FromRoute] Guid promotionId,
+            [FromServices] ISender sender,
+            CancellationToken cancellation
+            )
+        {
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellation);
+
+            var query = new GetPromotionByGameIdQuery(promotionId);
+
+            var response = await sender.Send(query, cancellation);
+
+            if (response == null)
+            {
+                return Results.NotFound(new { Message = "Promoção não encontrada." });
+            }
+
+            return Results.Ok(response);
+        }
+
+
+        private static async Task<IResult> CreatePromotion(
+            [FromBody] AddPromotionGameCommand addPromotionGameCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken
+            )
+        {
+            var response = await sender.Send(addPromotionGameCommand, cancellationToken);
+            return Results.Created($"/api/admin/promocao/obtem-por-id/{response.PromotionId}", response);
+        }
+
+
+        private static async Task<IResult> DeactivatePromotion(
+            [FromRoute] Guid promotionId,
+            [FromServices] DeactivatePromotionCommand deactivatePromotionCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken
+            )
+        {
+            var command = deactivatePromotionCommand with { PromotionId = promotionId };
+            await sender.Send(command, cancellationToken);
+            return Results.NoContent();
+        }
+
+        private static async Task<IResult> UpdatePromotion(
+            [FromRoute] Guid promotionId,
+            [FromBody] UpdatePromotionCommand updatePromotionCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken
+            )
+        {
+            if (promotionId == Guid.Empty)
+            {
+                return Results.BadRequest(new { Message = "O ID da promoção não pode ser vazio." });
+            }
+
+            var command = updatePromotionCommand with { PromotionId = promotionId };
+            await sender.Send(command, cancellationToken);
+            return Results.NoContent();
+        }
+
+    }
+}
+

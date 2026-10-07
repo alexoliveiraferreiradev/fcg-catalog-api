@@ -1,0 +1,163 @@
+using Fcg.Catalog.API.Filters;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.ReactivateGame;
+using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame;
+using Fcg.Catalog.Application.Features.Catalog.Queries.Admin.GetAllGamesAdmin;
+using Fcg.Catalog.Application.Features.Catalog.Queries.Admin.GetGamesByIdAdmin;
+using Fcg.Catalog.Application.Features.Response;
+using Fcg.Catalog.Application.IntegrationEvent;
+using Fcg.Catalog.Domain.Enum;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Fcg.Catalog.API.Endpoints.Admin
+{
+    public static class GamesEndpoints
+    {
+        public static void MapGamesEndpoints(this WebApplication app)
+        {
+            var group = app.MapGroup("/api/admin/games").RequireAuthorization("AdminOnly").WithTags("Admin - Gerenciamento de Games");
+
+            var genresList = string.Join(", ", Enum.GetValues<GameGenre>().Select(g => $"{g} ({(int)g})"));
+
+            group.MapGet("/{gameId:guid}", GetGameById)
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status200OK)
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Obtém um game por ID para o administrador.")
+             .WithDescription("Busca um game específico pelo seu identificador único (GUID) e retorna seus detalhes cadastrais completos.")
+             .WithName("AdminGetGameById");
+
+            group.MapGet("", GetAllGames)
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status200OK)
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Lista todos os games cadastrados.")
+             .WithDescription("Retorna a lista completa de todos os games cadastrados no catálogo, incluindo os ativos e inativos.")
+             .WithName("AdminGetAllGames");
+
+            group.MapPost("", AddGame)
+             .AddEndpointFilter<ValidationFilter<AddGameCommand>>()
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status201Created)
+             .ProducesValidationProblem()
+             .WithSummary("Cadastra um novo game.")
+             .WithDescription($"Realiza a inserção de um novo game no catálogo informando título, gênero, preço e status. Gêneros disponíveis: {genresList}.")
+             .WithName("AdminAddGame");
+
+            group.MapPut("/{gameId:guid}/deactivate", DeactiveGame)
+             .Produces(StatusCodes.Status204NoContent)
+             .Produces(StatusCodes.Status400BadRequest)
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Desativa um game no catálogo.")
+             .WithDescription("Realiza a desativação lógica de um game pelo seu ID, impedindo novas compras e sua exibição no catálogo público.")
+             .WithName("AdminDeactivateGame"); 
+
+            group.MapPut("/{gameId:guid}", UpdateGame)
+             .AddEndpointFilter<ValidationFilter<UpdateGameCommand>>()
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status200OK)
+             .ProducesValidationProblem()
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Atualiza os dados de um game.")
+             .WithDescription($"Permite atualizar as informações cadastrais de um game existente (título, preço, gênero, descrição). Gêneros disponíveis: {genresList}.")
+             .WithName("AdminUpdateGame");
+
+            group.MapPut("/{gameId:guid}/activate", ReactiveGame)
+             .Produces<GameResponse>()
+             .Produces(StatusCodes.Status200OK)
+             .Produces(StatusCodes.Status400BadRequest)
+             .Produces(StatusCodes.Status404NotFound)
+             .WithSummary("Reativa um game desativado.")
+             .WithDescription("Restaura o status ativo de um game desativado anteriormente, tornando-o novamente disponível no catálogo público.")
+             .WithName("AdminReactivateGame");
+
+            group.MapPost("/republish", RepublishAllGames)
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status400BadRequest)
+                .WithSummary("Republica todos os games no barramento de eventos para os demais microsserviços.")
+                .WithName("AdminRepublishGames");
+        }
+
+        private static async Task<IResult> RepublishAllGames(
+            [FromServices] RepublishGamesEvent republishEvent)
+        {
+            await republishEvent.Handle();
+            return Results.Ok();
+        }
+
+        private static async Task<IResult> GetGameById(
+            [FromRoute] Guid gameId, [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+        {
+            await sender.Send(new DeactivatePromotionInvalidaCommand(), cancellationToken);
+
+            var query = new GetGamesByIdAdminQueryGuid(gameId);
+            var response = await sender.Send(query, cancellationToken);
+            if (response == null)
+            {
+                return Results.NotFound();
+            }
+            return Results.Ok(response);
+        }
+
+        private static async Task<IResult> GetAllGames(
+            [FromServices] ISender mediator)
+        {
+            var query = new GetAllGamesAdminQuery();
+            var response = await mediator.Send(query);
+            if (response == null)
+            {
+                return Results.NotFound();
+            }
+            return Results.Ok(response);
+        }
+
+
+        private static async Task<IResult> AddGame(
+            [FromServices] ISender sender,
+            [FromBody] AddGameCommand addGameCommand,
+            CancellationToken cancellationToken)
+        {
+            var response = await sender.Send(addGameCommand, cancellationToken);
+            return Results.Created($"/api/admin/games/{response.Id}", response);
+        }
+
+        private static async Task<IResult> DeactiveGame(
+            [FromRoute] Guid gameId,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken
+            )
+        {
+            var command = new DeactivateGameCommand(gameId);
+
+            await sender.Send(command, cancellationToken);
+
+            return Results.NoContent();
+        }
+
+        private static async Task<IResult> UpdateGame(
+            [FromRoute] Guid gameId,
+            [FromBody] UpdateGameCommand updateGameCommand,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+        {
+            var command = updateGameCommand with { GameId = gameId };
+            var response = await sender.Send(command, cancellationToken);
+            return Results.Ok(response);
+        }
+
+        private static async Task<IResult> ReactiveGame(
+            [FromRoute] Guid gameId,
+            [FromServices] ISender sender,
+            CancellationToken cancellationToken)
+        {
+            var command =  new ReactivateGameCommand { GameId = gameId };
+            await sender.Send(command, cancellationToken);
+            return Results.NoContent();
+        }
+
+    }
+}
