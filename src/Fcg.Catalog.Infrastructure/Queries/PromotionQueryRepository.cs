@@ -67,7 +67,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
                             WHERE g.IsActive = 1
                               AND (@Genre IS NULL OR g.Genre = @Genre) 
-                            ORDER BY g.CreatedAt DESC
+                            ORDER BY g.CreatedAt DESC, g.Id DESC
                             OFFSET @Offset ROWS 
                             FETCH NEXT @PageSize ROWS ONLY;
                         ";

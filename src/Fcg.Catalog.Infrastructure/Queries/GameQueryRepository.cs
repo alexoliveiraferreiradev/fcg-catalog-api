@@ -122,7 +122,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                   WHERE p.GameId = j.Id 
                                     AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
                               ))
-                            ORDER BY j.CreatedAt DESC
+                            ORDER BY j.CreatedAt DESC, j.Id DESC
                             OFFSET @Offset ROWS 
                             FETCH NEXT @PageSize ROWS ONLY;";
 
