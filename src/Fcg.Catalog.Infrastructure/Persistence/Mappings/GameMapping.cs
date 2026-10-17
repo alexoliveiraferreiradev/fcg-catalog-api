@@ -1,4 +1,5 @@
 using Fcg.Catalog.Domain.Entities;
+using Fcg.Catalog.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -39,6 +40,15 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
                     .HasColumnType("decimal(18,2)")
                     .IsRequired();
             });
+
+            // Capa opcional: coluna nula quando o jogo não tem capa.
+            builder.OwnsOne(j => j.Cover, cover =>
+            {
+                cover.Property(c => c.Value)
+                    .HasColumnName("CoverUrl")
+                    .HasMaxLength(CoverUrl.MaxLength);
+            });
+            builder.Navigation(j => j.Cover).IsRequired(false);
 
             builder.Property(j => j.IsActive)
                 .IsRequired();

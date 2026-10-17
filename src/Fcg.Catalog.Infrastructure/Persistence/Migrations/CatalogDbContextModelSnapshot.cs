@@ -261,6 +261,25 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                                 .HasForeignKey("GameId");
                         });
 
+                    b.OwnsOne("Fcg.Catalog.Domain.ValueObject.CoverUrl", "Cover", b1 =>
+                        {
+                            b1.Property<Guid>("GameId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(500)
+                                .HasColumnType("nvarchar(500)")
+                                .HasColumnName("CoverUrl");
+
+                            b1.HasKey("GameId");
+
+                            b1.ToTable("Games");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GameId");
+                        });
+
                     b.OwnsOne("Fcg.Catalog.Domain.ValueObject.Description", "Description", b1 =>
                         {
                             b1.Property<Guid>("GameId")
@@ -301,6 +320,8 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
 
                     b.Navigation("BasePrice")
                         .IsRequired();
+
+                    b.Navigation("Cover");
 
                     b.Navigation("Description")
                         .IsRequired();
