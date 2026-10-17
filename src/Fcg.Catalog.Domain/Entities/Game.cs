@@ -15,6 +15,8 @@ namespace Fcg.Catalog.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public GameGenre Genre { get; private set; }
+        /// <summary>Link da capa; null quando o jogo não tem capa (o front mostra um placeholder).</summary>
+        public CoverUrl? Cover { get; private set; }
         private List<Promotion> _promotions = new List<Promotion>();
         public IReadOnlyCollection<Promotion> Promotions => _promotions;
 
@@ -23,12 +25,13 @@ namespace Fcg.Catalog.Domain.Entities
         }
 
 
-        public Game(Name gameName, Description gameDescription, Price priceGame, GameGenre gameGenre)
+        public Game(Name gameName, Description gameDescription, Price priceGame, GameGenre gameGenre, CoverUrl? cover = null)
         {
             Name = gameName;
             Description = gameDescription;
             BasePrice = priceGame;
             Genre = gameGenre;
+            Cover = cover;
             IsActive = true;
             CreatedAt = DateTime.UtcNow;
             UpdatedAt = CreatedAt;
@@ -54,7 +57,8 @@ namespace Fcg.Catalog.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void Update(Name newName, Description nemGameDescription, Price newPrice, GameGenre newGenre)
+        /// <summary>Substitui os dados editáveis (PUT): newCover null remove a capa.</summary>
+        public void Update(Name newName, Description nemGameDescription, Price newPrice, GameGenre newGenre, CoverUrl? newCover)
         {
             if (!IsActive) throw new DomainException(DomainMessages.GameIsDeactivated);
 
@@ -62,7 +66,14 @@ namespace Fcg.Catalog.Domain.Entities
             UpdateDescription(nemGameDescription);
             UpdatePrice(newPrice);
             UpdateGenre(newGenre);
+            UpdateCover(newCover);
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        private void UpdateCover(CoverUrl? newCover)
+        {
+            if (Equals(Cover, newCover)) return;
+            Cover = newCover;
         }
 
         private void UpdateGenre(GameGenre newGenre)

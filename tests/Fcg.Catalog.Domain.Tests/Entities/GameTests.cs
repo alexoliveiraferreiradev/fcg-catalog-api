@@ -122,7 +122,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             var novoGenero = GameGenre.RPG;
 
             // Act
-            Game.Update(novoNome, novaDescricao, novoPreco, novoGenero);
+            Game.Update(novoNome, novaDescricao, novoPreco, novoGenero, null);
 
             // Assert
             Assert.Equal(novoNome, Game.Name);
@@ -144,8 +144,75 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             var novoGenero = GameGenre.RPG;
 
             // Act & Assert
-            var excecao = Assert.Throws<DomainException>(() => Game.Update(novoNome, novaDescricao, novoPreco, novoGenero));
+            var excecao = Assert.Throws<DomainException>(() => Game.Update(novoNome, novaDescricao, novoPreco, novoGenero, null));
             Assert.Equal(DomainMessages.GameIsDeactivated, excecao.Message);
+        }
+
+        #endregion
+
+        #region Cover Tests
+
+        [Fact]
+        public void Construtor_SemCapa_DeveCriarJogoSemCapa()
+        {
+            // Act
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+
+            // Assert
+            Assert.Null(Game.Cover);
+        }
+
+        [Fact]
+        public void Construtor_ComCapa_DeveGuardarCapa()
+        {
+            // Arrange
+            var capa = new CoverUrl("/covers/pixel-pals.svg");
+
+            // Act
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, capa);
+
+            // Assert
+            Assert.Equal(capa, Game.Cover);
+        }
+
+        [Fact]
+        public void Atualizar_ComNovaCapa_DeveTrocarCapa()
+        {
+            // Arrange
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+            var novaCapa = new CoverUrl("https://cdn.exemplo.com/b.png");
+
+            // Act
+            Game.Update(Game.Name, Game.Description, Game.BasePrice, Game.Genre, novaCapa);
+
+            // Assert
+            Assert.Equal(novaCapa, Game.Cover);
+        }
+
+        [Fact]
+        public void Atualizar_ComMesmaCapa_DeveManterCapa()
+        {
+            // Arrange
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+
+            // Act
+            Game.Update(Game.Name, Game.Description, Game.BasePrice, Game.Genre, new CoverUrl("/covers/a.svg"));
+
+            // Assert
+            Assert.Equal(new CoverUrl("/covers/a.svg"), Game.Cover);
+        }
+
+        [Fact]
+        public void Atualizar_ComCapaNula_DeveRemoverCapa()
+        {
+            // Arrange
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+
+            // Act
+            Game.Update(Game.Name, Game.Description, Game.BasePrice, Game.Genre, null);
+
+            // Assert
+            Assert.Null(Game.Cover);
         }
 
         #endregion
