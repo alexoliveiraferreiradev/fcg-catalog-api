@@ -48,7 +48,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
                 var novaDescricao = new Description(request.NewDescription);
                 var novoPreco = new Price(request.NewPrice);
 
-                game.Update(novoNome, novaDescricao, novoPreco, request.NewGenre);
+                game.Update(novoNome, novaDescricao, novoPreco, request.NewGenre, CoverUrl.FromNullable(request.NewCoverUrl));
                 _jogoRepository.Update(game);
                 await _unitOfWork.CommitAsync();
 
@@ -65,7 +65,8 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
                     Description = game.Description.Value,
                     OriginalPrice = game.BasePrice.Amount,
                     Genre = game.Genre,
-                    IsActive = game.IsActive
+                    IsActive = game.IsActive,
+                    CoverUrl = game.Cover?.Value
                 };
             }
             catch(DomainException)

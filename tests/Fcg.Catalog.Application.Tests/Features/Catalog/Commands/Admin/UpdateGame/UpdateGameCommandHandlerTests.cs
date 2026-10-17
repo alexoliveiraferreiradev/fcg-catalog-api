@@ -79,6 +79,32 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
             _mediatorMock.Verify(m => m.Publish(It.IsAny<GameUpdatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        [Theory]
+        [InlineData("/covers/neon-rally.svg")]
+        [InlineData(null)]
+        public async Task Handle_DeveGravarCapaEDevolverNaResposta(string? capa)
+        {
+            // Arrange
+            var Game = CriarJogoValido();
+            var command = new UpdateGameCommand
+            {
+                GameId = Game.Id,
+                NewName = "Game Novo",
+                NewDescription = "Nova Description longa",
+                NewPrice = 120.00m,
+                NewGenre = GameGenre.Action,
+                NewCoverUrl = capa
+            };
+            _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            (Game.Cover?.Value).Should().Be(capa);
+            result.CoverUrl.Should().Be(capa);
+        }
+
         [Fact]
         public async Task Handle_DeveLancarDomainException_QuandoJogoNaoEncontrado()
         {

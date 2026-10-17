@@ -46,7 +46,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
                 var price = new Price(request.Price);
                 var gameName = new Name(request.Name);
                 var gameDescription = new Description(request.Description);
-                var game = new Game(gameName, gameDescription, price, request.Genre);
+                var game = new Game(gameName, gameDescription, price, request.Genre, CoverUrl.FromNullable(request.CoverUrl));
                 _jogoRepository.Add(game);
 
                 _logger.LogInformation("[CatalogAPI] Jogo adicionado com sucesso ao repositório. ID: {JogoId}, Nome: {Nome}", game.Id, request.Name);
@@ -76,7 +76,8 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
                     Name = game.Name.Value,
                     Description = game.Description.Value,
                     OriginalPrice = game.BasePrice.Amount,
-                    Genre = game.Genre
+                    Genre = game.Genre,
+                    CoverUrl = game.Cover?.Value
                 };
             }
             catch(DomainException)
