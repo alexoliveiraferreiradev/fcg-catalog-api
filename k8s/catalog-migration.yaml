@@ -42,7 +42,7 @@ spec:
             memory: "32Mi"
       containers:
       - name: migration-catalog-runner
-        image: alexoliverdev/fcg-catalog-api:1.9
+        image: acrfiapcloudgames.azurecr.io/fcg-catalog-api:1.3
         command: ["./efbundle"]
         resources:
           requests:
