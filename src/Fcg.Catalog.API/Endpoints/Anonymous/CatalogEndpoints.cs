@@ -1,7 +1,10 @@
 using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidPromotion;
+using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetGameCovers;
 using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetPagedCatalog;
 using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetPagedPromotedCatalogGames;
+using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Enum;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +30,13 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
                 .WithDescription("Retorna uma lista paginada de todos os games ativos que possuem uma promoção em vigência no momento, permitindo filtro opcional por gênero.")
                 .WithName("GetPromotedCatalogGames");
 
+            group.MapGet("/covers", GetGameCovers)
+                .Produces<IEnumerable<GameCoverResponse>>(StatusCodes.Status200OK)
+                .ProducesValidationProblem()
+                .WithSummary("Lista as capas de vários games.")
+                .WithDescription("Retorna id, nome e link da capa dos games pedidos (ids=...&ids=..., até 50), inclusive desativados. Ids inexistentes são ignorados.")
+                .WithName("GetCatalogGameCovers");
+
         }
 
 
@@ -47,6 +57,27 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
             }
             return Results.Ok(response);
         }      
+
+        private static async Task<IResult> GetGameCovers(
+            [FromServices] ISender sender,
+            [FromServices] IValidator<GetGameCoversQuery> validator,
+            [FromQuery] Guid[]? ids,
+            CancellationToken cancellationToken)
+        {
+            // Num GET o ValidationFilter não acha o command entre os argumentos; valida aqui com a mesma resposta.
+            var query = new GetGameCoversQuery(ids ?? []);
+            var validation = await validator.ValidateAsync(query, cancellationToken);
+            if (!validation.IsValid)
+            {
+                return Results.ValidationProblem(new Dictionary<string, string[]>
+                {
+                    ["ids"] = validation.Errors.Select(e => e.ErrorMessage).ToArray()
+                });
+            }
+
+            var response = await sender.Send(query, cancellationToken);
+            return Results.Ok(response);
+        }
 
         private static async Task<IResult> GetGamesByPromotion(
             [FromServices] ISender sender,
