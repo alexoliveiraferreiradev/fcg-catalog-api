@@ -26,7 +26,10 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.ValorPromocao AS CurrentPrice, 
                                 g.Genre, 
                                 g.IsActive, 
-                                p.Id AS PromotionId             
+                                p.Id AS PromotionId,
+                                p.GameId,
+                                p.EndDate,
+                                g.CoverUrl
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 
@@ -60,7 +63,10 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.ValorPromocao AS CurrentPrice, 
                                 g.Genre, 
                                 g.IsActive, 
-                                p.Id AS PromotionId             
+                                p.Id AS PromotionId,
+                                p.GameId,
+                                p.EndDate,
+                                g.CoverUrl
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 
