@@ -23,6 +23,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                 j.Id, 
                 j.Name, 
                 j.Description, 
+                j.CoverUrl,
                 j.BasePrice as OriginalPrice,             
                     COALESCE(
                         (SELECT TOP 1 p.ValorPromocao 
@@ -45,6 +46,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                      j.Id,
                      j.Name,    
                      j.Description,
+                     j.CoverUrl,
                      j.BasePrice AS OriginalPrice,
                      COALESCE(
                          (SELECT TOP 1 p.ValorPromocao 
@@ -67,6 +69,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 j.Id, 
                                 j.Name, 
                                 j.Description, 
+                                j.CoverUrl,
                                 j.BasePrice as OriginalPrice,
                                 COALESCE(
                                      (SELECT TOP 1 p.ValorPromocao 
@@ -83,6 +86,21 @@ namespace Fcg.Catalog.Infrastructure.Queries
 
             
             return await _dbConnection.QueryAsync<GameResponse>(sql, new { jogosIds });
+        }
+
+        public async Task<IEnumerable<GameCoverResponse>> GetGameCoversAsync(IReadOnlyCollection<Guid> gameIds, CancellationToken cancellationToken)
+        {
+            // Sem filtro de IsActive: a biblioteca mostra jogos que já saíram do catálogo.
+            const string sql = @"
+                SELECT
+                    j.Id AS GameId,
+                    j.Name,
+                    j.CoverUrl
+                FROM Games j
+                WHERE j.Id IN @GameIds;";
+
+            return await _dbConnection.QueryAsync<GameCoverResponse>(
+                new CommandDefinition(sql, new { GameIds = gameIds }, cancellationToken: cancellationToken));
         }
 
         public async Task<PagedResult<GameUserResponse>> GetPagedCatalogAsync(GameGenre? gameGenre, bool? promoted, int pageNumber, int pageSize, CancellationToken cancellationToken)
@@ -104,6 +122,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 j.Id,
                                 j.Name,    
                                 j.Description,
+                                j.CoverUrl,
                                 j.BasePrice AS OriginalPrice,
                                 COALESCE(
                                     (SELECT TOP 1 p.ValorPromocao 
@@ -122,7 +141,7 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                   WHERE p.GameId = j.Id 
                                     AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
                               ))
-                            ORDER BY j.CreatedAt DESC
+                            ORDER BY j.CreatedAt DESC, j.Id DESC
                             OFFSET @Offset ROWS 
                             FETCH NEXT @PageSize ROWS ONLY;";
 

@@ -35,6 +35,11 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
         /// </summary>
         [DefaultValue(GameGenre.Action)]
         public GameGenre NewGenre { get; init; }
+        /// <summary>
+        /// Novo link da capa: caminho do site ou URL http(s). null remove a capa.
+        /// </summary>
+        [DefaultValue(null)]
+        public string? NewCoverUrl { get; init; }
 
         /// <summary>
         /// Construtor padrão.

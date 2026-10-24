@@ -413,3 +413,8 @@ swagger.json
 # Secrets do Kubernetes
 *secret.yaml
 *secrets.yaml
+
+# Documentação local de planejamento (não versionada)
+/SPEC.md
+/tasks/
+/docs/

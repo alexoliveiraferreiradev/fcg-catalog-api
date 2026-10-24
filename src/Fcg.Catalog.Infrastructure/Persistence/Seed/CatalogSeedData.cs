@@ -1,0 +1,97 @@
+using Fcg.Catalog.Domain.Enum;
+
+namespace Fcg.Catalog.Infrastructure.Persistence.Seed
+{
+    /// <summary>
+    /// Catálogo de exemplo: os mesmos jogos fictícios do mock do front (fcg-front-end/mock/data.ts),
+    /// com capas autorais servidas pelo front em /covers. Nada de nome, arte ou logo de jogo real.
+    /// </summary>
+    internal static class CatalogSeedData
+    {
+        internal sealed record SeedPromotion(decimal Price, int DaysToEnd);
+
+        internal sealed record SeedGame(string Name, GameGenre Genre, decimal Price, string CoverUrl, string Description, SeedPromotion? Promotion);
+
+        internal static readonly IReadOnlyList<SeedGame> Games =
+        [
+            new("Hollow Depths", GameGenre.Metroidvania, 99.9m, "/covers/hollow-depths.svg",
+                "Desça por cavernas que mudam a cada ciclo de maré. Cada habilidade nova abre um caminho que você já tinha visto e não conseguia alcançar.",
+                new SeedPromotion(59.94m, DaysToEnd: 14)),
+            new("Neon Rally", GameGenre.Racing, 49.9m, "/covers/neon-rally.svg",
+                "Corridas noturnas em circuitos de rua, com garagem para personalizar e campeonato on-line semanal.",
+                new SeedPromotion(37.42m, DaysToEnd: 7)),
+            new("Kingdom Tactics", GameGenre.Strategy, 79.9m, "/covers/kingdom-tactics.svg",
+                "Estratégia por turnos em mapas de hexágonos. Recrute, negocie alianças e defenda o castelo antes do inverno.",
+                new SeedPromotion(39.95m, DaysToEnd: 19)),
+            new("Starfall Online", GameGenre.MOBA, 0m, "/covers/starfall-online.svg",
+                "Arenas 5 contra 5 com mais de 40 heróis. Gratuito para jogar.",
+                null),
+            new("Iron Front", GameGenre.FPS, 149.9m, "/covers/iron-front.svg",
+                "Tiro tático em equipe com destruição de cenário e partidas de 32 jogadores.",
+                null),
+            new("Farm Days", GameGenre.Simulation, 29.9m, "/covers/farm-days.svg",
+                "Plante, colha e reforme a fazenda da família. Ritmo tranquilo, estações do ano e cooperativo local.",
+                null),
+            new("Ashen Oath", GameGenre.Soulslike, 199.9m, "/covers/ashen-oath.svg",
+                "Um juramento quebrado, um reino em cinzas. Combate exigente, chefes memoráveis e nenhum mapa.",
+                new SeedPromotion(149.92m, DaysToEnd: 10)),
+            new("Pixel Pals", GameGenre.Platformer, 19.9m, "/covers/pixel-pals.svg",
+                "Plataforma em dupla. Um pula, o outro segura. Feito para jogar no sofá com alguém.",
+                new SeedPromotion(9.95m, DaysToEnd: 3)),
+            new("Crimson Arena", GameGenre.Fighting, 119.9m, "/covers/crimson-arena.svg",
+                "Luta 2D com 24 personagens, modo história e rollback no on-line.",
+                null),
+            new("Deep Signal", GameGenre.Horror, 59.9m, "/covers/deep-signal.svg",
+                "Uma estação de pesquisa no fundo do mar parou de responder. Você é a equipe de resgate.",
+                null),
+            new("Wildlands Odyssey", GameGenre.OpenWorld, 249.9m, "/covers/wildlands-odyssey.svg",
+                "Um continente inteiro para explorar a cavalo, com clima dinâmico e mais de 200 missões.",
+                null),
+            new("Rune Tiles", GameGenre.Puzzle, 14.9m, "/covers/rune-tiles.svg",
+                "Quebra-cabeças de runas que se encaixam em padrões. Mais de 300 fases.",
+                null),
+            new("Last Circle", GameGenre.Battle_Royale, 0m, "/covers/last-circle.svg",
+                "Cem jogadores, uma ilha e um círculo que fecha. Gratuito para jogar.",
+                null),
+            new("Dungeon Loop", GameGenre.Roguelike, 39.9m, "/covers/dungeon-loop.svg",
+                "Cada morte reinicia a masmorra, mas o que você aprendeu fica.",
+                null),
+            new("Chronicles of Vael", GameGenre.RPG, 179.9m, "/covers/chronicles-of-vael.svg",
+                "RPG de grupo com escolhas que mudam o mundo, seis companheiros e combate em tempo real pausável.",
+                null),
+            new("Goal Rush", GameGenre.Sports, 89.9m, "/covers/goal-rush.svg",
+                "Futebol arcade de cinco contra cinco, com partidas de quatro minutos.",
+                null),
+            new("Lantern Path", GameGenre.Adventure, 44.9m, "/covers/lantern-path.svg",
+                "Uma menina, uma lanterna e uma floresta que só existe de noite.",
+                null),
+            new("Byte Garden", GameGenre.Indie, 24.9m, "/covers/byte-garden.svg",
+                "Cultive plantas feitas de código e veja o jardim crescer sozinho enquanto você dorme.",
+                null),
+            new("Steel Horizon", GameGenre.Action, 129.9m, "/covers/steel-horizon.svg",
+                "Ação em terceira pessoa com mechas customizáveis e campanha cooperativa para dois.",
+                null),
+            new("Court Kings", GameGenre.Sport, 69.9m, "/covers/court-kings.svg",
+                "Basquete de rua três contra três, com quadras do mundo todo.",
+                null),
+            new("Echoes of the Spire", GameGenre.RPG, 99.9m, "/covers/echoes-of-the-spire.svg",
+                "Suba uma torre infinita com um grupo de mercenários e decida quem sobrevive.",
+                null),
+            new("Turbo Karts Deluxe Championship Edition", GameGenre.Racing, 79.9m, "/covers/turbo-karts-deluxe-championship-edition.svg",
+                "Corrida de kart com itens, 48 pistas e modo batalha. Nome comprido de propósito.",
+                null),
+            new("Silent Ward", GameGenre.Horror, 49.9m, "/covers/silent-ward.svg",
+                "Um hospital abandonado e uma câmera com pouca bateria.",
+                null),
+            new("Orbital Command", GameGenre.Strategy, 89.9m, "/covers/orbital-command.svg",
+                "Estratégia em tempo real no espaço, com gravidade, órbitas e frotas inteiras.",
+                null),
+            new("Mosaic Mind", GameGenre.Puzzle, 9.9m, "/covers/mosaic-mind.svg",
+                "Monte mosaicos sem tempo nem pontuação.",
+                null),
+            new("Blade Saga", GameGenre.Action, 59.9m, "/covers/blade-saga.svg",
+                "Hack and slash com combos aéreos e trilha de rock.",
+                null),
+        ];
+    }
+}

@@ -31,5 +31,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
         /// </summary>
         
         public GameGenre Genre { get; init; }
+        /// <summary>
+        /// Link da capa (opcional): caminho do site, como "/covers/jogo.svg", ou URL http(s).
+        /// </summary>
+        [DefaultValue(null)]
+        public string? CoverUrl { get; init; }
     }
 }

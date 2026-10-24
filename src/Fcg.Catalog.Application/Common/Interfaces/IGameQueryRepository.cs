@@ -11,5 +11,7 @@ namespace Fcg.Catalog.Application.Common.Interfaces
         Task<GameResponse?> GetGameByIdAsync(Guid gameId, CancellationToken cancellationToken);
         Task<IEnumerable<GameResponse>> GetAllGamesAsync(CancellationToken cancellationToken);
         Task<IEnumerable<GameResponse>> GetGamesByIdsAsync(IEnumerable<Guid> jogosIds, CancellationToken cancellationToken);
+        /// <summary>Capas dos jogos pedidos, inclusive desativados. Ids inexistentes são ignorados.</summary>
+        Task<IEnumerable<GameCoverResponse>> GetGameCoversAsync(IReadOnlyCollection<Guid> gameIds, CancellationToken cancellationToken);
     }
 }

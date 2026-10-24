@@ -26,7 +26,10 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.ValorPromocao AS CurrentPrice, 
                                 g.Genre, 
                                 g.IsActive, 
-                                p.Id AS PromotionId             
+                                p.Id AS PromotionId,
+                                p.GameId,
+                                p.EndDate,
+                                g.CoverUrl
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 
@@ -60,14 +63,17 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.ValorPromocao AS CurrentPrice, 
                                 g.Genre, 
                                 g.IsActive, 
-                                p.Id AS PromotionId             
+                                p.Id AS PromotionId,
+                                p.GameId,
+                                p.EndDate,
+                                g.CoverUrl
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 
                                AND GETUTCDATE() BETWEEN p.StartDate AND p.EndDate
                             WHERE g.IsActive = 1
                               AND (@Genre IS NULL OR g.Genre = @Genre) 
-                            ORDER BY g.CreatedAt DESC
+                            ORDER BY g.CreatedAt DESC, g.Id DESC
                             OFFSET @Offset ROWS 
                             FETCH NEXT @PageSize ROWS ONLY;
                         ";

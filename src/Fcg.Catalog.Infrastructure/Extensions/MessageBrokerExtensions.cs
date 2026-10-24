@@ -1,6 +1,8 @@
 ﻿using Fcg.Catalog.Infrastructure.MessageBroker;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Core.SharedContracts.Interfaces;
+using Fcg.Core.SharedContracts.MessageContracts;
+using Fcg.Core.SharedContracts.Messaging;
 using Fcg.Core.WebApi.MessageBroker;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +17,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
         {
             services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
 
-            services.AddOptions<RabbitMqConnectionSettings>().BindConfiguration(RabbitMqConnectionSettings.SectionName)
+            services.AddOptions<AzureServiceBusSettings>().BindConfiguration(AzureServiceBusSettings.SectionName)
            .ValidateDataAnnotations().ValidateOnStart();
 
             services.AddMassTransit(x =>
@@ -26,18 +28,15 @@ namespace Fcg.Catalog.Infrastructure.Extensions
                     o.UseBusOutbox();
                 });
 
-                x.UsingRabbitMq((context, cfg) =>
+                x.UsingAzureServiceBus((context, cfg) =>
                 {
-                    var rabbitMqConfig = context.GetRequiredService<IOptions<RabbitMqConnectionSettings>>().Value;
-                                        
-                    cfg.Host(rabbitMqConfig.Host,rabbitMqConfig.Port, "/", h =>
-                    {
-                        h.Username(rabbitMqConfig.Username);
-                        h.Password(rabbitMqConfig.Password);
-                    });
-
+                    var serviceBusConfig = context.GetRequiredService<IOptions<AzureServiceBusSettings>>().Value;
+                    cfg.Host(serviceBusConfig.ConnectionString);
                     cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
 
+                    cfg.Message<IGameCreatedIntegrationEvent>(m => m.SetEntityName(Topics.GameCreated));
+                    cfg.Message<IGameDeactiveIntegrationEvent>(m => m.SetEntityName(Topics.GameDeactivated));
+                    cfg.Message<IGameReactiveIntegrationEvent>(m => m.SetEntityName(Topics.GameReactivated));
                 });
             });
 
