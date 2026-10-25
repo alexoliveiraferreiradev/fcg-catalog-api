@@ -5,7 +5,6 @@ metadata:
   labels:
     app: fcg-catalog-migration
 spec:
-  ttlSecondsAfterFinished: 120
   backoffLimit: 3
   activeDeadlineSeconds: 900
   template:
@@ -70,10 +69,21 @@ spec:
           - name: DatabaseSettings__Username
             valueFrom:
               secretKeyRef:
-                name: catalog-opaque
+                name: fcg-secrets
                 key: DB_USER
           - name: DatabaseSettings__Password
             valueFrom:
               secretKeyRef:
-                name: catalog-opaque
+                name: fcg-secrets
                 key: DB_PASS
+        volumeMounts:
+          - name: secrets-store
+            mountPath: /mnt/secrets
+            readOnly: true
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: fcg-kv

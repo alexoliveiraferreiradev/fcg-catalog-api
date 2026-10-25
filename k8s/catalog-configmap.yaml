@@ -6,8 +6,6 @@ data:
   DB_SERVER: sql-service
   DB_PORT: "1433"
   DB_NAME: "Fcg_Catalogs"
-  RABBITMQ_SERVER: rabbitmq-service
-  RABBITMQ_PORT: "5672"
   REDIS_SERVER: redis-service
   REDIS_PORT: "6379" 
   REDIS_NAME: "FiapCloudGames:" 
