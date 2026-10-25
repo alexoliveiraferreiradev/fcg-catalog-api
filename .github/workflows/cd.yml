@@ -43,10 +43,13 @@ jobs:
     environment: production
     permissions:
       id-token: write   # OIDC só no job que fala com a Azure
-      contents: read    # a tag é gravada no fcg-infrastructure com o token do GitHub App
+      contents: read    
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     env:
       IMAGE: ${{ vars.ACR_REGISTRY_NAME }}.azurecr.io/fcg-catalog-api:${{ github.sha }}
+      NAMESPACE: default
+      DEPLOYMENT: fcg-catalog-api-deployment
+      MIGRATION_JOB: fcg-catalog-db-migration
     steps:
       - uses: actions/checkout@v4
 
@@ -76,40 +79,43 @@ jobs:
       - name: Push Docker Image to ACR
         run: docker push $IMAGE
 
-      # Token do GitHub App restrito ao fcg-infrastructure, onde fica a tag lida pelo Argo CD.
-      - name: Generate token to GitHub App
-        id: app-token
-        uses: actions/create-github-app-token@v1
+      - name: Set AKS context
+        uses: azure/aks-set-context@v4
         with:
-          app-id: ${{ vars.GITOPS_APP_ID }}
-          private-key: ${{ secrets.GITOPS_APP_PRIVATE_KEY }}
-          repositories: fcg-infrastructure
+          resource-group: ${{ vars.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ vars.AKS_CLUSTER_NAME }}
 
-      # Depois do build: o checkout em ./infra não entra no contexto do docker build.
-      - name: Checkout fcg-infrastructure
-        uses: actions/checkout@v4
-        with:
-          repository: alexoliveiraferreiradev/fcg-infrastructure
-          token: ${{ steps.app-token.outputs.token }}
-          path: infra
+      - name: Apply ConfigMap
+        run: kubectl apply -n "$NAMESPACE" -f k8s/catalog-configmap.yaml
 
-      # Id numérico do usuário bot do App: o e-mail <id>+<slug>[bot]@users.noreply.github.com liga o commit ao App.
-      - name: Get GitHub App bot user id
-        id: bot-user
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: echo "id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
-
-      - name: Update image tag (GitOps)
-        env:
-          TAG: ${{ github.sha }}
+      - name: Run DB migration
         run: |
-          cd infra/k8s/apps/catalog
-          kustomize edit set image acrfiapcloudgames.azurecr.io/fcg-catalog-api=acrfiapcloudgames.azurecr.io/fcg-catalog-api:$TAG
-          # Re-run do mesmo commit: a tag já está gravada, não há o que commitar.
-          git diff --quiet && { echo "Tag $TAG já está gravada"; exit 0; }
-          git config user.name  "${{ steps.app-token.outputs.app-slug }}[bot]"
-          git config user.email "${{ steps.bot-user.outputs.id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
-          git commit -am "deploy: fcg-catalog-api $TAG"
-          git pull --rebase origin main
-          git push
+          kubectl delete job "$MIGRATION_JOB" -n "$NAMESPACE" --ignore-not-found --wait=true
+          yq '.spec.template.spec.containers[0].image = strenv(IMAGE)' k8s/catalog-migration.yaml \
+            | kubectl apply -n "$NAMESPACE" -f -
+          
+          for i in $(seq 1 95); do
+            status=$(kubectl get job "$MIGRATION_JOB" -n "$NAMESPACE" \
+              -o jsonpath='{.status.conditions[?(@.status=="True")].type}')
+            case "$status" in
+              *Complete*) echo "Migração concluída"; exit 0 ;;
+              *Failed*)
+                kubectl logs job/"$MIGRATION_JOB" -n "$NAMESPACE" --all-containers --tail=200
+                exit 1 ;;
+            esac
+            sleep 10
+          done
+          echo "Migração não terminou a tempo"; exit 1  
+
+      - name: Deploy to AKS
+        run: |
+          yq '(select(.kind == "Deployment") | .spec.template.spec.containers[0].image) = strenv(IMAGE)' k8s/catalog.yaml \
+            | kubectl apply -n "$NAMESPACE" -f -
+          kubectl annotate deployment/"$DEPLOYMENT" -n "$NAMESPACE" \
+            kubernetes.io/change-cause="fcg-catalog-api ${{ github.sha }}" --overwrite
+          if ! kubectl rollout status deployment/"$DEPLOYMENT" -n "$NAMESPACE" --timeout=5m; then
+            echo "Rollout falhou, desfazendo"
+            kubectl rollout undo deployment/"$DEPLOYMENT" -n "$NAMESPACE"
+            kubectl rollout status deployment/"$DEPLOYMENT" -n "$NAMESPACE" --timeout=5m
+            exit 1
+          fi    
