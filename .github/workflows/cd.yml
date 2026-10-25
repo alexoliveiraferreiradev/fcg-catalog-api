@@ -7,9 +7,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write   
   contents: read
-  
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 9.0.x
@@ -37,9 +41,28 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     environment: production
+    permissions:
+      id-token: write   # OIDC só no job que fala com a Azure
+      contents: read    # a tag é gravada no fcg-infrastructure com o token do GitHub App
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    env:
+      IMAGE: ${{ vars.ACR_REGISTRY_NAME }}.azurecr.io/fcg-catalog-api:${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build --pull -t $IMAGE .   # --pull: base sempre atualizada, sem cache velho
+
+      - name: Scan Docker Image (Trivy)
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          version: v0.69.3
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+          format: table
+
       - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
@@ -47,12 +70,46 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
-      - name: ACR Login 
+      - name: ACR Login
         run: az acr login --name ${{ vars.ACR_REGISTRY_NAME }}
 
-      - name: Build and Push Docker Image to ACR
+      - name: Push Docker Image to ACR
+        run: docker push $IMAGE
+
+      # Token do GitHub App restrito ao fcg-infrastructure, onde fica a tag lida pelo Argo CD.
+      - name: Generate token to GitHub App
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.GITOPS_APP_ID }}
+          private-key: ${{ secrets.GITOPS_APP_PRIVATE_KEY }}
+          repositories: fcg-infrastructure
+
+      # Depois do build: o checkout em ./infra não entra no contexto do docker build.
+      - name: Checkout fcg-infrastructure
+        uses: actions/checkout@v4
+        with:
+          repository: alexoliveiraferreiradev/fcg-infrastructure
+          token: ${{ steps.app-token.outputs.token }}
+          path: infra
+
+      # Id numérico do usuário bot do App: o e-mail <id>+<slug>[bot]@users.noreply.github.com liga o commit ao App.
+      - name: Get GitHub App bot user id
+        id: bot-user
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: echo "id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
+      - name: Update image tag (GitOps)
+        env:
+          TAG: ${{ github.sha }}
         run: |
-          IMAGE_TAG=fcg-catalog-api:${{ github.sha }}
-          docker build -t ${{ vars.ACR_REGISTRY_NAME }}.azurecr.io/$IMAGE_TAG .
-          docker push ${{ vars.ACR_REGISTRY_NAME }}.azurecr.io/$IMAGE_TAG
-  
+          cd infra/k8s/apps/catalog
+          kustomize edit set image acrfiapcloudgames.azurecr.io/fcg-catalog-api=acrfiapcloudgames.azurecr.io/fcg-catalog-api:$TAG
+          # Re-run do mesmo commit: a tag já está gravada, não há o que commitar.
+          git diff --quiet && { echo "Tag $TAG já está gravada"; exit 0; }
+          git config user.name  "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.email "${{ steps.bot-user.outputs.id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git commit -am "deploy: fcg-catalog-api $TAG"
+          git pull --rebase origin main
+          git push
