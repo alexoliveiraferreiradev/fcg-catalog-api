@@ -15,5 +15,10 @@ namespace Fcg.Catalog.Domain.Resources
         public const string GameCoversIdsRequired = "Informe ao menos um id de jogo.";
         public const string GameCoversIdsLimit = "Informe no máximo 50 ids de jogo por consulta.";
         #endregion
+
+        #region Avaliação
+        public const string RatingOutOfRange = "A avaliação deve ser entre 0 e 5.";
+        public const string RatingUserRequired = "A avaliação precisa do usuário que avaliou.";
+        #endregion
     }
 }

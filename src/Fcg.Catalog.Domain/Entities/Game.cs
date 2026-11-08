@@ -15,7 +15,9 @@ namespace Fcg.Catalog.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public GameGenre Genre { get; private set; }
-        /// <summary>Link da capa; null quando o jogo não tem capa (o front mostra um placeholder).</summary>
+        public double RatingSum { get; private set; }
+        public int RatingCount { get; private set; }
+        public double? AverageRating => RatingCount == 0 ? null : Math.Round(RatingSum / RatingCount, 1, MidpointRounding.AwayFromZero);
         public CoverUrl? Cover { get; private set; }
         private List<Promotion> _promotions = new List<Promotion>();
         public IReadOnlyCollection<Promotion> Promotions => _promotions;
