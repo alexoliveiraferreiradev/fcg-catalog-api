@@ -66,7 +66,9 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
                     OriginalPrice = game.BasePrice.Amount,
                     Genre = game.Genre,
                     IsActive = game.IsActive,
-                    CoverUrl = game.Cover?.Value
+                    CoverUrl = game.Cover?.Value,
+                    AverageRating = game.AverageRating,
+                    RatingCount = game.RatingCount
                 };
             }
             catch(DomainException)

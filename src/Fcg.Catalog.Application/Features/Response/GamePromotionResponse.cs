@@ -13,6 +13,8 @@ namespace Fcg.Catalog.Application.Features.Response
         public GameGenre Genre { get; init; }
         public DateTime EndDate { get; init; }
         public string? CoverUrl { get; init; }
+        public double? AverageRating { get; init; }
+        public int RatingCount { get; init; }
         public decimal DiscountPercentage => OriginalPrice > 0 ? Math.Round((OriginalPrice - CurrentPrice) / OriginalPrice * 100, 2) : 0;
     }
 }

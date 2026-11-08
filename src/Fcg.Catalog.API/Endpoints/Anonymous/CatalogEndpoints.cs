@@ -34,7 +34,7 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
                 .Produces<IEnumerable<GameCoverResponse>>(StatusCodes.Status200OK)
                 .ProducesValidationProblem()
                 .WithSummary("Lista as capas de vários games.")
-                .WithDescription("Retorna id, nome e link da capa dos games pedidos (ids=...&ids=..., até 50), inclusive desativados. Ids inexistentes são ignorados.")
+                .WithDescription("Retorna id, nome, link da capa e se o game está ativo na loja (ids=...&ids=..., até 50), inclusive desativados. Ids inexistentes são ignorados.")
                 .WithName("GetCatalogGameCovers");
 
         }

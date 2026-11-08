@@ -11,6 +11,8 @@ namespace Fcg.Catalog.Application.Features.Response
         public decimal CurrentPrice { get; init; }
         public GameGenre Genre { get; init; }
         public string? CoverUrl { get; init; }
+        public double? AverageRating { get; init; }
+        public int RatingCount { get; init; }
         public bool HasDiscount => CurrentPrice < OriginalPrice;        
     }
 }
