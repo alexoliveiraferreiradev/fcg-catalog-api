@@ -12,3 +12,4 @@ data:
   ENVIRONMENT: "Development"
   JWT_ISSUER: "FiapCloudGames"
   JWT_AUDIENCE: "FiapCloudGamesAudience"
+  CATALOG_GAME_RATED_INTEGRATION_QUEUE: "catalog-game-rated-integration-queue"
