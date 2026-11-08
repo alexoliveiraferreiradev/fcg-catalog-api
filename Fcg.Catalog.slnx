@@ -1,4 +1,9 @@
-﻿<Solution>
+<Solution>
+  <Folder Name="/k8s/">
+    <File Path="k8s/catalog-configmap.yaml" />
+    <File Path="k8s/catalog-migration.yaml" />
+    <File Path="k8s/catalog.yaml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Fcg.Catalog.API/Fcg.Catalog.API.csproj" Id="a74e9e9d-7222-4e20-816f-da08c79ec27f" />
     <Project Path="src/Fcg.Catalog.Application/Fcg.Catalog.Application.csproj" Id="4d246821-6fc0-452a-b4d5-6409494a7b09" />
