@@ -36,6 +36,12 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<int>("RatingCount")
+                        .HasColumnType("int");
+
+                    b.Property<double>("RatingSum")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -44,6 +50,28 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                     b.HasIndex("IsActive");
 
                     b.ToTable("Games", (string)null);
+                });
+
+            modelBuilder.Entity("Fcg.Catalog.Domain.Entities.GamesRating", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("RatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("GamesRatings", (string)null);
                 });
 
             modelBuilder.Entity("Fcg.Catalog.Domain.Entities.Promotion", b =>
@@ -327,6 +355,35 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Name")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fcg.Catalog.Domain.Entities.GamesRating", b =>
+                {
+                    b.HasOne("Fcg.Catalog.Domain.Entities.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Fcg.Catalog.Domain.ValueObject.Avaliation", "Rating", b1 =>
+                        {
+                            b1.Property<Guid>("GamesRatingId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<double>("Value")
+                                .HasColumnType("float")
+                                .HasColumnName("Rating");
+
+                            b1.HasKey("GamesRatingId");
+
+                            b1.ToTable("GamesRatings");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GamesRatingId");
+                        });
+
+                    b.Navigation("Rating")
                         .IsRequired();
                 });
 

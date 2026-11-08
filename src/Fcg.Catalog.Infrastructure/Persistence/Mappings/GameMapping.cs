@@ -1,6 +1,7 @@
 using Fcg.Catalog.Domain.Entities;
 using Fcg.Catalog.Domain.ValueObject;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
@@ -62,6 +63,19 @@ namespace Fcg.Catalog.Infrastructure.Persistence.Mappings
 
             builder.Property(j => j.UpdatedAt)
                 .IsRequired();
+
+            // Soma e quantidade só mudam por incremento atômico no banco (GameRepository.ApplyRatingAsync).
+            // Ignorados no UPDATE do EF: a edição do admin não sobrescreve uma nota que chegou no meio dela,
+            // e avaliações simultâneas no mesmo jogo não conflitam.
+            builder.Property(j => j.RatingSum)
+                .IsRequired()
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+            builder.Property(j => j.RatingCount)
+                .IsRequired()
+                .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+            builder.Ignore(j => j.AverageRating);
 
            
             builder.HasMany(j => j.Promotions)
