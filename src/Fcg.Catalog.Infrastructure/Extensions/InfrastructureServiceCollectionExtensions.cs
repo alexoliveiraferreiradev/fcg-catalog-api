@@ -19,6 +19,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
         {
             services.AddDatabaseExtension(configuration);
             services.AddCacheExtension(configuration);
+            services.AddSearchExtension(configuration);
             services.AddMassTransitExtension(configuration);
             services.AddHealthCheckExtension(configuration);    
             services.AddScoped<IDbConnection>(sp => sp.GetRequiredService<CatalogDbContext>().Database.GetDbConnection());           
