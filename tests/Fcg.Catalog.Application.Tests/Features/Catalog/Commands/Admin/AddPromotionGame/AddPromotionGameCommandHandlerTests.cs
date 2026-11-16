@@ -72,6 +72,26 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddPromo
         }
 
         [Fact]
+        public async Task Handle_DevePublicarEventoSoDepoisDoCommit()
+        {
+            // Os handlers do evento (cache e índice de busca) leem a promoção no banco: ela precisa já estar gravada.
+            var game = CriarJogoValido();
+            var command = new AddPromotionGameCommand(game.Id, 50.0m, DateTime.UtcNow, DateTime.UtcNow.AddDays(5));
+            var calls = new List<string>();
+
+            _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(game);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Callback(() => calls.Add("commit")).ReturnsAsync(true);
+            _mediatorMock
+                .Setup(m => m.Publish(It.IsAny<PromotionAddedEvent>(), It.IsAny<CancellationToken>()))
+                .Callback(() => calls.Add("publish"))
+                .Returns(Task.CompletedTask);
+
+            await _handler.Handle(command, CancellationToken.None);
+
+            calls.Should().Equal("commit", "publish");
+        }
+
+        [Fact]
         public async Task Handle_DeveLancarDomainException_QuandoJogoJaPossuirPromocao()
         {
             // Arrange

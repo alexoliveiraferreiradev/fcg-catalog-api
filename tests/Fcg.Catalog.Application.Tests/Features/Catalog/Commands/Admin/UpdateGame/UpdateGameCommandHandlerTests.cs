@@ -61,7 +61,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
                 NewName = "Game Novo",
                 NewDescription = "Nova Description longa",
                 NewPrice = 120.00m,
-                NewGenre = GameGenre.Action
+                NewGenre = GameGenre.Acao
             };
 
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);
@@ -92,7 +92,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
                 NewName = "Game Novo",
                 NewDescription = "Nova Description longa",
                 NewPrice = 120.00m,
-                NewGenre = GameGenre.Action,
+                NewGenre = GameGenre.Acao,
                 NewCoverUrl = capa
             };
             _jogoRepositoryMock.Setup(r => r.GetById(command.GameId)).ReturnsAsync(Game);

@@ -15,7 +15,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
             Name = "Pixel Pals",
             Description = "Plataforma em dupla para jogar no sofa",
             Price = 19.90m,
-            Genre = GameGenre.Platformer,
+            Genre = GameGenre.Plataforma,
             CoverUrl = capa
         };
 

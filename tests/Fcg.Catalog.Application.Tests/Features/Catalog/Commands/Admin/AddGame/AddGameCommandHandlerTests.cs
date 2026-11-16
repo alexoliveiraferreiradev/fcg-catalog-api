@@ -48,7 +48,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
                 Name = "Novo Game",
                 Description = "Uma descrição super legal para o Game",
                 Price = 150.0m,
-                Genre = GameGenre.Strategy
+                Genre = GameGenre.Estrategia
             };
 
             _jogoRepositoryMock
@@ -69,6 +69,31 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
         }
 
         [Fact]
+        public async Task Handle_DevePublicarEventoSoDepoisDoCommit()
+        {
+            // Os handlers do evento (cache e índice de busca) leem o jogo no banco: ele precisa já estar gravado.
+            var command = new AddGameCommand
+            {
+                Name = "Novo Game",
+                Description = "Uma descrição super legal para o Game",
+                Price = 150.0m,
+                Genre = GameGenre.Estrategia
+            };
+            var calls = new List<string>();
+
+            _jogoRepositoryMock.Setup(r => r.GameExistsWithName(command.Name)).ReturnsAsync(false);
+            _unitOfWorkMock.Setup(u => u.CommitAsync()).Callback(() => calls.Add("commit")).ReturnsAsync(true);
+            _mediatorMock
+                .Setup(m => m.Publish(It.IsAny<GameAddedEvent>(), It.IsAny<CancellationToken>()))
+                .Callback(() => calls.Add("publish"))
+                .Returns(Task.CompletedTask);
+
+            await _handler.Handle(command, CancellationToken.None);
+
+            calls.Should().Equal("commit", "publish");
+        }
+
+        [Fact]
         public async Task Handle_DeveLancarDomainException_QuandoNomeDoJogoJaExistir()
         {
             // Arrange
@@ -77,7 +102,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.AddGame
                 Name = "Game Duplicado",
                 Description = "Descrição",
                 Price = 50.0m,
-                Genre = GameGenre.Action
+                Genre = GameGenre.Acao
             };
 
             _jogoRepositoryMock
