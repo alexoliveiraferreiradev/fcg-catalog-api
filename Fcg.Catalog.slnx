@@ -13,5 +13,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Fcg.Catalog.Application.Tests/Fcg.Catalog.Application.Tests.csproj" Id="e6ea4703-3d25-46e8-9da8-fe6f7be08ca8" />
     <Project Path="tests/Fcg.Catalog.Domain.Tests/Fcg.Catalog.Domain.Tests.csproj" Id="18099710-3c6c-40ec-a488-9e16e53beb4f" />
+    <Project Path="tests/Fcg.Catalog.Infrastructure.Tests/Fcg.Catalog.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>
