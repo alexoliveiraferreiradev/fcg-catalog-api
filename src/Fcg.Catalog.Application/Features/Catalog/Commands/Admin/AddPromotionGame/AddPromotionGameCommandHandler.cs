@@ -55,9 +55,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddPromotionGa
 
                 _logger.LogInformation("[CatalogAPI] Promoção adicionada com sucesso. JogoId: {JogoId}, PromocaoId: {PromocaoId}, Valor: {Valor}", game.Id, novaPromocao.Id, request.PromotionValue);
 
-                await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
-
                 await _unitOfWork.CommitAsync();
+
+                // Depois do commit: os handlers (cache e índice de busca) leem a promoção já gravada no banco.
+                await _mediator.Publish(new PromotionAddedEvent(novaPromocao.GameId, novaPromocao.Id), cancellationToken);
 
                 PromotionMetrics.CreateAttempts.WithLabels("success").Inc();
 
