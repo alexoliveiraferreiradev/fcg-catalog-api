@@ -8,6 +8,14 @@ namespace Fcg.Catalog.Infrastructure.Search
     {
         public const string Name = "games";
 
+        /// <summary>
+        /// Versão do mapping, gravada no _meta do índice. Ao subir, o initializer recria o índice quando a versão
+        /// gravada é diferente desta (ou não existe, caso de índice criado automaticamente pelo Elasticsearch).
+        /// Aumente sempre que mudar o Configure: analyzer, campo, tipo ou subcampo.
+        /// </summary>
+        public const int MappingVersion = 1;
+        public const string MappingVersionKey = "mapping_version";
+
         /// <summary>Ensina o client a gravar GameDocument no índice "games" usando o Id do jogo como _id.</summary>
         public static ElasticsearchClientSettings MapDocument(ElasticsearchClientSettings settings) =>
             settings.DefaultMappingFor<GameDocument>(m => m
@@ -52,7 +60,9 @@ namespace Fcg.Catalog.Infrastructure.Search
                         .Filter(["lowercase", EnglishPossessiveFilter, EnglishLightStemFilter, "asciifolding"]))
                     .Custom(PortugueseStemAnalyzer, ca => ca.Tokenizer("standard")
                         .Filter(["lowercase", PortugueseLightStemFilter, "asciifolding"])))))
-            .Mappings(m => m.Properties(p => p
+            .Mappings(m => m
+                .Meta(new Dictionary<string, object> { [MappingVersionKey] = MappingVersion })
+                .Properties(p => p
                 .Keyword(d => d.Id)
                 .Text(d => d.Name, t => t
                     .Analyzer(FoldingAnalyzer)
