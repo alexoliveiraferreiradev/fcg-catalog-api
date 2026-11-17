@@ -78,6 +78,11 @@ spec:
               secretKeyRef:
                 name: fcg-secrets
                 key: ServiceBus_Connection
+          - name: AzureServiceBus__CatalogGameRatedIntegrationQueue
+            valueFrom:
+              configMapKeyRef:
+                name: catalog-config
+                key: CATALOG_GAME_RATED_INTEGRATION_QUEUE
           - name: RedisSettings__Host
             valueFrom:
               configMapKeyRef:

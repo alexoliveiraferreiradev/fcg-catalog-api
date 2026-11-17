@@ -29,7 +29,9 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.Id AS PromotionId,
                                 p.GameId,
                                 p.EndDate,
-                                g.CoverUrl
+                                g.CoverUrl,
+                                CASE WHEN g.RatingCount = 0 THEN NULL ELSE ROUND(g.RatingSum / g.RatingCount, 1) END AS AverageRating,
+                                g.RatingCount
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 
@@ -66,7 +68,9 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 p.Id AS PromotionId,
                                 p.GameId,
                                 p.EndDate,
-                                g.CoverUrl
+                                g.CoverUrl,
+                                CASE WHEN g.RatingCount = 0 THEN NULL ELSE ROUND(g.RatingSum / g.RatingCount, 1) END AS AverageRating,
+                                g.RatingCount
                             FROM Games g 
                             INNER JOIN Promotions p 
                                 ON g.Id = p.GameId 

@@ -60,6 +60,15 @@ namespace Fcg.Catalog.Infrastructure.Repositories
             return games;
         }
 
+        public async Task ApplyRatingAsync(Guid gameId, double sumDelta, int countDelta, CancellationToken cancellationToken)
+        {           
+            await _dbContext.Games
+                .Where(g => g.Id == gameId)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(g => g.RatingSum, g => g.RatingSum + sumDelta)
+                    .SetProperty(g => g.RatingCount, g => g.RatingCount + countDelta), cancellationToken);
+        }
+
         public async Task<IEnumerable<Game>> GetAllGamesAsync()
         {
             return await _dbContext.Games.Include(p => p.Promotions)

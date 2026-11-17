@@ -26,6 +26,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<IGameRepository, GameRepository>();
+            services.AddScoped<IGamesRatingRepository, GamesRatingRepository>();
             services.AddScoped<IGameQueryRepository, GameQueryRepository>();
             services.AddScoped<IPromotionQueryRepository, PromotionQueryRepository>();
             return services;

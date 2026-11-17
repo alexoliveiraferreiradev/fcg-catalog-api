@@ -10,6 +10,7 @@ namespace Fcg.Catalog.Infrastructure.Persistence
         }
         public DbSet<Game> Games { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<GamesRating> GamesRatings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogDbContext).Assembly);

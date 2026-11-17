@@ -1,4 +1,6 @@
-﻿using Fcg.Catalog.Infrastructure.MessageBroker;
+﻿using Fcg.Catalog.Infrastructure.Consumers;
+using Fcg.Core.Abstractions.Common.Exceptions;
+using Fcg.Catalog.Infrastructure.MessageBroker;
 using Fcg.Catalog.Infrastructure.Persistence;
 using Fcg.Core.SharedContracts.Interfaces;
 using Fcg.Core.SharedContracts.MessageContracts;
@@ -22,6 +24,7 @@ namespace Fcg.Catalog.Infrastructure.Extensions
 
             services.AddMassTransit(x =>
             {
+                x.AddConsumer<RatingGameConsumer>();
                 x.AddEntityFrameworkOutbox<CatalogDbContext>(o =>
                 {
                     o.UseSqlServer();
@@ -32,11 +35,20 @@ namespace Fcg.Catalog.Infrastructure.Extensions
                 {
                     var serviceBusConfig = context.GetRequiredService<IOptions<AzureServiceBusSettings>>().Value;
                     cfg.Host(serviceBusConfig.ConnectionString);
-                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
+                    // Falhas transitórias (deadlock, conexão) tentam de novo; regra de negócio inválida vai direto para a fila de erro.
+                    cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)).Ignore<DomainException>());
 
                     cfg.Message<IGameCreatedIntegrationEvent>(m => m.SetEntityName(Topics.GameCreated));
                     cfg.Message<IGameDeactiveIntegrationEvent>(m => m.SetEntityName(Topics.GameDeactivated));
                     cfg.Message<IGameReactiveIntegrationEvent>(m => m.SetEntityName(Topics.GameReactivated));
+                    cfg.Message<IGameRatingIntegrationEvent>(m => m.SetEntityName(Topics.GameRated));
+
+                    // Inbox do outbox: a mesma mensagem entregue duas vezes não conta a nota duas vezes.
+                    cfg.ReceiveEndpoint(serviceBusConfig.CatalogGameRatedIntegrationQueue, e =>
+                    {
+                        e.UseEntityFrameworkOutbox<CatalogDbContext>(context);
+                        e.ConfigureConsumer<RatingGameConsumer>(context);
+                    });
                 });
             });
 

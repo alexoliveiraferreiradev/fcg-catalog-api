@@ -24,6 +24,8 @@ namespace Fcg.Catalog.Infrastructure.Queries
                 j.Name, 
                 j.Description, 
                 j.CoverUrl,
+                CASE WHEN j.RatingCount = 0 THEN NULL ELSE ROUND(j.RatingSum / j.RatingCount, 1) END AS AverageRating,
+                j.RatingCount,
                 j.BasePrice as OriginalPrice,             
                     COALESCE(
                         (SELECT TOP 1 p.ValorPromocao 
@@ -47,6 +49,8 @@ namespace Fcg.Catalog.Infrastructure.Queries
                      j.Name,    
                      j.Description,
                      j.CoverUrl,
+                     CASE WHEN j.RatingCount = 0 THEN NULL ELSE ROUND(j.RatingSum / j.RatingCount, 1) END AS AverageRating,
+                     j.RatingCount,
                      j.BasePrice AS OriginalPrice,
                      COALESCE(
                          (SELECT TOP 1 p.ValorPromocao 
@@ -70,6 +74,8 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 j.Name, 
                                 j.Description, 
                                 j.CoverUrl,
+                                CASE WHEN j.RatingCount = 0 THEN NULL ELSE ROUND(j.RatingSum / j.RatingCount, 1) END AS AverageRating,
+                                j.RatingCount,
                                 j.BasePrice as OriginalPrice,
                                 COALESCE(
                                      (SELECT TOP 1 p.ValorPromocao 
@@ -95,7 +101,8 @@ namespace Fcg.Catalog.Infrastructure.Queries
                 SELECT
                     j.Id AS GameId,
                     j.Name,
-                    j.CoverUrl
+                    j.CoverUrl,
+                    j.IsActive
                 FROM Games j
                 WHERE j.Id IN @GameIds;";
 
@@ -123,6 +130,8 @@ namespace Fcg.Catalog.Infrastructure.Queries
                                 j.Name,    
                                 j.Description,
                                 j.CoverUrl,
+                                CASE WHEN j.RatingCount = 0 THEN NULL ELSE ROUND(j.RatingSum / j.RatingCount, 1) END AS AverageRating,
+                                j.RatingCount,
                                 j.BasePrice AS OriginalPrice,
                                 COALESCE(
                                     (SELECT TOP 1 p.ValorPromocao 

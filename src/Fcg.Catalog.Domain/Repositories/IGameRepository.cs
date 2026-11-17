@@ -12,6 +12,7 @@ namespace Fcg.Catalog.Domain.Repositories
         Task<Promotion?> GetPromotionById(Guid id);        
         Task DeactivateInvalidPromotions();
         Task<IEnumerable<Game>> GetGamesByIds(IEnumerable<Guid> jogosIds);
-        Task<IEnumerable<Game>> GetAllGamesAsync();
+        Task<IEnumerable<Game>> GetAllGamesAsync();        
+        Task ApplyRatingAsync(Guid gameId, double sumDelta, int countDelta, CancellationToken cancellationToken);
     }
 }

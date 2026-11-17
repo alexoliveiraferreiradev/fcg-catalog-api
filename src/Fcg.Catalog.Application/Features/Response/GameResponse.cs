@@ -12,6 +12,8 @@ namespace Fcg.Catalog.Application.Features.Response
         public GameGenre Genre { get; init; }
         public bool IsActive { get; init; }
         public string? CoverUrl { get; init; }
+        public double? AverageRating { get; init; }
+        public int RatingCount { get; init; }
         public bool HasDiscount => CurrentPrice < OriginalPrice;
     }
 }
