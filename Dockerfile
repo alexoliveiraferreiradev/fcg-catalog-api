@@ -23,7 +23,7 @@ WORKDIR "/src/Fcg.Catalog.API"
 
 # Sem --no-restore: o publish refaz o restore no Linux e não depende de nenhum obj/ que venha no contexto.
 RUN dotnet publish "./Fcg.Catalog.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-RUN dotnet ef migrations bundle --no-build --configuration $BUILD_CONFIGURATION --self-contained -r linux-x64 -o /app/efbundle
+RUN dotnet ef migrations bundle --project ../Fcg.Catalog.Infrastructure --startup-project . --no-build --configuration $BUILD_CONFIGURATION --self-contained -r linux-x64 -o /app/efbundle
 
 FROM base AS final
 WORKDIR /app
