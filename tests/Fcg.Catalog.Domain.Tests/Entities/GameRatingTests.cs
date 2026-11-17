@@ -8,7 +8,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
     public class GameRatingTests
     {
         private static Game CriarJogo() =>
-            new Game(new Name("Super Mario"), new Description("Game clássico de Platformer de encanadores"), new Price(100m), GameGenre.Platformer);
+            new Game(new Name("Super Mario"), new Description("Game clássico de Platformer de encanadores"), new Price(100m), GameGenre.Plataforma);
 
         [Fact]
         public void AverageRating_SemAvaliacoes_DeveSerNulo()

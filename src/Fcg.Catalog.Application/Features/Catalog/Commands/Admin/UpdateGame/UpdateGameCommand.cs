@@ -33,7 +33,7 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.UpdateGame
         /// <summary>
         /// Novo gênero principal do game.
         /// </summary>
-        [DefaultValue(GameGenre.Action)]
+        [DefaultValue(GameGenre.Acao)]
         public GameGenre NewGenre { get; init; }
         /// <summary>
         /// Novo link da capa: caminho do site ou URL http(s). null remove a capa.

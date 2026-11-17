@@ -2,8 +2,10 @@ using Fcg.Catalog.Application.Features.Catalog.Commands.Admin.DeactivateInvalidP
 using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetGameCovers;
 using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetPagedCatalog;
 using Fcg.Catalog.Application.Features.Catalog.Queries.User.GetPagedPromotedCatalogGames;
+using Fcg.Catalog.Application.Features.Catalog.Queries.User.SearchGames;
 using Fcg.Catalog.Application.Features.Response;
 using Fcg.Catalog.Domain.Enum;
+using Fcg.Core.Abstractions.Common;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +39,32 @@ namespace Fcg.Catalog.API.Endpoints.Anonymous
                 .WithDescription("Retorna id, nome, link da capa e se o game está ativo na loja (ids=...&ids=..., até 50), inclusive desativados. Ids inexistentes são ignorados.")
                 .WithName("GetCatalogGameCovers");
 
+            group.MapGet("/search", SearchGames)
+                .Produces<PagedResult<GameUserResponse>>(StatusCodes.Status200OK)
+                .ProducesValidationProblem()
+                .WithSummary("Busca games ativos por texto.")
+                .WithDescription("Busca no Elasticsearch pelo nome, gênero e descrição (q=...). Tolera erros de digitação (fuzzy) e devolve os resultados do mais relevante para o menos relevante, paginados (pageSize até 50).")
+                .WithName("SearchCatalogGames");
+
+        }
+
+        private static async Task<IResult> SearchGames(
+            [FromServices] ISender sender,
+            [FromServices] IValidator<SearchGamesQuery> validator,
+            [FromQuery(Name = "q")] string? term,
+            CancellationToken cancellationToken,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var query = new SearchGamesQuery(term ?? string.Empty, page, pageSize);
+            var validation = await validator.ValidateAsync(query, cancellationToken);
+            if (!validation.IsValid)
+            {
+                return Results.ValidationProblem(validation.ToDictionary());
+            }
+
+            var response = await sender.Send(query, cancellationToken);
+            return Results.Ok(response);
         }
 
 

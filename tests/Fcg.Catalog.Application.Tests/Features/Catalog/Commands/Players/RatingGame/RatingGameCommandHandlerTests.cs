@@ -33,7 +33,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Players.Rating
 
         private Game CriarJogo()
         {
-            var game = new Game(new Name("Super Mario"), new Description("Game clássico de Platformer"), new Price(100m), GameGenre.Platformer);
+            var game = new Game(new Name("Super Mario"), new Description("Game clássico de Platformer"), new Price(100m), GameGenre.Plataforma);
             _gameRepositoryMock.Setup(r => r.GetById(game.Id)).ReturnsAsync(game);
             return game;
         }

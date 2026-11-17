@@ -29,7 +29,7 @@ namespace Fcg.Catalog.Application.Tests.Features.Catalog.Commands.Admin.UpdateGa
             NewName = nome,
             NewDescription = descricao,
             NewPrice = 120.00m,
-            NewGenre = GameGenre.Adventure
+            NewGenre = GameGenre.Aventura
         };
 
         [Fact]

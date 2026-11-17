@@ -16,6 +16,14 @@ namespace Fcg.Catalog.Domain.Resources
         public const string GameCoversIdsLimit = "Informe no máximo 50 ids de jogo por consulta.";
         #endregion
 
+        #region Busca
+        public const string SearchTermRequired = "Informe o termo da busca.";
+        public const string SearchTermLength = "O termo da busca deve ter no máximo 100 caracteres.";
+        public const string SearchPageInvalid = "A página deve ser maior ou igual a 1.";
+        public const string SearchPageSizeInvalid = "O tamanho da página deve ser entre 1 e 50.";
+        public const string SearchPageLimit = "A busca alcança no máximo os 10.000 primeiros resultados.";
+        #endregion
+
         #region Avaliação
         public const string RatingOutOfRange = "A avaliação deve ser entre 0 e 5.";
         public const string RatingUserRequired = "A avaliação precisa do usuário que avaliou.";

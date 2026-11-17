@@ -64,9 +64,10 @@ namespace Fcg.Catalog.Application.Features.Catalog.Commands.Admin.AddGame
                     OccurredAt = DateTime.UtcNow
                 });
 
-                await _mediator.Publish(new GameAddedEvent(game.Id), cancellationToken);
-
                 await _unitOfWork.CommitAsync();
+
+                // Depois do commit: os handlers (cache e índice de busca) leem o jogo já gravado no banco.
+                await _mediator.Publish(new GameAddedEvent(game.Id), cancellationToken);
 
                 GameMetrics.CreateAttempts.WithLabels("success").Inc();
 

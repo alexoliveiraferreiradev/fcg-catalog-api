@@ -88,6 +88,9 @@ jobs:
       - name: Apply ConfigMap
         run: kubectl apply -n "$NAMESPACE" -f k8s/catalog-configmap.yaml
 
+      - name: Apply Secret Provider Class
+        run: kubectl apply -n "$NAMESPACE" -f k8s/catalog-secret-provider-class.yaml
+
       - name: Run DB migration
         run: |
           kubectl delete job "$MIGRATION_JOB" -n "$NAMESPACE" --ignore-not-found --wait=true

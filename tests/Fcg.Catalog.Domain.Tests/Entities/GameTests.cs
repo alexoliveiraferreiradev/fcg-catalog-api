@@ -21,7 +21,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             var Name = ObterNomeValido();
             var Description = ObterDescricaoValida();
             var Price = ObterPrecoValido();
-            var Genre = GameGenre.Platformer;
+            var Genre = GameGenre.Plataforma;
 
             // Act
             var Game = new Game(Name, Description, Price, Genre);
@@ -59,7 +59,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Desativar_JogoAtivo_DeveDesativar()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
 
             // Act
             Game.Deactivate();
@@ -73,7 +73,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Desativar_JogoInativo_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
             Game.Deactivate();
 
             // Act & Assert
@@ -85,7 +85,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Reativar_JogoInativo_DeveReativar()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
             Game.Deactivate();
 
             // Act
@@ -100,7 +100,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Reativar_JogoAtivo_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
 
             // Act & Assert
             var excecao = Assert.Throws<DomainException>(() => Game.Reactivate());
@@ -115,7 +115,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Atualizar_ComDadosValidos_DeveAtualizarCampos()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var novoNome = new Name("Zelda Breath of the Wild");
             var novaDescricao = new Description("Game de RPG e mundo aberto com grande exploração");
             var novoPreco = ObterPrecoValido(150m);
@@ -135,7 +135,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Atualizar_JogoInativo_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
             Game.Deactivate();
 
             var novoNome = new Name("Zelda Breath of the Wild");
@@ -156,7 +156,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Construtor_SemCapa_DeveCriarJogoSemCapa()
         {
             // Act
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao);
 
             // Assert
             Assert.Null(Game.Cover);
@@ -169,7 +169,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
             var capa = new CoverUrl("/covers/pixel-pals.svg");
 
             // Act
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, capa);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao, capa);
 
             // Assert
             Assert.Equal(capa, Game.Cover);
@@ -179,7 +179,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Atualizar_ComNovaCapa_DeveTrocarCapa()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao, new CoverUrl("/covers/a.svg"));
             var novaCapa = new CoverUrl("https://cdn.exemplo.com/b.png");
 
             // Act
@@ -193,7 +193,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Atualizar_ComMesmaCapa_DeveManterCapa()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao, new CoverUrl("/covers/a.svg"));
 
             // Act
             Game.Update(Game.Name, Game.Description, Game.BasePrice, Game.Genre, new CoverUrl("/covers/a.svg"));
@@ -206,7 +206,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void Atualizar_ComCapaNula_DeveRemoverCapa()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Action, new CoverUrl("/covers/a.svg"));
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(), GameGenre.Acao, new CoverUrl("/covers/a.svg"));
 
             // Act
             Game.Update(Game.Name, Game.Description, Game.BasePrice, Game.Genre, null);
@@ -223,7 +223,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void AdicionarPromocao_ComPrecoMenorQuePrecoBase_DeveAdicionar()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var precoPromocional = ObterPrecoValido(80m);
             var EndDate = new Period(DateTime.UtcNow.AddDays(7));
 
@@ -242,7 +242,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void AdicionarPromocao_ComPrecoMaiorOuIgualAoPrecoBase_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var precoPromocionalInvalido = ObterPrecoValido(100m); // igual
             var EndDate = new Period(DateTime.UtcNow.AddDays(7));
 
@@ -255,7 +255,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void AlteraPromocao_ComDadosValidos_DeveUpdatePromotion()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var precoPromocional = ObterPrecoValido(80m);
             var EndDate = new Period(DateTime.UtcNow.AddDays(7));
             Game.AddPromotion(precoPromocional, EndDate);
@@ -277,7 +277,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void AlteraPromocao_ComPrecoMaiorOuIgualAoPrecoBase_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var precoPromocional = ObterPrecoValido(80m);
             var EndDate = new Period(DateTime.UtcNow.AddDays(7));
             Game.AddPromotion(precoPromocional, EndDate);
@@ -295,7 +295,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void ObterPrecoAtual_ComPromocaoAtivaEValida_DeveRetornarPrecoDaPromocao()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var precoPromocional = ObterPrecoValido(75m);
             // Período contendo a data atual
             var StartDate = DateTime.UtcNow.AddDays(-1);
@@ -314,7 +314,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void ObterPrecoAtual_SemPromocaoValida_DeveRetornarPrecoBase()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
 
             // Act
             var CurrentPrice = Game.GetCurrentPrice();
@@ -327,7 +327,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void DeactivatePromotion_PromocaoExistente_DeveDesativar()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             Game.AddPromotion(ObterPrecoValido(80m), new Period(DateTime.UtcNow.AddDays(7)));
             var promoId = Game.Promotions.First().Id;
 
@@ -342,7 +342,7 @@ namespace Fcg.Catalog.Domain.Tests.Entities
         public void DeactivatePromotion_PromocaoNaoEncontrada_DeveLancarDomainException()
         {
             // Arrange
-            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Action);
+            var Game = new Game(ObterNomeValido(), ObterDescricaoValida(), ObterPrecoValido(100m), GameGenre.Acao);
             var promoIdInexistente = Guid.NewGuid();
 
             // Act & Assert
