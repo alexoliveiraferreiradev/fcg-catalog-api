@@ -8,25 +8,35 @@ A Catálogo API é a **fonte da verdade do catálogo**: ela nunca consulta outro
 
 ## 🔄 Fluxo de Eventos e Responsabilidades
 
-A comunicação com os demais microsserviços é assíncrona, via **RabbitMQ** (abstraído pelo **MassTransit**), com o padrão de **Outbox Transacional** (tabelas de Outbox no SQL Server) garantindo que a publicação do evento aconteça de forma consistente com a gravação no banco.
+A comunicação com os demais microsserviços é assíncrona, via **Azure Service Bus** (tópicos e subscriptions, abstraído pelo **MassTransit** com `UsingAzureServiceBus`), com o padrão de **Outbox Transacional** (tabelas de Outbox no SQL Server) garantindo que a publicação do evento aconteça de forma consistente com a gravação no banco.
+
+Cada evento é publicado em um **tópico com nome fixo**, definido via `SetEntityName` com as constantes da classe `Topics` do pacote `Fcg.Core.SharedContracts` (namespace `Fcg.Core.SharedContracts.Messaging`). Assim, publicadores e consumidores de todos os microsserviços enxergam os mesmos tópicos, independentemente do nome da interface do contrato.
 
 > [!NOTE]
-> Este serviço é **publicador puro**: não existe nenhum *consumer* de RabbitMQ na Catálogo API. Ela não depende do estado de nenhum outro microsserviço para atender requisições.
+> A Catálogo API não depende do estado de nenhum outro microsserviço para atender requisições. O único *consumer* do serviço recebe as **avaliações dos jogadores** (veja [Eventos Consumidos](#-eventos-consumidos)), que apenas atualizam a nota média do jogo.
 
 ### 📤 Eventos Publicados
 
-| Evento | Publicado quando | Consumido por |
-| :--- | :--- | :--- |
-| `IGameCreatedIntegrationEvent` | Um jogo é cadastrado (`AddGameCommand`), ou via republicação manual/automática | Order API, User Library API (criam o *snapshot* local do jogo) |
-| `IGameDeactiveIntegrationEvent` | Um jogo é desativado (`DeactivateGameCommand`) | Order API, User Library API (marcam o jogo como indisponível) |
-| `IGameReactiveIntegrationEvent` | Um jogo é reativado (`ReactivateGameCommand`) | Order API, User Library API (devolvem o jogo à disponibilidade) |
+| Evento | Tópico | Publicado quando | Consumido por |
+| :--- | :--- | :--- | :--- |
+| `IGameCreatedIntegrationEvent` | `game-created` | Um jogo é cadastrado (`AddGameCommand`), ou via republicação manual/automática | Order API, User Library API (criam o *snapshot* local do jogo) |
+| `IGameDeactiveIntegrationEvent` | `game-deactivated` | Um jogo é desativado (`DeactivateGameCommand`) | Order API, User Library API (marcam o jogo como indisponível) |
+| `IGameReactiveIntegrationEvent` | `game-reactivated` | Um jogo é reativado (`ReactivateGameCommand`) | Order API, User Library API (devolvem o jogo à disponibilidade) |
+
+### 📥 Eventos Consumidos
+
+| Evento | Tópico | Fila (`AzureServiceBus:CatalogGameRatedIntegrationQueue`) | Consumer | Efeito |
+| :--- | :--- | :--- | :--- | :--- |
+| `IGameRatingIntegrationEvent` | `game-rated` | `catalog-game-rated-integration-queue` | `RatingGameConsumer` | Registra ou atualiza a nota do jogador (`RatingGameCommand`) e recalcula `AverageRating`/`RatingCount` do jogo. |
+
+O evento é publicado pela **User Library API** quando o jogador avalia um jogo da sua biblioteca. O MassTransit cria a fila e a *subscription* que encaminha as mensagens do tópico `game-rated` para ela. O endpoint usa o **Inbox do Outbox do EF Core** (`UseEntityFrameworkOutbox`), de modo que a mesma mensagem entregue duas vezes não conta a nota duas vezes, e o handler ignora avaliações mais antigas que a já registrada (comparando `OccurredAt`). Falhas transitórias são reprocessadas 3 vezes com intervalo de 5 segundos; `DomainException` vai direto para a fila de erro, sem retry.
 
 > [!IMPORTANT]
 > **Atualizar um jogo não republica o evento de integração.** `UpdateGameCommand` só dispara o evento interno `GameUpdatedEvent` (usado para invalidar o cache Redis local) — nome, descrição, preço e gênero atualizados **não** são propagados automaticamente para os *snapshots* do Order API e do User Library API. Para ressincronizar os demais serviços após uma edição, use a republicação manual abaixo.
 
 ### 🔁 Republicação Manual de Eventos
 
-`POST /api/admin/games/republish` (Admin) aciona `RepublishGamesEvent`, que reenvia `IGameCreatedIntegrationEvent` para **todos** os jogos cadastrados — com o preço promocional vigente, se houver. Use esse endpoint para popular ou ressincronizar os demais serviços após uma edição de jogo, uma indisponibilidade prolongada do RabbitMQ, ou qualquer suspeita de divergência entre os *snapshots*.
+`POST /api/admin/games/republish` (Admin) aciona `RepublishGamesEvent`, que reenvia `IGameCreatedIntegrationEvent` para **todos** os jogos cadastrados — com o preço promocional vigente, se houver. Use esse endpoint para popular ou ressincronizar os demais serviços após uma edição de jogo, uma indisponibilidade prolongada do Azure Service Bus, ou qualquer suspeita de divergência entre os *snapshots*.
 
 Em ambiente de **Development**, essa republicação também é disparada automaticamente uma única vez, logo após o seed inicial do catálogo (`CatalogDbContextSeed`), para popular o ecossistema local com dados de teste.
 
@@ -35,6 +45,47 @@ Em ambiente de **Development**, essa republicação também é disparada automat
 Duas rotinas garantem que promoções vencidas nunca apareçam como válidas, mesmo sem intervenção manual:
 - **`DeactivateInvalidPromotionWorker`**: um `BackgroundService` que roda a cada 1 hora e desativa em lote todas as promoções cujo período de validade já expirou.
 - **Invalidação sob demanda**: os principais endpoints de leitura (catálogo público, listagem/detalhe de promoções, detalhe de jogo pelo admin) disparam `DeactivatePromotionInvalidaCommand` antes de consultar o banco, garantindo consistência mesmo entre execuções do worker.
+
+---
+
+## 🔍 Busca de Jogos com Elasticsearch
+
+A busca textual do catálogo (`GET /api/catalog/games/search?q=...`) é atendida pelo **Elasticsearch**, usando o client oficial `Elastic.Clients.Elasticsearch`. O SQL Server continua sendo a fonte da verdade: o índice é apenas uma cópia otimizada para busca, mantida em sincronia pela própria API.
+
+### Índice `games`
+
+O formato do índice fica centralizado em `GameIndex` (nome, mapping e analyzers), e cada jogo é gravado como um `GameDocument` com o `Id` do jogo como `_id`:
+
+| Campo | Mapeamento |
+| :--- | :--- |
+| `name` | `text` com o analyzer `folding` (minúsculas e sem acento) + subcampo `name.stemmed` com stemmer em **inglês** (nomes de jogos costumam estar em inglês: `"knights"` → `"knight"`, `"Assassin's"` → `"assassin"`). |
+| `description` | `text` com o analyzer `folding` + subcampo `description.stemmed` com stemmer leve em **português** (`"corridas"` → `"corrida"`). |
+| `genre` | `text` com o analyzer `folding`. |
+| `originalPrice`, `promotionPrice`, `promotionStartDate`, `promotionEndDate` | Usados para calcular o preço vigente no momento da busca. |
+| `isActive` | Filtro: só jogos ativos aparecem no resultado. |
+| `averageRating`, `ratingCount` | Nota média e quantidade de avaliações, devolvidas no resultado. |
+| `coverUrl` | `keyword` não indexado (apenas devolvido). |
+
+### Consulta
+
+O `ElasticGameService` monta um `bool` com `multi_match` (`best_fields`) sobre os campos com peso `name^3`, `name.stemmed^2`, `genre^2`, `description` e `description.stemmed^0.5`, e um filtro `term` em `isActive = true`:
+- **Tolerância a erro de digitação**: `fuzziness: AUTO` com `prefix_length: 1` (a primeira letra precisa bater).
+- **Relevância**: quem digitou a palavra exatamente como no jogo fica acima de quem só bateu pelo radical, e o nome pesa mais que gênero e descrição.
+- **Paginação**: `page`/`pageSize` (até 50 itens por página), com termo de até 100 caracteres e janela máxima de 10.000 resultados, validados por FluentValidation.
+
+### Sincronização do índice
+
+- **A cada mudança no jogo**: o `GameSearchIndexHandler` reage às notificações internas do MediatR (`GameAddedEvent`, `GameUpdatedEvent`, `GameDeactivatedEvent`, `GameReactivatedEvent`, `PromotionAddedEvent`, `PromotionUpdatedEvent`, `PromotionDeactivatedEvent`), lê o estado atual do jogo no banco (`GameDocumentQuery`, via Dapper) e regrava o documento — ou o remove do índice, se o jogo não existir mais. Avaliações recebidas pelo `RatingGameConsumer` disparam `GameUpdatedEvent` e, portanto, também atualizam a nota no índice. Uma falha no Elasticsearch é apenas logada: ela **não** desfaz a gravação no SQL Server.
+- **Na subida da API**: o `GameSearchIndexInitializer` (`IHostedService`) verifica o índice e:
+  - **não existe** → cria com o mapping atual e carrega todos os jogos do banco (`Bulk`);
+  - **mapping desatualizado** (a versão gravada em `_meta.mapping_version` difere de `GameIndex.MappingVersion`, ou o índice foi criado automaticamente pelo Elasticsearch) → apaga, recria e recarrega;
+  - **vazio** (carga anterior falhou) → recarrega;
+  - **pronto** → não faz nada.
+
+  Se o Elasticsearch estiver fora do ar, a API sobe mesmo assim (o erro é logado): o catálogo pelo SQL continua funcionando e apenas a busca fica indisponível.
+
+> [!TIP]
+> Ao alterar o mapping (analyzer, campo, tipo ou subcampo) em `GameIndex.Configure`, incremente `GameIndex.MappingVersion`. Na próxima subida, o índice é recriado e recarregado automaticamente — no rollout do Kubernetes, a primeira réplica corrige o índice e as seguintes o encontram pronto.
 
 ---
 
@@ -63,6 +114,7 @@ Duas rotinas garantem que promoções vencidas nunca apareçam como válidas, me
 | :--- | :--- | :--- |
 | `GET` | `/api/catalog/games` | Lista paginada de jogos ativos, com filtro opcional por gênero. |
 | `GET` | `/api/catalog/games/promoted` | Lista paginada de jogos ativos com promoção em vigência. |
+| `GET` | `/api/catalog/games/search?q={termo}&page=1&pageSize=10` | Busca textual de jogos ativos no **Elasticsearch** (nome, gênero e descrição), tolerante a erros de digitação e ordenada por relevância. |
 
 A documentação **Swagger** fica disponível em `/swagger` quando a API é executada isoladamente.
 
@@ -71,7 +123,7 @@ A documentação **Swagger** fica disponível em `/swagger` quando a API é exec
 | Rota | Uso |
 | :--- | :--- |
 | `/health/liveness` | O processo está de pé. |
-| `/health/readiness` | Dependências (**SQL Server** e **Redis**) estão acessíveis. Não inclui o RabbitMQ, já que este serviço não consome mensagens. |
+| `/health/readiness` | Dependências (**SQL Server** e **Redis**) estão acessíveis. Não inclui o Azure Service Bus nem o Elasticsearch: a indisponibilidade da busca não deve tirar o catálogo do ar. |
 
 ---
 
@@ -104,7 +156,8 @@ A API faz uso das seguintes tecnologias e pacotes:
 - **Entity Framework Core 9.0**: ORM utilizado na **escrita** dos dados no **SQL Server**, e também nas tabelas de Outbox do MassTransit.
 - **Dapper**: Micro-ORM de alta performance utilizado na camada de **leitura** (Queries), com type handlers customizados para os Value Objects do domínio.
 - **MediatR (v14)**: Implementação do padrão Mediator para suporte a **CQRS**, e canal das notificações internas que disparam a invalidação de cache.
-- **MassTransit & RabbitMQ**: Mensageria para publicação assíncrona dos eventos de integração, com Outbox Transacional baseado em EF Core.
+- **MassTransit & Azure Service Bus**: Mensageria para publicação assíncrona dos eventos de integração em tópicos do Azure Service Bus e consumo das avaliações de jogos, com Outbox/Inbox Transacional baseado em EF Core.
+- **Elasticsearch (`Elastic.Clients.Elasticsearch` 9.x)**: Motor de busca textual do catálogo, com analyzers sem acento e stemmers em inglês/português, busca *fuzzy* e ordenação por relevância. Funciona tanto com **Elastic Cloud** (`CloudId` + `ApiKey`) quanto com uma instância própria (`Url`).
 - **Redis (StackExchange)**: Cache distribuído da listagem do catálogo e das promoções, invalidado automaticamente a cada mutação via handlers do MediatR.
 - **Prometheus (prometheus-net.AspNetCore)**: Exposição de métricas HTTP e de negócio no formato Prometheus.
 - **xUnit**: Framework para execução de testes de unidade.
@@ -112,7 +165,7 @@ A API faz uso das seguintes tecnologias e pacotes:
 ### 📦 Shared Kernels (Pacotes Compartilhados da FCG)
 Projetos criados internamente e utilizados para padronizar e compartilhar recursos base:
 - **Fcg.Core.Abstractions**: Biblioteca de blocos de construção para Domain-Driven Design (DDD) em projetos .NET.
-- **Fcg.Core.SharedContracts**: Contratos de eventos compartilhados para comunicação assíncrona entre os microsserviços da plataforma FCG (ex: RabbitMQ / MassTransit).
+- **Fcg.Core.SharedContracts**: Contratos de eventos compartilhados para comunicação assíncrona entre os microsserviços da plataforma FCG via Azure Service Bus / MassTransit, incluindo a classe `Topics` com os nomes dos tópicos.
 - **Fcg.Core.WebApi**: Utilitários prontos para uso em ASP.NET Core Web APIs, incluindo autenticação JWT e tratamento global de exceções.
 
 ---
@@ -124,8 +177,8 @@ O projeto está estruturado em camadas para separar responsabilidades de forma c
 ```
 src/
 ├── Fcg.Catalog.Domain         # Regras de Negócio, Entidades de Domínio e Value Objects
-├── Fcg.Catalog.Application    # Casos de Uso (Commands/Queries), Event Handlers (cache) e MediatR Handlers
-├── Fcg.Catalog.Infrastructure # Acesso a Dados (EF Core + Dapper), Outbox/MassTransit, Cache e Worker
+├── Fcg.Catalog.Application    # Casos de Uso (Commands/Queries), Event Handlers (cache e índice de busca) e MediatR Handlers
+├── Fcg.Catalog.Infrastructure # Acesso a Dados (EF Core + Dapper), Outbox/MassTransit (Azure Service Bus), Busca (Elasticsearch), Cache e Worker
 └── Fcg.Catalog.API            # Host da API HTTP, Middlewares e Ponto de Entrada (Program.cs)
 ```
 
@@ -146,6 +199,9 @@ Orquestra os fluxos de dados e implementa os casos de uso usando **CQRS**:
 - **Handlers**: Processam as operações de gravação e leitura via `IRequestHandler` do MediatR, publicam os eventos de integração e incrementam as métricas de negócio.
 - **Event Handlers de Cache**: reagem a notificações internas do MediatR (`GameAddedEvent`, `GameUpdatedEvent`, `GameDeactivatedEvent`, `GameReactivatedEvent`, `PromotionAddedEvent`, `PromotionUpdatedEvent`, `PromotionDeactivatedEvent`, `InvalidPromotionEvent`) para invalidar as chaves relevantes no Redis.
 - **`RepublishGamesEvent`**: republica `IGameCreatedIntegrationEvent` para todos os jogos do catálogo.
+- **`GameSearchIndexHandler`**: reage às mesmas notificações internas de jogos e promoções para manter o índice do Elasticsearch igual ao banco.
+- **`SearchGamesQuery`**: busca textual paginada, atendida pela abstração `IGameSearchService` (a aplicação não conhece o Elasticsearch).
+- **`RatingGameCommand`**: registra a avaliação de um jogador e atualiza a nota média do jogo, a partir do evento consumido do Azure Service Bus.
 
 #### 3. `Fcg.Catalog.Infrastructure` (Infraestrutura)
 Lida com a comunicação técnica de persistência e mensageria:
@@ -153,6 +209,8 @@ Lida com a comunicação técnica de persistência e mensageria:
 - **Leitura (Dapper)**: `GameQueryRepository` e `PromotionQueryRepository`, com SQL otimizado para as listagens paginadas e type handlers para os Value Objects.
 - **`DeactivateInvalidPromotionWorker`**: `BackgroundService` que desativa promoções expiradas a cada hora.
 - **`RedisCacheService`**: cache distribuído por trás de `ICacheService`.
+- **Mensageria (`MessageBrokerExtensions`)**: MassTransit com `UsingAzureServiceBus`, mapeamento dos contratos para os tópicos (`SetEntityName(Topics.*)`), retry e o *receive endpoint* do `RatingGameConsumer`. A connection string e o nome da fila vêm de `AzureServiceBusSettings`, validados na subida (`ValidateOnStart`).
+- **Busca (`Search/`)**: `ElasticGameService` (implementação de `IGameSearchService`), `GameIndex` (nome, mapping e analyzers do índice), `GameDocumentQuery` (leitura via Dapper do estado do jogo para o documento) e `GameSearchIndexInitializer` (cria/recria/carrega o índice na subida). O `ElasticsearchClient` é registrado como **singleton** (thread-safe e com pool de conexões).
 
 #### 4. `Fcg.Catalog.API` (Apresentação)
 Host responsável por inicializar a API HTTP, configurar middlewares, injeção de dependências e expor os endpoints, o Swagger, os health checks e as métricas.
@@ -172,17 +230,20 @@ Para o funcionamento local stand-alone, configure o arquivo `appsettings.json`:
     "Username": "sa",
     "Password": "SuaSenhaSegura"
   },
-  "RabbitMqSettings": {
-    "Host": "localhost",
-    "Port": "5672",
-    "Username": "guest",
-    "Password": "guest"
+  "AzureServiceBus": {
+    "ConnectionString": "Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<policy>;SharedAccessKey=<chave>",
+    "CatalogGameRatedIntegrationQueue": "catalog-game-rated-integration-queue"
   },
   "RedisSettings": {
     "Host": "localhost",
     "Port": "6379",
     "Password": "SuaSenhaSegura",
     "InstanceName": "FiapCloudGames:"
+  },
+  "ElasticSearchSettings": {
+    "Url": "http://localhost:9200",
+    "ApiKey": "",
+    "CloudId": ""
   },
   "JwtSettings": {
     "Secret": "SUA_CHAVE_SUPER_SECRETA_E_LONGA_DE_EXEMPLO",
@@ -193,7 +254,11 @@ Para o funcionamento local stand-alone, configure o arquivo `appsettings.json`:
 }
 ```
 
-No **Kubernetes**, essas variáveis são injetadas via `ConfigMap`/`Secret` (`k8s/configmap.yaml`, `k8s/secrets.yaml`), no formato `DatabaseSettings__Host`, `RabbitMqSettings__Port` e assim por diante.
+> **AzureServiceBus** exige um namespace do Azure Service Bus no tier **Standard** ou superior (necessário para tópicos). As seções `AzureServiceBus` e `ElasticSearchSettings` são validadas na subida: sem a connection string, o nome da fila ou uma configuração válida do Elasticsearch, a API não inicia.
+>
+> **ElasticSearchSettings** aceita duas formas de conexão: **Elastic Cloud**, informando `CloudId` + `ApiKey`; ou **instância própria** (por exemplo, o Elasticsearch do `docker-compose` do [fcg-infrastructure](https://github.com/alexoliveiraferreiradev/fcg-infrastructure)), informando `Url` e, opcionalmente, `ApiKey`. Se `CloudId` estiver preenchido, ele tem precedência sobre `Url`.
+
+No **Kubernetes**, essas variáveis são injetadas via `ConfigMap` (`k8s/catalog-configmap.yaml`) e segredos do **Azure Key Vault** montados pelo driver CSI (`k8s/catalog-secret-provider-class.yaml`), no formato `DatabaseSettings__Host`, `AzureServiceBus__ConnectionString`, `AzureServiceBus__CatalogGameRatedIntegrationQueue`, `ElasticSearchSettings__Url`, `ElasticSearchSettings__CloudId`, `ElasticSearchSettings__ApiKey` e assim por diante.
 
 ---
 
@@ -201,7 +266,8 @@ No **Kubernetes**, essas variáveis são injetadas via `ConfigMap`/`Secret` (`k8
 
 ### Pré-requisitos
 - SDK do [.NET 9.0](https://dotnet.microsoft.com/download/dotnet/9.0) instalado.
-- SQL Server, Redis e RabbitMQ acessíveis.
+- SQL Server, Redis e Elasticsearch acessíveis.
+- Um namespace do **Azure Service Bus** (tier Standard ou superior) e a sua connection string.
 
 ### Comandos de Terminal
 
